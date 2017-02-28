@@ -26,7 +26,24 @@ The two shift registers can produce a sixteen bit address, although the 28C256 o
 
 ## Software Design
 
-TBD
+The software is designed around several major blocks and classes.  It would be cleaner to break the classes out into individual files, but they are kept together so that the entire project can be easily loaded as a simple Arduino project.
+
+### CommandStatus class
+This is used to store the execution status of the previous command.  It allows the status to be saved (and recalled using the / command) instead of just printing the status at the completion of the command.  This was important for debugging XMODEM problems, because the error messages would get eaten as part of the transfer.  The class has utility beyond XMODEM because it includes formatting that releives each command from having to build paramterized error messages with multiple prints.
+
+### PromDevice class
+The PromDevice class encapsulates all of the communication between the Arduino and the target PROM device.  Although the existing code is specific to the 28C256, the constructor has parameters that easily support other chips.  The current design has been used to read other chips, including 2764 and 29c040 EPROMs.
+
+The PromDevice class accesses the data bus using direct port writes instead of 8 individual pin accesses.  This greatly increases performance, but it makes the code dependent on the particular flavor of Arduino being used.  The code can currently be compiled for Uno, Nano, or Micro versions of Arduino hardware.
+
+### Xmodem class
+The Xmodem class implements the communications protocols needed to do XMODEM CRC transmit and receive.  It calls directly into the PROM read and write code, to the complete files are never stored during the transfer.
+
+### CLI code and command implementation
+This code parses input commands and parameters and executes the commands.
+
+A compile-time switch enables additional debug commands that are not needed in normal operation, but are very useful to verify proper operation of the hardware.
+
 
 ## Operation
 ![TommyPROM Screenshot](docs/tp05.png)
