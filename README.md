@@ -13,6 +13,9 @@ Features include:
 * Support for fast block EEPROM writes - a 32K EEPROM will program in just a few seconds.
 * Modular software design to easily support other EEPROM and EPROM families.
 
+The [hardware readme](hardware/README.md) has schematics and more information on the hardware design. The [software readme](TommyPROM/README.md) has class definitions and more information on the software design.
+
+
 The project was inspired by the [MEEPROMMER programmer](http://www.ichbinzustaendig.de/dev/meeprommer-en).
 
 ![TommyPROM Nano Hardware](docs/TommyPROM-nano.jpg)
