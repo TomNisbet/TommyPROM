@@ -1,49 +1,29 @@
 # TommyPROM - An Arduino-based EEPROM programmer
-This is a simple EEPROM reader and programmer that can be assembled using an Arduino and a few additional parts.  It has been sucessfully built using the Arduino UNO, Micro, and Nano models.
+This is a simple EEPROM programmer and reader that can be assembled using an Arduino and a few additional parts.  It has been sucessfully built using the Arduino UNO, Micro, and Nano models.
 
-The code is specific to the 28C256 32Kx8 EEPROM, but it would work, with some pin changes with other 5V EEPROMS as well.  The PROM-specific code is fairly modular and would be easily adapted.  Larger PROMs can be read or written in 64K chunks.  Many 5V chips, including UV EPROMs, such as the 2716, can be read with this hardware.
+The original code was specific to the 28C256 32Kx8 EEPROM, but it has been extended to also support Intel 8755A EPROMS.
+
+The 28C design can be used with other 5V EEPROMS as well. Many 5V chips, including UV EPROMs, such as the 2716, 2764, 27C2001 and 27C040, can be read, but not written, with the basic hardware. Some pin changes may be needed to get the signals to the correct pins on the device.  See the [extension readme](README-extension.md) for details on suggested hardware and software changes needed to support new EPROM and EEPROM families.
+
+The PROM-specific code is modular and can be easily adapted to support additional devices. There are currently drivers and hardware designs for 28C series EEPROMS and the Intel 8755A EPROM. Larger PROMs can be read or written in 64K chunks.
 
 Features include:
 * Simple hardware design that can be assembled on a breadboard.
 * ROM images transfers using XMODEM - no special host client needed.
-* Support for fast block EEPROM writes - a 32K chip will program is just a few seconds.
+* Support for fast block EEPROM writes - a 32K EEPROM will program in just a few seconds.
+* Modular software design to easily support other EEPROM and EPROM families.
 
 The project was inspired by the [MEEPROMMER programmer](http://www.ichbinzustaendig.de/dev/meeprommer-en).
 
 ![TommyPROM Nano Hardware](docs/TommyPROM-nano.jpg)
 
-## Hardware Design
-The hardware uses an Arduino to write data and toggle to control lines with the appropriate timing to access the PROM.  A pair of 74LS164 serial to parallel shift registers latch the address lines.  Use of the shift registers allows the Arduino to control up to 16 address lines using only 3 output ports.
+## Compiling
 
-The basic circuit is as follows:
-* Pins D2..D9 are wired to the data lines on the target PROM.
-* Pins A0..A2 are wired to the WE, CE, and OE control lines on the target PROM.
-* Pins A3..A5 control shift registers to produce the address lines.
+Open the TommyPROM.ino file in the Arduino IDE. It should automatically open the cpp and h files as well. The default code programs 28C series chips using Arduino Nano hardware.  To use this version, just compile and upload it to the Arduino.
 
-The two shift registers can produce a sixteen bit address, although the 28C256 only needs 15 addresses.  Chips larger than 64K can be supported by manually tying the additional lines high or low and working with 64K blocks at a time.  Additional pins on the Arduino could also be directly tied to additional address lines to do bank selecting.
+For different Arduino hardware, like UNO or Micro, edit the Configure.h file and uncomment the appropriate ARDUINO_IS_xx line. Only one of these lines should be uncommented. If all of these lines are commented out, the generic bit at a time code is used to write to the data bus. This will work on all Arduinos, but it is slower that the model-specific code.
 
-![TommyPROM Nano Schematic](docs/TommyPROM-nano-sch.png)
-
-## Software Design
-
-The software is designed around several major blocks and classes.  It would be cleaner to break the classes out into individual files, but they are kept together so that the entire project can be easily loaded as a simple Arduino project.
-
-### CommandStatus class
-This is used to store the execution status of the previous command.  It allows the status to be saved (and recalled using the / command) instead of just printing the status at the completion of the command.  This was important for debugging XMODEM problems, because the error messages would get eaten as part of the transfer.  The class has utility beyond XMODEM because it includes formatting that releives each command from having to build paramterized error messages with multiple prints.
-
-### PromDevice class
-The PromDevice class encapsulates all of the communication between the Arduino and the target PROM device.  Although the existing code is specific to the 28C256, the constructor has parameters that easily support other chips.  The current design has been used to read other chips, including 2764 and 29c040 EPROMs.
-
-The PromDevice class accesses the data bus using direct port writes instead of 8 individual pin accesses.  This greatly increases performance, but it makes the code dependent on the particular flavor of Arduino being used.  The code can currently be compiled for Uno, Nano, or Micro versions of Arduino hardware.
-
-### Xmodem class
-The Xmodem class implements the communications protocols needed to do XMODEM CRC transmit and receive.  It calls directly into the PROM read and write code, to the complete files are never stored during the transfer.
-
-### CLI code and command implementation
-This code parses input commands and parameters and executes the commands.
-
-A compile-time switch enables additional debug commands that are not needed in normal operation, but are very useful to verify proper operation of the hardware.
-
+To use the 8755A version of the code and matching hardware, uncomment PROM_IS_8755A and comment out the other PROM_IS_xx choices.
 
 ## Operation
 ![TommyPROM Screenshot](docs/tp05.png)
@@ -60,7 +40,11 @@ dumps memory from 0000H to 01ffH.  Note that commands and parameters can be ente
 
 The R command is used to read from a PROM and save a binary image on the host.  The W command receives a file from the host and writes (burns) it into the device.  The R command needs a start and end address.  The W command determines the end address from the received file size.
 
-The READ and WRITE command both use XMODEM CRC to complete the file transfers.  Once the command is issued to the programmer, the transfer must be started on the host program.
+The READ and WRITE command both use XMODEM CRC to complete the file transfers.  Many terminal programs default to XMODEM Checksum format, so be sure to select XMODEM CRC as the format. Once the READ or WRITE command is issued to the programmer, the transfer must be started on the host program.
+
+The files used for READ and WRITE are simple binary images. This can be created directly by [asm85](http://github.com/TomNisbet/asm85) or can be converted from S-record or Intel HEX using an external utility.
 
 ## Further Work
-The next project may be a PCB spin of the Nano design with a ZIF socket for easier access to the target chip.
+* Add a new PromDevice class for 27 series EPROMS.
+* Additional error checking in the CmdLine code.
+* Extend the addressing code to use a U32 instead of a U16 to allow chips larger than 64K to be programmed in a single operation.

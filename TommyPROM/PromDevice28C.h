@@ -7,10 +7,10 @@
 /*****************************************************************************/
 /*****************************************************************************/
 /**
- * PromDevice class
+ * PromDevice28C class
  *
- * Provides the interface to read and write data from a parallel PROM using the
- * Arduino.
+ * Provides the device-specific interface to read and write data from a
+ * 28C series parallel EEPROM using the Arduino.
  *
  * Block writes are supported on compatible devices by specifying a blockSize
  * in the constructor.  Use zero for byte writes.

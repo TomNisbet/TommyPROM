@@ -1,5 +1,5 @@
 #include "Configure.h"
-#if defined(PROM_IS_8755)
+#if defined(PROM_IS_8755A)
 
 
 #define CE1         A0
@@ -12,13 +12,13 @@
 #define VDDCTL      11
 
 
-PromDevice8755::PromDevice8755(unsigned long size)
+PromDevice8755A::PromDevice8755A(unsigned long size)
     : PromDevice(size, 0, 0, false)
 {
 }
 
 
-void PromDevice8755::begin()
+void PromDevice8755A::begin()
 {
     // Define the data bus as input initially so that it does not put out a
     // signal that could collide with output on the data pins of the EEPROM.
@@ -52,7 +52,7 @@ void PromDevice8755::begin()
 
 // Set an 11 bit address using the 8 address/data bus lines and three more dedicated
 // address lines.  The read and burn code will take care of the ALE line
-void PromDevice8755::setAddress(word address)
+void PromDevice8755A::setAddress(word address)
 {
     writeDataBus(byte(address & 0xff));
     digitalWrite(AD8, address & 0x100  ? HIGH : LOW);
@@ -62,7 +62,7 @@ void PromDevice8755::setAddress(word address)
 
 
 // Read a byte from a given address
-byte PromDevice8755::readByte(word address)
+byte PromDevice8755A::readByte(word address)
 {
     byte data = 0;
     digitalWrite(RD, HIGH);
@@ -89,7 +89,7 @@ byte PromDevice8755::readByte(word address)
 
 
 // Burn a byte to the chip and verify that it was written.
-bool PromDevice8755::burnByte(byte value, word address)
+bool PromDevice8755A::burnByte(byte value, word address)
 {
     // Latch the address and the CE lines
     digitalWrite(ALE, HIGH);
@@ -111,5 +111,5 @@ bool PromDevice8755::burnByte(byte value, word address)
     return readByte(address) == value;
 }
 
-#endif // #if defined(PROM_IS_8755)
+#endif // #if defined(PROM_IS_8755A)
 

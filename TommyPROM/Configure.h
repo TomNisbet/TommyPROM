@@ -12,13 +12,15 @@
 // compiled in.
 
 #define PROM_IS_28C
-//#define PROM_IS_8755
+//#define PROM_IS_8755A
 
 
 #if defined(PROM_IS_28C)
 #include "PromDevice28C.h"
-#elif defined(PROM_IS_8755)
-#include "PromDevice8755.h"
+#elif defined(PROM_IS_8755A)
+#include "PromDevice8755A.h"
+// Additional device support goes here...
+// Also add matching code in TommyPROM.ino to declare the new device
 #else
 #error "No Prom Device defined"
 #endif

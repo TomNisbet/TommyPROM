@@ -29,10 +29,13 @@ CmdStatus cmdStatus;
 //   Data polling supported
 PromDevice28C  prom(32 * 1024L, 64, 10, true);
 
-#elif defined(PROM_IS_8755)
-// Define a device for an 8755.  This has a fixed size of 2K and no
+#elif defined(PROM_IS_8755A)
+// Define a device for an 8755A.  This has a fixed size of 2K and no
 // other parameters.
-PromDevice8755  prom(2 * 1024L);
+PromDevice8755A  prom(2 * 1024L);
+
+// Additional device-specific code goes here...
+//#elif defined(PROM_IS...
 
 #else
 #error "Must define a PROM type in Configure.h"
