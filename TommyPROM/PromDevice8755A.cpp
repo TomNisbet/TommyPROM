@@ -2,14 +2,14 @@
 #if defined(PROM_IS_8755A)
 
 
-#define CE1         A0
-#define CE2         A1
-#define RD          A2
-#define AD8         A5
-#define AD9         A4
+#define CE2         A0
+#define RD          A1
+#define CE1         A2
 #define AD10        A3
-#define ALE         12
-#define VDDCTL      11
+#define AD9         A4
+#define AD8         A5
+#define ALE         10
+#define VDDCTL      12
 
 
 PromDevice8755A::PromDevice8755A(unsigned long size)
@@ -75,7 +75,7 @@ byte PromDevice8755A::readByte(word address)
 	digitalWrite(ALE, HIGH);
 	digitalWrite(ALE, LOW);
 
-	// Read a byte
+	// Read a byte
     setDataBusMode(INPUT);
     setAddress(0xff);
     digitalWrite(RD, LOW);
