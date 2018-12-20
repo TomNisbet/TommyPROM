@@ -75,7 +75,7 @@ bool PromDevice::writeData(byte data[], word len, word address)
 // on pins D2..D9.
 void PromDevice::setDataBusMode(uint8_t mode)
 {
-#if defined(AUDUINO_IS_UNO) || defined(ARDUINO_IS_NANO)
+#if defined(ARDUINO_IS_UNO) || defined(ARDUINO_IS_NANO)
     // On the Uno and Nano, D2..D9 maps to the upper 6 bits of port D and the
     // lower 2 bits of port B.
     if (mode == OUTPUT)
@@ -115,7 +115,7 @@ void PromDevice::setDataBusMode(uint8_t mode)
 // before calling this or no useful data will be returned.
 byte PromDevice::readDataBus()
 {
-#if defined(AUDUINO_IS_UNO) || defined(ARDUINO_IS_NANO)
+#if defined(ARDUINO_IS_UNO) || defined(ARDUINO_IS_NANO)
     return (PINB << 6) | (PIND >> 2);
 #elif defined(ARDUINO_IS_MICRO)
     return (PINB & 0xfe) | (PIND & 0x01);
@@ -137,7 +137,7 @@ byte PromDevice::readDataBus()
 // before calling this or no data will be written.
 void PromDevice::writeDataBus(byte data)
 {
-#if defined(AUDUINO_IS_UNO) || defined(ARDUINO_IS_NANO)
+#if defined(ARDUINO_IS_UNO) || defined(ARDUINO_IS_NANO)
      PORTB = (PORTB & 0xfc) | (data >> 6);
      PORTD = (PORTD & 0x03) | (data << 2);
 #elif defined(ARDUINO_IS_MICRO)
