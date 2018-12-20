@@ -7248,7 +7248,7 @@ to compensate for the voltage loss from D1 and Q2.
 <pinref part="IC1" gate="G$1" pin="A8"/>
 </segment>
 </net>
-<net name="CE2" class="0">
+<net name="CE1/PRG" class="0">
 <segment>
 <wire x1="15.24" y1="114.3" x2="-30.48" y2="114.3" width="0.1524" layer="91"/>
 <wire x1="-30.48" y1="114.3" x2="-30.48" y2="55.88" width="0.1524" layer="91"/>
@@ -7280,7 +7280,7 @@ to compensate for the voltage loss from D1 and Q2.
 <pinref part="IC1" gate="G$1" pin="RD"/>
 </segment>
 </net>
-<net name="CE1/PROG" class="0">
+<net name="CE2" class="0">
 <segment>
 <wire x1="15.24" y1="109.22" x2="-25.4" y2="109.22" width="0.1524" layer="91"/>
 <wire x1="-25.4" y1="109.22" x2="-25.4" y2="60.96" width="0.1524" layer="91"/>

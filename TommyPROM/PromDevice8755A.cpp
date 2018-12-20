@@ -2,9 +2,9 @@
 #if defined(PROM_IS_8755A)
 
 
-#define CE2         A0
+#define CE1         A0
 #define RD          A1
-#define CE1         A2
+#define CE2         A2
 #define AD10        A3
 #define AD9         A4
 #define AD8         A5
