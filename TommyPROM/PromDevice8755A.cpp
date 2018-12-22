@@ -54,6 +54,7 @@ void PromDevice8755A::begin()
 // address lines.  The read and burn code will take care of the ALE line
 void PromDevice8755A::setAddress(word address)
 {
+    setDataBusMode(OUTPUT);
     writeDataBus(byte(address & 0xff));
     digitalWrite(AD8, address & 0x100  ? HIGH : LOW);
     digitalWrite(AD9, address & 0x200  ? HIGH : LOW);
@@ -70,14 +71,12 @@ byte PromDevice8755A::readByte(word address)
 
 	// Put the address on the bus and latch it with ALE
     digitalWrite(CE2, HIGH);
-    setDataBusMode(OUTPUT);
     setAddress(address);
 	digitalWrite(ALE, HIGH);
 	digitalWrite(ALE, LOW);
 
 	// Read a byte
     setDataBusMode(INPUT);
-    setAddress(0xff);
     digitalWrite(RD, LOW);
     delayMicroseconds(1);
     data = readDataBus();

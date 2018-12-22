@@ -29,6 +29,17 @@ CmdStatus cmdStatus;
 //   Data polling supported
 PromDevice28C  prom(32 * 1024L, 64, 10, true);
 
+#elif defined(PROM_IS_27)
+// Define a device for a 2764 EPROM with the following parameters:
+//   8K byte device capacity
+//   1000us (1ms) write pulse
+//   15 write attempts
+//   4x overwrite pulse
+PromDevice27  prom(8 * 1024L, 1000L, 15, 4); // 2764 with SEEQ intelligent programming
+//PromDevice27  prom(32 * 1024L, 1000L, 25, 3); // 27C256 with SEEQ intelligent programming
+//PromDevice27  prom(2 * 1024L, 50000L, 1, 0); // 2716 with single 50ms write
+//PromDevice27  prom(64 * 1024L, 100L, 11, 0); // 27C040 with Atmel rapid programming
+
 #elif defined(PROM_IS_8755A)
 // Define a device for an 8755A.  This has a fixed size of 2K and no
 // other parameters.
@@ -490,7 +501,7 @@ void zapTest(word start)
         return;
     }
 
-    delayMicroseconds(10000);
+    delay(100);
     for (int ix = 0; ix < sizeof(testData); ix++)
     {
         byte val = prom.readData(start + ix);
@@ -529,6 +540,7 @@ void setup()
 * executing read or write requestes.
 **/
 
+/* 8085 Test programs
 byte ledTest[] =
 {
     0xc3, 0x03, 0x80, 0x3e, 0xc0, 0x30, 0x3e, 0xff,
@@ -545,6 +557,7 @@ byte charTest[] =
     0x3e, 0x40, 0x30, 0x3e, 0xc0, 0x30, 0x3e, 0x40, 0x30, 0x21, 0xff, 0xff,
     0x2d, 0xc2, 0x30, 0x80, 0x25, 0xc2, 0x30, 0x80, 0xc3, 0x03, 0x80
 };
+*/
 
 word start = 0;
 word end = 0xff;
@@ -644,7 +657,7 @@ void loop()
         break;
 
     default:
-        Serial.println(F("TommyPROM 1.5\n"));
+        Serial.println(F("TommyPROM 1.6\n"));
         Serial.println(F("Valid commands are:"));
         Serial.println(F("  Cssss eeee    - Compute checksum from device"));
         Serial.println(F("  Dssss eeee    - Dump bytes from device to terminal"));
