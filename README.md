@@ -24,7 +24,7 @@ The project was inspired by the [MEEPROMMER programmer](http://www.ichbinzustaen
 
 Open the TommyPROM.ino file in the Arduino IDE. It should automatically open the cpp and h files as well. The default code programs 28C series chips using Arduino Nano hardware.  To use this version, just compile and upload it to the Arduino.
 
-For different Arduino hardware, like UNO or Micro, edit the Configure.h file and uncomment the appropriate ARDUINO_IS_xx line. Only one of these lines should be uncommented. If all of these lines are commented out, the generic bit at a time code is used to write to the data bus. This will work on all Arduinos, but it is slower that the model-specific code.
+For different Arduino hardware, like UNO or Micro, edit the Configure.h file and uncomment the appropriate ARDUINO_IS_xx line. Only one of these lines should be uncommented. If all of these lines are commented out, the generic bit-at-a-time code is used to write to the data bus. This will work on all Arduinos, but it is slower that the model-specific code.
 
 To use the 8755A version of the code and matching hardware, uncomment PROM_IS_8755A and comment out the other PROM_IS_xx choices.
 
