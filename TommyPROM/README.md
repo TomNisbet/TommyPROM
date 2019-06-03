@@ -1,6 +1,6 @@
 # Software Design
 
-The software is designed around several major blocks and classes.  The code has been broken out into individual files to make it easy to extend the hardware support to additional EPROM and EEPROM families. See the [extension readme](README-extension.md) for details on suggested hardware and software changes needed.
+The software is designed around several major blocks and classes.  The code has been broken out into individual files to make it easy to extend the hardware support to additional EPROM and EEPROM families. See the [extension readme](../README-extension.md) for details on suggested hardware and software changes needed.
 
 ## CommandStatus class
 The CommandStatus class stores the execution status of the previous command.  It allows the status to be saved (and recalled using the / command) instead of just printing the status at the completion of the command.  This was important for debugging XMODEM problems, because the error messages would get eaten as part of the transfer.  The class has utility beyond XMODEM because it includes formatting that relieves each command from having to build paramterized error messages with multiple print calls.
