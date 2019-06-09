@@ -64,6 +64,23 @@ void PromDevice28C::disableSoftwareWriteProtect()
 }
 
 
+// Write the special three-byte code to turn on Software Data Protection.
+void PromDevice28C::enableSoftwareWriteProtect()
+{
+    disableOutput();
+    disableWrite();
+    enableChip();
+    setDataBusMode(OUTPUT);
+
+    setByte(0xaa, 0x5555);
+    setByte(0x55, 0x2aaa);
+    setByte(0xa0, 0x5555);
+
+    setDataBusMode(INPUT);
+    disableChip();
+}
+
+
 // BEGIN PRIVATE METHODS
 //
 

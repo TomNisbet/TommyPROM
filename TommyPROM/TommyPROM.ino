@@ -71,6 +71,7 @@ enum {
     CMD_DUMP,
     CMD_ERASED,
     CMD_FILL,
+    CMD_LOCK,
     CMD_READ,
     CMD_UNLOCK,
     CMD_WRITE,
@@ -127,6 +128,7 @@ byte parseCommand(char c)
         case 'd':  cmd = CMD_DUMP;      break;
         case 'e':  cmd = CMD_ERASED;    break;
         case 'f':  cmd = CMD_FILL;      break;
+        case 'l':  cmd = CMD_LOCK;      break;
         case 'r':  cmd = CMD_READ;      break;
         case 'u':  cmd = CMD_UNLOCK;    break;
         case 'w':  cmd = CMD_WRITE;     break;
@@ -610,6 +612,11 @@ void loop()
         fillBlock(start, end, val);
         break;
 
+    case CMD_LOCK:
+        Serial.println(F("Writing the lock code to enable Software Write Protect mode."));
+        prom.enableSoftwareWriteProtect();
+        break;
+
     case CMD_READ:
         Serial.println(F("Set the terminal to receive XMODEM CRC"));
         if (xmodem.SendFile(start, uint32_t(end) - start + 1))
@@ -657,14 +664,17 @@ void loop()
         break;
 
     default:
-        Serial.println(F("TommyPROM 1.6\n"));
+        Serial.print(F("TommyPROM 1.7 - "));
+        Serial.println(prom.getName());
+        Serial.println();
         Serial.println(F("Valid commands are:"));
         Serial.println(F("  Cssss eeee    - Compute checksum from device"));
         Serial.println(F("  Dssss eeee    - Dump bytes from device to terminal"));
         Serial.println(F("  Essss eeee    - Check to see if device range is Erased (all FF)"));
         Serial.println(F("  Fssss eeee dd - Fill block on device with fixed value"));
+        Serial.println(F("  L             - Lock (enable) device Software Data Protection"));
         Serial.println(F("  Rssss eeee    - Read from device and save to XMODEM CRC file"));
-        Serial.println(F("  U             - Unlock device Software Data Protection"));
+        Serial.println(F("  U             - Unlock (disable) device Software Data Protection"));
         Serial.println(F("  Wssss         - Write to device from XMODEM CRC file"));
 #ifdef ENABLE_DEBUG_COMMANDS
         Serial.println();

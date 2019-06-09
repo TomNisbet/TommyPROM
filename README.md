@@ -47,6 +47,13 @@ The READ and WRITE command both use XMODEM CRC to complete the file transfers.  
 
 The files used for READ and WRITE are simple binary images. This can be created directly by [asm85](http://github.com/TomNisbet/asm85) or can be converted from S-record or Intel HEX using an external utility.
 
+## Troubleshooting
+* If the code doesn't appear to be working, concentrate on the read operations first to verify that the data and address paths are good.
+* Re-check all hardware connections and verify the the control pins are going to the Arduino pins that match the definitions in the code.
+* Verify that the ARDUINO_IS_xxx line in Configure.h matches the Arduino type you are using. Many Arduino boards other than those listed in
+the file may work as well by commenting out all of the ARDUINO_IS_xxx lines.  This will use the slower bit-at-a-time code for that data bus instead of the board-specific code.
+* 28C series EEPROMS, like the 28C256, sometimes ship from the factory with Data Protection enabled.  Use the UNLOCK command to disable this.
+
 ## Further Work
 * Add a new PromDevice class for 27 series EPROMS.
 * Additional error checking in the CmdLine code.

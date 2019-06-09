@@ -22,7 +22,9 @@ class PromDevice
     byte readData(word address) { return readByte(address); }
 
     virtual void begin() = 0;
+    virtual const char * getName() = 0;
     virtual void disableSoftwareWriteProtect() {}
+    virtual void enableSoftwareWriteProtect() {}
 
   protected:
     unsigned int mSize;             // Size of the device, in bytes

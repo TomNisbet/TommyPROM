@@ -20,6 +20,7 @@ class PromDevice8755A : public PromDevice
   public:
     PromDevice8755A(unsigned long size);
     void begin();
+    const char * getName() { return "Intel 8755A EPROM"; }
 
   protected:
     void setAddress(word address);
