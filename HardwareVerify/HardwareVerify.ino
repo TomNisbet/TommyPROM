@@ -236,7 +236,11 @@ void loop()
 
     case 'u':
         Serial.println(F("Writing the unlock code to disable Software Write Protect mode."));
+        unsigned long timeStart = micros();
         prom.disableSoftwareWriteProtect();
+        unsigned long timeEnd = micros();
+        Serial.print("Unlock command time in uSec=");
+        Serial.println(timeEnd - timeStart);
         break;
 
     default:
