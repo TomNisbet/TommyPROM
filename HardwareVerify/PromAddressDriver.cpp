@@ -33,10 +33,10 @@ void PromAddressDriver::setAddress(word address)
 
     if (hi != lastHi)
     {
-        setAddressRegister(ADDR_CLK_HI, hi);
+        setAddressRegisterDirect(ADDR_CLK_HI, hi);
         lastHi = hi;
     }
-    setAddressRegister(ADDR_CLK_LO, lo);
+    setAddressRegisterDirect(ADDR_CLK_LO, lo);
 }
 
 
@@ -67,4 +67,38 @@ void PromAddressDriver::setAddressRegister(uint8_t clkPin, byte addr)
     }
 }
 
+// Shift an 8-bit value into one of the address shift registers.  Note that
+// the data pins are tied together, selecting the high or low address register
+// is a matter of using the correct clock pin to shift the data in.
+void PromAddressDriver::setAddressRegisterDirect(uint8_t clkPin, byte addr)
+{
+    byte mask = 0;
+    if (clkPin == A3)
+        mask = 0x08;
+    else if (clkPin == A4)
+        mask = 0x10;
+
+    // Make sure the clock is low to start.
+    PORTC &= ~mask;
+
+    // Shift 8 bits in, starting with the MSB.
+    for (int ix = 0; (ix < 8); ix++)
+    {
+        // Set the data bit
+        if (addr & 0x80)
+        {
+            PORTC |= 0x20;
+        }
+        else
+        {
+            PORTC &= 0xdf;
+        }
+
+        // Toggle the clock high then low
+        PORTC |= mask;
+        delayMicroseconds(3);
+        PORTC &= ~mask;
+        addr <<= 1;
+    }
+}
 

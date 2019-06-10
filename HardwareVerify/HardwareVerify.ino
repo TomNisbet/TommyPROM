@@ -145,19 +145,20 @@ void setup()
     Serial.begin(115200);
 }
 
-
-
-word start = 0;
-word end = 0xff;
-byte val = 0xff;
-
 void loop()
+{
+    commandLoop();
+}
+
+static void commandLoop()
 {
     byte b;
     word w;
-    bool error = false;
     char line[20];
     uint32_t numBytes;
+    unsigned long timeStart;
+    unsigned long timeEnd;
+    bool cmdError = false;
 
     Serial.print("\n#");
     Serial.flush();
@@ -167,12 +168,6 @@ void loop()
         c |= 0x20;
     }
 
-    /*
-    * Note that the comamnds here allow for direct writing of the 28C control lines with some exceptions to
-    * protect the chip and the host arduino:
-    *   1) When the O command is used to enable chip output, the arduino data bus us set to INPUT
-    *   2) When the D command is used to write data from the arduino, the chip output is disabled
-    *   3) The R command sets to output enable (OE) on the chip (but not the chip enable (CE)) */
     switch (c)
     {
     case 'a':
@@ -182,8 +177,9 @@ void loop()
             prom.setAddress(w);
         }
         else
-            error = true;
+            cmdError = true;
         break;
+
     case 'd':
         if (hexDigit(line[1]) <= 15)
         {
@@ -193,12 +189,18 @@ void loop()
             prom.writeDataBus(b);
         }
         else
-            error = true;
+            cmdError = true;
         break;
+
     case 'c':
     case 'o':
     case 'w':
-        if ((line[1] == 'd') || (line[1] == 'e')) {
+        if ((line[1] != 'd') && (line[1] != 'e'))
+        {
+            cmdError = true;
+        }
+        else
+        {
             bool enable = line[1] == 'e';
             if (c == 'c')
                 if (enable) prom.enableChip(); else prom.disableChip();
@@ -213,10 +215,6 @@ void loop()
                 }
                 else prom.disableOutput();
             }
-        }
-        else
-        {
-            error = true;
         }
         break;
 
@@ -236,19 +234,19 @@ void loop()
 
     case 'u':
         Serial.println(F("Writing the unlock code to disable Software Write Protect mode."));
-        unsigned long timeStart = micros();
+        timeStart = micros();
         prom.disableSoftwareWriteProtect();
-        unsigned long timeEnd = micros();
+        timeEnd = micros();
         Serial.print("Unlock command time in uSec=");
         Serial.println(timeEnd - timeStart);
         break;
 
     default:
-        error = true;
+        cmdError = true;
         break;
     }
 
-    if (error) {
+    if (cmdError) {
         Serial.print(F("Hardware Verifier - "));
         Serial.println(prom.getName());
         Serial.println();

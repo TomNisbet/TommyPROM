@@ -9,6 +9,7 @@ Note that the comamnds allow for direct writing of the 28C control lines with so
 * When the O command is used to enable chip output, the arduino data bus is set to INPUT
 * When the D command is used to write data from the arduino, the chip output is disabled
 * The R command sets the output enable (OE) on the chip, but not the chip enable (CE)
+* The L and U commands reset CE, OE, and WE back to disabled on completion and change the data and address
 
 The session below shows how a write fails to a locked chip and then succeeds once the chip is unlocked.
 

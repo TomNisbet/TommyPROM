@@ -10,6 +10,7 @@ class PromAddressDriver {
 
   private:
     static void setAddressRegister(uint8_t clkPin, byte addr);
+    static void setAddressRegisterDirect(uint8_t clkPin, byte addr);
 };
 
 

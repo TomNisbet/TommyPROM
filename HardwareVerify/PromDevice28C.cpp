@@ -204,8 +204,8 @@ void PromDevice28C::setByte(byte value, word address)
     enableChip();
     enableWrite();
     delayMicroseconds(1);
-    disableChip();
     disableWrite();
+    disableChip();
 }
 
 
