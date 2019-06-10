@@ -1,10 +1,12 @@
-## hardware Verifier Tool
-This tools allows access to individual control lines from the Arduino to verify that the hardware was assembled correctly.
+## Hardware Verifier Tool
+This tool allows access to individual control lines from the Arduino to verify that the hardware was assembled correctly.
 
-It can be used without a chip installed to scope out address and data lines.  It also offers low-level control when the chip
-is installed.  
+It can be used without a chip installed to scope out address and data lines.  It also offers low-level control when the chip is installed.  
 
-Note that the comamnds allow for direct writing of the 28C control lines with some exceptions to protect the chip and the host arduino:
+THIS TOOL USES DIRECT PORT ACCESS ON THE ARDUINO.  CHECK TO MAKE SURE IT IS
+COMPATIBLE WITH YOUR BOARD BEFORE USING.  It will work correctly on the Unu, Nano, and Boarduino.  It WILL NOT WORK on the Micro.
+
+Note that the comamnds write access to the individual 28C control lines with some exceptions to protect the chip and the host arduino:
 
 * When the O command is used to enable chip output, the arduino data bus is set to INPUT
 * When the D command is used to write data from the arduino, the chip output is disabled
