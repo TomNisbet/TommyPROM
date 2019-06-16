@@ -45,8 +45,14 @@ void PromAddressDriver::setAddress(word address)
 // is a matter of using the correct clock pin to shift the data in.
 void PromAddressDriver::setAddressRegister(uint8_t clkPin, byte addr)
 {
+    byte mask = 0;
+    if (clkPin == ADDR_CLK_HI)
+        mask = 0x08;
+    else if (clkPin == ADDR_CLK_LO)
+        mask = 0x10;
+
     // Make sure the clock is low to start.
-    digitalWrite(clkPin, LOW);
+    PORTC &= ~mask;
 
     // Shift 8 bits in, starting with the MSB.
     for (int ix = 0; (ix < 8); ix++)
@@ -54,17 +60,18 @@ void PromAddressDriver::setAddressRegister(uint8_t clkPin, byte addr)
         // Set the data bit
         if (addr & 0x80)
         {
-            digitalWrite(ADDR_DATA, HIGH);
+            PORTC |= 0x20;
         }
         else
         {
-            digitalWrite(ADDR_DATA, LOW);
+            PORTC &= 0xdf;
         }
 
-        digitalWrite(clkPin, HIGH); // Clock in a bit
-        digitalWrite(clkPin, LOW);  // Reset the clock pin
+        // Toggle the clock high then low
+        PORTC |= mask;
+        delayMicroseconds(3);
+        PORTC &= ~mask;
         addr <<= 1;
     }
 }
-
 

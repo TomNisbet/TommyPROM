@@ -16,7 +16,7 @@ A compile-time switch in Configure.h enables additional debug commands that are 
 ## PromDevice class
 The PromDevice class and its subclasses encapsulate all of the communication between the Arduino and the target PROM device.
 
-The PromDevice class can access the data bus using direct port writes instead of 8 individual pin accesses.  This greatly increases performance, but it makes the code dependent on the particular flavor of Arduino being used.  The code can currently be compiled for Uno, Nano, or Micro versions of Arduino hardware or in a slower hardware-indpendent mode.
+To meet the timing requirements for block writes and 28C chip unlocking, the PromDevice class accesses the shift registers and data bus using direct port writes instead of 8 individual pin accesses.  This greatly increases performance, but it makes the code dependent on the particular flavor of Arduino being used.  The code supports the Uno, Nano, and Boarduino versions of Arduino hardware or any other variant that uses that same mapping of ATMega ports to I/O pins.  To support a different Arduino board, either change the pins used to match the mapping in the software, or change the hardware-specific code in PromDevice.cpp and PromAddressDriver.cpp.
 
 The PromDevice class contains common code used by all devices, including the block write code that will break a large write request into a set of properly-aligned smaller blocks for devices that support block writing, or a sequence of infividual byte writes for devices that do not.
 

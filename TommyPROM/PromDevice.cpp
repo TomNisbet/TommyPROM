@@ -75,7 +75,6 @@ bool PromDevice::writeData(byte data[], word len, word address)
 // on pins D2..D9.
 void PromDevice::setDataBusMode(uint8_t mode)
 {
-#if defined(ARDUINO_IS_UNO) || defined(ARDUINO_IS_NANO)
     // On the Uno and Nano, D2..D9 maps to the upper 6 bits of port D and the
     // lower 2 bits of port B.
     if (mode == OUTPUT)
@@ -88,26 +87,6 @@ void PromDevice::setDataBusMode(uint8_t mode)
         DDRB &= 0xfc;
         DDRD &= 0x03;
     }
-#elif defined(ARDUINO_IS_MICRO)
-    // On the Micro, D2..D9 maps to the upper 7 bits of port B and the
-    // lower bit of port D.
-    if (mode == OUTPUT)
-    {
-        DDRB |= 0xfe;
-        DDRD |= 0x01;
-    }
-        else
-    {
-        DDRB &= 0x01;
-        DDRD &= 0xfe;
-    }
-#else
-    byte bit = 0x01;
-    for (int pin = 2; (pin <= 9); pin++) {
-        pinMode(pin, mode);
-        bit <<= 1;
-    }
-#endif
 }
 
 
@@ -115,21 +94,7 @@ void PromDevice::setDataBusMode(uint8_t mode)
 // before calling this or no useful data will be returned.
 byte PromDevice::readDataBus()
 {
-#if defined(ARDUINO_IS_UNO) || defined(ARDUINO_IS_NANO)
     return (PINB << 6) | (PIND >> 2);
-#elif defined(ARDUINO_IS_MICRO)
-    return (PINB & 0xfe) | (PIND & 0x01);
-#else
-    byte data = 0;
-    byte bit = 0x01;
-    for (int pin = 2; (pin <= 9); pin++) {
-        if (digitalRead(pin) == HIGH) {
-            data |= bit;
-        }
-        bit <<= 1;
-    }
-    return data;
-#endif
 }
 
 
@@ -137,19 +102,8 @@ byte PromDevice::readDataBus()
 // before calling this or no data will be written.
 void PromDevice::writeDataBus(byte data)
 {
-#if defined(ARDUINO_IS_UNO) || defined(ARDUINO_IS_NANO)
      PORTB = (PORTB & 0xfc) | (data >> 6);
      PORTD = (PORTD & 0x03) | (data << 2);
-#elif defined(ARDUINO_IS_MICRO)
-    PORTB = (PORTB & 0x01) | (data & 0xfe);
-    PORTD = (PORTD & 0xfe) | (data & 0x01);
-#else
-    byte bit = 0x01;
-    for (int pin = 2; (pin <= 9); pin++) {
-        digitalWrite(pin, (data & bit) ? HIGH : LOW);
-        bit <<= 1;
-    }
-#endif
 }
 
 

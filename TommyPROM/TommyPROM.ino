@@ -1,18 +1,25 @@
 /**
-* Read and write ATMEL 28C series EEPROMs.  Support block writes for better
-* performance.  Read-only is supported for most parallel EPROM/EEPROMs.
+* Read and write parallel EEPROMS with an interctive command-line interface.
+* Modules are available for ATMEL 28C series EEPROMs and Intel 8755A EPROMS.  
+* Many other parallel EPROM/EEPROMs can be read, but not written, using the
+* 28C code.
 *
-* ROM images are moved to and from a host computer using XMODEM.
-* This is available in a number of terminal programs, such as
-* TeraTerm and Minicom.
+* The 28C module supports block writes for better performance and
+* Software Data Protection (SDP) unlocking.  
 *
-* The hardware uses two 74LS164 shift registers as the low and
+* ROM images are moved to and from a host computer using XMODEM.  This is 
+* available in a number of terminal programs, such as TeraTerm and Minicom.
+*
+* The default hardware uses two 74LS164 shift registers as the low and
 * high address registers.
 **/
 
 #include "Configure.h"
 #include "CmdStatus.h"
 #include "XModem.h"
+
+
+static const char * MY_VERSION = "1.8";
 
 
 // Global status
@@ -574,6 +581,7 @@ void loop()
     Serial.print("\n>");
     Serial.flush();
     readLine(line, sizeof(line));
+    Serial.println();
     byte cmd = parseCommand(line[0]);
     if (hexDigit(line[1]) <= 15)
         start = hexWord(line + 1);
@@ -664,7 +672,9 @@ void loop()
         break;
 
     default:
-        Serial.print(F("TommyPROM 1.7 - "));
+        Serial.print(F("TommyPROM "));
+        Serial.print(MY_VERSION);
+        Serial.print(F(" - "));
         Serial.println(prom.getName());
         Serial.println();
         Serial.println(F("Valid commands are:"));

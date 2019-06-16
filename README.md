@@ -1,5 +1,5 @@
 # TommyPROM - An Arduino-based EEPROM programmer
-This is a simple EEPROM programmer and reader that can be assembled using an Arduino and a few additional parts.  It has been sucessfully built using the Arduino UNO, Micro, and Nano models.
+This is a simple EEPROM programmer and reader that can be assembled using an Arduino and a few additional parts.  It has been sucessfully built using the Arduino UNO, Nano and Boarduino models.
 
 The original code was specific to the 28C256 32Kx8 EEPROM, but it has been extended to also support Intel 8755A EPROMS.
 
@@ -11,6 +11,7 @@ Features include:
 * Simple hardware design that can be assembled on a breadboard.
 * ROM images transfers using XMODEM - no special host client needed.
 * Support for fast block EEPROM writes - a 32K EEPROM will program in just a few seconds.
+* Optimized code that supports the timing requirements needed to unlock the 28C series Software Protection Algorithm.
 * Modular software design to easily support other EEPROM and EPROM families.
 
 The [hardware readme](hardware/README.md) has schematics and more information on the hardware design. The [software readme](TommyPROM/README.md) has class definitions and more information on the software design.
@@ -24,9 +25,9 @@ The project was inspired by the [MEEPROMMER programmer](http://www.ichbinzustaen
 
 Open the TommyPROM.ino file in the Arduino IDE. It should automatically open the cpp and h files as well. The default code programs 28C series chips using Arduino Nano hardware.  To use this version, just compile and upload it to the Arduino.
 
-For different Arduino hardware, like UNO or Micro, edit the Configure.h file and uncomment the appropriate ARDUINO_IS_xx line. Only one of these lines should be uncommented. If all of these lines are commented out, the generic bit-at-a-time code is used to write to the data bus. This will work on all Arduinos, but it is slower that the model-specific code.
+**Note well** that this code has been optimized for the Aduino UNO and Nano hardware so that it can run quickly enough to meet 28C series chip timing reqirements for SDP unlocking.  To use different Arduino hardware, like the Micro, the board-specific code in PromDevice.cpp and PromAddressDriver.cpp must be change to match the port mappings between the ATmega chip and the Arduino I/O pins.
 
-To use the 8755A version of the code and matching hardware, uncomment PROM_IS_8755A and comment out the other PROM_IS_xx choices.
+To use the 8755A version of the code and matching hardware, uncomment PROM_IS_8755A and comment out the other PROM_IS_xx choices in Configure.h.
 
 ## Operation
 ![TommyPROM Screenshot](docs/tp05.png)
@@ -48,11 +49,11 @@ The READ and WRITE command both use XMODEM CRC to complete the file transfers.  
 The files used for READ and WRITE are simple binary images. This can be created directly by [asm85](http://github.com/TomNisbet/asm85) or can be converted from S-record or Intel HEX using an external utility.
 
 ## Troubleshooting
+* Verify that the Arduino type you are using is a supported board or that its I/O port definitions match one of the supported boards.  Some other Arduino boards, like the Duemilanove, appear to be compatible but have not been tested. Others, like the Micro, have different port mappings and definitely will not work without software changes.
 * If the code doesn't appear to be working, concentrate on the read operations first to verify that the data and address paths are good.
+* 28C series EEPROMS, like the X28C256, sometimes ship from the factory with Data Protection enabled.  Use the UNLOCK command to disable this. See the [28C Readme](README-28C.md) for more information.
 * Re-check all hardware connections and verify the the control pins are going to the Arduino pins that match the definitions in the code.
-* Verify that the ARDUINO_IS_xxx line in Configure.h matches the Arduino type you are using. Many Arduino boards other than those listed in
-the file may work as well by commenting out all of the ARDUINO_IS_xxx lines.  This will use the slower bit-at-a-time code for that data bus instead of the board-specific code.
-* 28C series EEPROMS, like the 28C256, sometimes ship from the factory with Data Protection enabled.  Use the UNLOCK command to disable this.
+* This repo contains a standalone program called HardwareVerify that allows low-level access to the address, data, and control lines through a menu-driven interface.  See the [readme](HardwareVerify/README.md) for that code for more tips.
 
 ## Further Work
 * Add a new PromDevice class for 27 series EPROMS.
