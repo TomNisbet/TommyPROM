@@ -11,12 +11,14 @@ In practice, the Xicor chips seem very forgiving of the timing, doing successful
 
 # Solution
 
-The TommyProm programmer uses direct port access to control the data bus and addressing shift register.  This is much faster than doing individual DigitalWrite calls and allows the unlock and page write code to run comfortably with the tBLC constraints.  It has been successfully tested with the following 28C256 chips:
+The TommyProm programmer uses direct port access on the Arduino to control the data bus and addressing shift register.  This is much faster than doing individual DigitalWrite calls and allows the unlock and page write code to run comfortably within the tBLC constraints.  It has been successfully tested with the following 28C256 chips:
 
 * Atmel AT28C256-15PU
 * Catalyst/ON Semi CSI CAT28C256P-12
 * Xicor X28C256P-15
 * Xicor X28C256P-25
+
+The Atmel chips tested included a batch from eBay that may not have been genuine, but they were unlocked and burned successfully with the TommyProm code.
 
 The capture below shows an unlock command sequence where the tBLC us within 80us for each byte.
 
