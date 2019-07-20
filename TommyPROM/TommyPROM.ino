@@ -1,13 +1,13 @@
 /**
 * Read and write parallel EEPROMS with an interctive command-line interface.
-* Modules are available for ATMEL 28C series EEPROMs and Intel 8755A EPROMS.  
+* Modules are available for ATMEL 28C series EEPROMs and Intel 8755A EPROMS.
 * Many other parallel EPROM/EEPROMs can be read, but not written, using the
 * 28C code.
 *
 * The 28C module supports block writes for better performance and
-* Software Data Protection (SDP) unlocking.  
+* Software Data Protection (SDP) unlocking.
 *
-* ROM images are moved to and from a host computer using XMODEM.  This is 
+* ROM images are moved to and from a host computer using XMODEM.  This is
 * available in a number of terminal programs, such as TeraTerm and Minicom.
 *
 * The default hardware uses two 74LS164 shift registers as the low and
@@ -19,7 +19,7 @@
 #include "XModem.h"
 
 
-static const char * MY_VERSION = "1.8";
+static const char * MY_VERSION = "2.0";
 
 
 // Global status
@@ -42,14 +42,13 @@ PromDevice28C  prom(32 * 1024L, 64, 10, true);
 //   1000us (1ms) write pulse
 //   15 write attempts
 //   4x overwrite pulse
-PromDevice27  prom(8 * 1024L, 1000L, 15, 4); // 2764 with SEEQ intelligent programming
+PromDevice27  prom(8 * 1024L, 1000L, 15, 4);  // 2764 with SEEQ intelligent programming
 //PromDevice27  prom(32 * 1024L, 1000L, 25, 3); // 27C256 with SEEQ intelligent programming
-//PromDevice27  prom(2 * 1024L, 50000L, 1, 0); // 2716 with single 50ms write
-//PromDevice27  prom(64 * 1024L, 100L, 11, 0); // 27C040 with Atmel rapid programming
+//PromDevice27  prom(2 * 1024L, 50000L, 1, 0);  // 2716 with single 50ms write
+//PromDevice27  prom(64 * 1024L, 100L, 11, 0);  // 27C040 with Atmel rapid programming
 
 #elif defined(PROM_IS_8755A)
-// Define a device for an 8755A.  This has a fixed size of 2K and no
-// other parameters.
+// Define a device for an Intel 8755A with a fixed size of 2K and no other parameters.
 PromDevice8755A  prom(2 * 1024L);
 
 // Additional device-specific code goes here...
@@ -58,6 +57,7 @@ PromDevice8755A  prom(2 * 1024L);
 #else
 #error "Must define a PROM type in Configure.h"
 #endif
+
 
 // Global XModem driver
 XModem xmodem(prom, cmdStatus);
@@ -151,6 +151,8 @@ byte parseCommand(char c)
 }
 
 
+
+
 /************************************************************
 * convert a single hex character [0-9a-fA-F] to its value
 * @param char c single character (digit)
@@ -176,29 +178,38 @@ byte hexDigit(char c)
     }
 }
 
-
 /************************************************************
-* convert a hex byte (00 - ff) to byte
-* @param c-string with the hex value of the byte
-* @return byte represented by the digits
-************************************************************/
-byte hexByte(char * a)
-{
-    return (hexDigit(a[0]) << 4) | hexDigit(a[1]);
-}
-
-
-/************************************************************
-* convert a hex word (0000 - ffff) to unsigned int
-* @param c-string with the hex value of the word
+* Convert a hex string to a uint32_t value.
+* Skips leading spaces and terminates on the first non-hex
+* character.  Leading zeroes are not required.
+*
+* No error checking is performed - if no hex is found then
+* zero is returned.  Similarly, a hex string of more than
+* 8 digits will return the value of the last 8 digits.
+* @param pointer to string with the hex value of the word (modified)
 * @return unsigned int represented by the digits
 ************************************************************/
-unsigned int hexWord(char * data)
+uint32_t getHex32(char *& pData, uint32_t defaultValue=0)
 {
-    return (hexDigit(data[0]) << 12) |
-           (hexDigit(data[1]) <<  8) |
-           (hexDigit(data[2]) <<  4) |
-           (hexDigit(data[3]));
+    uint32_t u32 = 0;
+
+    while (isspace(*pData))
+    {
+        ++pData;
+    }
+
+    if (isxdigit(*pData))
+    {
+        while (isxdigit(*pData)) {
+            u32 = (u32 << 4) | hexDigit(*pData++);
+        }
+    }
+    else
+    {
+        u32 = defaultValue;
+    }
+
+    return u32;
 }
 
 
@@ -228,6 +239,26 @@ void printWord(word w)
 }
 
 
+/*
+* Prints a 32 bit value as a hex.
+*
+* Note that no values over 5 digits are used in
+* this appication, so only 5 digits are printed.*/
+void printHex32(uint32_t u32)
+{
+    char line[6];
+
+    line[0] = hex[(u32 >> 16) & 0x0f];
+    line[1] = hex[(u32 >> 12) & 0x0f];
+    line[2] = hex[(u32 >>  8) & 0x0f];
+    line[3] = hex[(u32 >>  4) & 0x0f];
+    line[4] = hex[(u32)       & 0x0f];
+    line[5] = '\0';
+
+    Serial.print(line);
+}
+
+
 // If the user presses a key then pause until they press another.  Return true if
 // Ctrl-C is pressed.
 bool checkForBreak()
@@ -239,7 +270,7 @@ bool checkForBreak()
             return true;
         }
         while (!Serial.available())
-        {;}
+        {}
         if (Serial.read() == 0x03)
         {
             return true;
@@ -266,23 +297,15 @@ bool checkForBreak()
  * address if an odd number of bytes is specified by start and
  * end.
  */
-word checksumBlock(word start, word end)
+word checksumBlock(uint32_t start, uint32_t end)
 {
     word checksum = 0;
-    for (word addr = start; (addr <= end); addr += 2)
+    for (uint32_t addr = start; (addr <= end); addr += 2)
     {
         word w = prom.readData(addr);
         w <<= 8;
         w |= prom.readData(addr + 1);
         checksum += w;
-
-        if (addr >= 0xfffe)
-        {
-            // This is a really kludgy check to make sure the counter doesn't wrap
-            // around to zero.  Could replace addr and end with longs to fix this,
-            // but that might not be any faster.
-            break;
-        }
     }
 
     return checksum;
@@ -292,24 +315,25 @@ word checksumBlock(word start, word end)
 /**
 * Read data from the device and dump it in hex and ascii.
 **/
-void dumpBlock(word start, word end)
+void dumpBlock(uint32_t start, uint32_t end)
 {
     char line[81];
 //  01234567891 234567892 234567893 234567894 234567895 234567896 234567897 23456789
-//  1234: 01 23 45 67  89 ab cf ef  01 23 45 67  89 ab cd ef  1.2.3.4. 5.6.7.8.
+//  01234: 01 23 45 67  89 ab cf ef  01 23 45 67  89 ab cd ef  1.2.3.4. 5.6.7.8.
     int count = 0;
 
     memset(line, ' ', sizeof(line));
 
     char * pHex = line;
     char * pChar = line + 58;
-    for (word addr = start; (addr <= end); addr++)
+    for (uint32_t addr = start; (addr <= end); addr++)
     {
         if (count == 0)
         {
             //print out the address at the beginning of the line
             pHex = line;
             pChar = line + 58;
+            *pHex++ = hex[(addr >> 16) & 0x0f];
             *pHex++ = hex[(addr >> 12) & 0x0f];
             *pHex++ = hex[(addr >>  8) & 0x0f];
             *pHex++ = hex[(addr >>  4) & 0x0f];
@@ -359,7 +383,7 @@ void dumpBlock(word start, word end)
  * @param end - end address
  * @param val - data byte to write to all addresses
  */
-void fillBlock(word start, word end, byte val)
+void fillBlock(uint32_t start, uint32_t end, byte val)
 {
     enum { BLOCK_SIZE = 32 };
     byte block[BLOCK_SIZE];
@@ -369,9 +393,9 @@ void fillBlock(word start, word end, byte val)
         block[ix] = val;
     }
 
-    for (word addr = start; (addr <= end); addr += BLOCK_SIZE)
+    for (uint32_t addr = start; (addr <= end); addr += BLOCK_SIZE)
     {
-        unsigned writeLen = ((end - addr + 1) < BLOCK_SIZE) ? (end - addr + 1) : BLOCK_SIZE;
+        uint32_t writeLen = ((end - addr + 1) < BLOCK_SIZE) ? (end - addr + 1) : BLOCK_SIZE;
         if (!prom.writeData(block, writeLen, addr))
         {
             cmdStatus.error("Write failed");
@@ -387,9 +411,9 @@ void fillBlock(word start, word end, byte val)
  * @param start - start address
  * @param end - end address
  */
-void erasedBlockCheck(word start, word end)
+void erasedBlockCheck(uint32_t start, uint32_t end)
 {
-    for (word addr = start; (addr <= end); addr ++)
+    for (uint32_t addr = start; (addr <= end); addr ++)
     {
         byte val = prom.readData(addr);
         if (val != 0xff)
@@ -413,11 +437,11 @@ void erasedBlockCheck(word start, word end)
  * @param start - start address
  * @param end - end address
  */
-void scanBlock(word start, word end)
+void scanBlock(uint32_t start, uint32_t end)
 {
     enum { SCAN_TESTS = 10 };
 
-    for (word addr = start; (addr <= end); addr++)
+    for (uint32_t addr = start; (addr <= end); addr++)
     {
         byte values[SCAN_TESTS];
         values[0] = prom.readData(addr);
@@ -432,7 +456,7 @@ void scanBlock(word start, word end)
         }
         if (fail)
         {
-            printWord(addr);
+            printHex32(addr);
             Serial.print(": ");
             for (int ix = 0; (ix < SCAN_TESTS); ix++)
             {
@@ -456,7 +480,7 @@ void scanBlock(word start, word end)
  *
  * @param addr - address to test
  */
-void testAddr(word addr)
+void testAddr(uint32_t addr)
 {
     enum { NUM_TESTS = 100 };
 
@@ -493,7 +517,7 @@ void testAddr(word addr)
  *
  * @param start - start address
  */
-void zapTest(word start)
+void zapTest(uint32_t start)
 {
     byte testData[] =
     {
@@ -531,7 +555,7 @@ void zapTest(word start)
 /************************************************
 * MAIN
 *************************************************/
-word addr = 0;
+uint32_t addr = 0;
 
 void setup()
 {
@@ -568,13 +592,13 @@ byte charTest[] =
 };
 */
 
-word start = 0;
-word end = 0xff;
+uint32_t start = 0;
+uint32_t end = 0xff;
 byte val = 0xff;
 
 void loop()
 {
-    word w;
+    uint32_t w;
     char line[20];
     uint32_t numBytes;
 
@@ -583,12 +607,10 @@ void loop()
     readLine(line, sizeof(line));
     Serial.println();
     byte cmd = parseCommand(line[0]);
-    if (hexDigit(line[1]) <= 15)
-        start = hexWord(line + 1);
-    if (hexDigit(line[6]) <= 15)
-        end = hexWord(line + 6);
-    if (hexDigit(line[6]) <= 11)
-        val = hexByte(line + 11);
+    char * pCursor = line+1;
+    start = getHex32(pCursor, 0);
+    end = getHex32(pCursor, 0xff);
+    val = (byte) getHex32(pCursor, 0);
 
     if ((cmd != CMD_LAST_STATUS) && (cmd != CMD_INVALID))
     {
@@ -599,11 +621,11 @@ void loop()
     {
     case CMD_CHECKSUM:
         w = checksumBlock(start, end);
-        Serial.print("Checksum ");
+        Serial.print(F("Checksum "));
         printWord(start);
-        Serial.print("-");
+        Serial.print(F("-"));
         printWord(end);
-        Serial.print(" = ");
+        Serial.print(F(" = "));
         printWord(w);
         Serial.println();
         break;
@@ -678,19 +700,19 @@ void loop()
         Serial.println(prom.getName());
         Serial.println();
         Serial.println(F("Valid commands are:"));
-        Serial.println(F("  Cssss eeee    - Compute checksum from device"));
-        Serial.println(F("  Dssss eeee    - Dump bytes from device to terminal"));
-        Serial.println(F("  Essss eeee    - Check to see if device range is Erased (all FF)"));
-        Serial.println(F("  Fssss eeee dd - Fill block on device with fixed value"));
-        Serial.println(F("  L             - Lock (enable) device Software Data Protection"));
-        Serial.println(F("  Rssss eeee    - Read from device and save to XMODEM CRC file"));
-        Serial.println(F("  U             - Unlock (disable) device Software Data Protection"));
-        Serial.println(F("  Wssss         - Write to device from XMODEM CRC file"));
+        Serial.println(F("  Csssss eeeee    - Compute checksum from device"));
+        Serial.println(F("  Dsssss eeeee    - Dump bytes from device to terminal"));
+        Serial.println(F("  Esssss eeeee    - Check to see if device range is Erased (all FF)"));
+        Serial.println(F("  Fsssss eeeee dd - Fill block on device with fixed value"));
+        Serial.println(F("  L               - Lock (enable) device Software Data Protection"));
+        Serial.println(F("  Rsssss eeeee    - Read from device and save to XMODEM CRC file"));
+        Serial.println(F("  U               - Unlock (disable) device Software Data Protection"));
+        Serial.println(F("  Wsssss          - Write to device from XMODEM CRC file"));
 #ifdef ENABLE_DEBUG_COMMANDS
         Serial.println();
-        Serial.println(F("  Sssss eeee    - Scan addresses (read each 10x)"));
-        Serial.println(F("  Tssss         - Test read address (read 100x)"));
-        Serial.println(F("  Zssss         - Zap (burn) a 32 byte test pattern"));
+        Serial.println(F("  Ssssss eeeee    - Scan addresses (read each 10x)"));
+        Serial.println(F("  Tsssss          - Test read address (read 100x)"));
+        Serial.println(F("  Zsssss          - Zap (burn) a 32 byte test pattern"));
 #endif /* ENABLE_DEBUG_COMMANDS */
         break;
     }
@@ -701,4 +723,3 @@ void loop()
         cmdStatus.printStatus();
     }
 }
-

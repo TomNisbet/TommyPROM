@@ -1,7 +1,7 @@
 #include "XModem.h"
 #include "CmdStatus.h"
 
-uint32_t XModem::ReceiveFile(uint16_t address)
+uint32_t XModem::ReceiveFile(uint32_t address)
 {
     uint8_t buffer[PKTLEN];
     int c;
@@ -71,7 +71,7 @@ uint32_t XModem::ReceiveFile(uint16_t address)
 // within one second then the transfer will fail.  Unlike in the dial-up
 // days of old, this is designed to be run on a 3 foot cable betwee two fast
 // hosts, so communication errors or timeouts are extremely unlikely.
-bool XModem::SendFile(uint16_t address, uint32_t fileSize)
+bool XModem::SendFile(uint32_t address, uint32_t fileSize)
 {
     uint8_t seq = 1;
     int rxChar = -1;
@@ -175,7 +175,7 @@ bool XModem::StartReceive()
 }
 
 
-bool XModem::ReceivePacket(uint8_t buffer[], unsigned bufferSize, uint8_t seq, uint16_t destAddr)
+bool XModem::ReceivePacket(uint8_t buffer[], unsigned bufferSize, uint8_t seq, uint32_t destAddr)
 {
     int c;
     uint8_t rxSeq1, rxSeq2;
@@ -218,16 +218,12 @@ bool XModem::ReceivePacket(uint8_t buffer[], unsigned bufferSize, uint8_t seq, u
     else
     {
         // The data is good.  Process the packet then ACK it to the sender.
-        pinMode(13, OUTPUT);
-        digitalWrite(13, HIGH);
         if (!promDevice.writeData(buffer, bufferSize, destAddr))
         {
             cmdStatus.error("Write failed");
             cmdStatus.setValueHex(0, "address", destAddr);
             return false;
         }
-        digitalWrite(13, LOW);
-
         Serial.write(XMDM_ACK);
     }
 
@@ -235,7 +231,7 @@ bool XModem::ReceivePacket(uint8_t buffer[], unsigned bufferSize, uint8_t seq, u
 }
 
 
-void XModem::SendPacket(uint16_t address, uint8_t seq)
+void XModem::SendPacket(uint32_t address, uint8_t seq)
 {
     uint16_t crc = 0;
 

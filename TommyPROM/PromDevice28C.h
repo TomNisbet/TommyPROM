@@ -18,19 +18,19 @@
 class PromDevice28C : public PromDevice
 {
   public:
-    PromDevice28C(unsigned long size, word blockSize, unsigned maxWriteTime, bool polling);
+    PromDevice28C(uint32_t size, word blockSize, unsigned maxWriteTime, bool polling);
     void begin();
     const char * getName() { return "28C series EEPROM"; }
     void disableSoftwareWriteProtect();
     void enableSoftwareWriteProtect();
 
   protected:
-    void setAddress(word address);
-    byte readByte(word address);
-    bool burnByte(byte value, word address);
-    bool burnBlock(byte data[], word len, word address);
+    void setAddress(uint32_t address);
+    byte readByte(uint32_t address);
+    bool burnByte(byte value, uint32_t address);
+    bool burnBlock(byte data[], uint32_t len, uint32_t address);
     bool waitForWriteCycleEnd(byte lastValue);
-    void setByte(byte value, word address);
+    void setByte(byte value, uint32_t address);
 };
 
 #endif  // #define INCLUDE_PROM_DEVICE_28C_H

@@ -18,16 +18,15 @@
 class PromDevice8755A : public PromDevice
 {
   public:
-    PromDevice8755A(unsigned long size);
+    PromDevice8755A(uint32_t size);
     void begin();
     const char * getName() { return "Intel 8755A EPROM"; }
 
   protected:
-    void setAddress(word address);
-    byte readByte(word address);
-    bool burnByte(byte value, word address);
+    void setAddress(uint32_t address);
+    byte readByte(uint32_t address);
+    bool burnByte(byte value, uint32_t address);
 };
-
 
 #endif  // #define INCLUDE_PROM_DEVICE_8755A_H
 

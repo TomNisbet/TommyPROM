@@ -18,7 +18,7 @@ static void enableWrite()      { digitalWrite(WE, LOW); }
 static void disableWrite()     { digitalWrite(WE, HIGH);}
 
 
-PromDevice28C::PromDevice28C(unsigned long size, word blockSize, unsigned maxWriteTime, bool polling)
+PromDevice28C::PromDevice28C(uint32_t size, word blockSize, unsigned maxWriteTime, bool polling)
     : PromDevice(size, blockSize, maxWriteTime, polling)
 {
 }
@@ -84,15 +84,15 @@ void PromDevice28C::enableSoftwareWriteProtect()
 // BEGIN PRIVATE METHODS
 //
 
-// Use the PromAddressDriver to set a 16 bit address in the two address shift registers.
-void PromDevice28C::setAddress(word address)
+// Use the PromAddressDriver to set an address in the two address shift registers.
+void PromDevice28C::setAddress(uint32_t address)
 {
     PromAddressDriver::setAddress(address);
 }
 
 
 // Read a byte from a given address
-byte PromDevice28C::readByte(word address)
+byte PromDevice28C::readByte(uint32_t address)
 {
     byte data = 0;
     setAddress(address);
@@ -110,7 +110,7 @@ byte PromDevice28C::readByte(word address)
 
 
 // Burn a byte to the chip and verify that it was written.
-bool PromDevice28C::burnByte(byte value, word address)
+bool PromDevice28C::burnByte(byte value, uint32_t address)
 {
     bool status = false;
 
@@ -135,7 +135,7 @@ bool PromDevice28C::burnByte(byte value, word address)
 }
 
 
-bool PromDevice28C::burnBlock(byte data[], word len, word address)
+bool PromDevice28C::burnBlock(byte data[], uint32_t len, uint32_t address)
 {
     bool status = false;
 
@@ -148,7 +148,7 @@ bool PromDevice28C::burnBlock(byte data[], word len, word address)
     // Write all of the bytes in the block out to the chip.  The chip will
     // program them all at once as long as they are written fast enough.
     setDataBusMode(OUTPUT);
-    for (word ix = 0; (ix < len); ix++)
+    for (uint32_t ix = 0; (ix < len); ix++)
     {
         setAddress(address + ix);
         writeDataBus(data[ix]);
@@ -212,7 +212,7 @@ bool PromDevice28C::waitForWriteCycleEnd(byte lastValue)
 // to write control sequences, like the software write protect.  This is not a
 // complete byte write function because it does not set the chip enable or the
 // mode of the data bus.
-void PromDevice28C::setByte(byte value, word address)
+void PromDevice28C::setByte(byte value, uint32_t address)
 {
     setAddress(address);
     writeDataBus(value);

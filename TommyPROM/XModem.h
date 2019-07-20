@@ -22,8 +22,8 @@ class XModem
 {
   public:
     XModem(PromDevice & pd, CmdStatus & cs) : promDevice(pd), cmdStatus(cs) {}
-    uint32_t ReceiveFile(uint16_t address);
-    bool SendFile(uint16_t address, uint32_t fileSize);
+    uint32_t ReceiveFile(uint32_t address);
+    bool SendFile(uint32_t address, uint32_t fileSize);
     void Cancel();
 
   private:
@@ -50,8 +50,8 @@ class XModem
     int GetChar(int msWaitTime = 3000);
     uint16_t UpdateCrc(uint16_t crc, uint8_t data);
     bool StartReceive();
-    bool ReceivePacket(uint8_t buffer[], unsigned bufferSize, uint8_t seq, uint16_t destAddr);
-    void SendPacket(uint16_t address, uint8_t seq);
+    bool ReceivePacket(uint8_t buffer[], unsigned bufferSize, uint8_t seq, uint32_t destAddr);
+    void SendPacket(uint32_t address, uint8_t seq);
 };
 
 #endif // #define INCLUDE_CONFIGURE_H

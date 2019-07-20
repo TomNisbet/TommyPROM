@@ -14,6 +14,7 @@ void PromAddressDriver::begin()
     digitalWrite(ADDR_DATA, LOW);
     digitalWrite(ADDR_CLK_LO, LOW);
     digitalWrite(ADDR_CLK_HI, LOW);
+    DDRB |= 0x1c; // Set D10..D12 as outputs
 
 
     // To save time, the setAddress only writes the hi byte if it has changed.
@@ -24,19 +25,34 @@ void PromAddressDriver::begin()
 }
 
 
-// Set a 16 bit address in the two address shift registers.
-void PromAddressDriver::setAddress(word address)
+// Set a 16 bit address in the two address shift registers and
+// the upper bits on the extened address pins.
+void PromAddressDriver::setAddress(uint32_t address)
 {
     static byte lastHi = 0xca;
-    byte hi = address >> 8;
+    static byte lastUpper = 0xca;
+    byte upper = (address >> 16) & 0xff;
+    byte hi = (address >> 8) & 0xff;
     byte lo = address & 0xff;
 
+    if (upper != lastUpper)
+    {
+        setUpperAddress(upper);
+        lastUpper = upper;
+    }
     if (hi != lastHi)
     {
         setAddressRegister(ADDR_CLK_HI, hi);
         lastHi = hi;
     }
     setAddressRegister(ADDR_CLK_LO, lo);
+}
+
+
+void PromAddressDriver::setUpperAddress(byte addr)
+{
+    // Set the upper address on pins D10..D12.
+    PORTB = (PORTB & 0xe3) | ((addr << 2) & 0x1c);
 }
 
 
@@ -74,4 +90,3 @@ void PromAddressDriver::setAddressRegister(uint8_t clkPin, byte addr)
         addr <<= 1;
     }
 }
-

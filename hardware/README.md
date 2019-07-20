@@ -7,14 +7,13 @@ The basic circuit is as follows:
 * Pins D2..D9 are wired to the data lines on the target PROM.
 * Pins A0..A2 are wired to the WE, CE, and OE control lines on the target PROM.
 * Pins A3..A5 control shift registers to produce the address lines.
+* Pins D10..D12 control A16..A18 for chips larger than 64K bytes.
 
 Note that the existing design uses 74LS164 shift registers, but another 8-bit parallel out
 shift register, like the 74LS594 or 74LS595, could be used instead with some pin changes.
 
 The two shift registers can produce a sixteen bit address, although the 28C256 only needs 15 addresses.
-Chips larger than 64K can be supported by manually tying the additional lines high or low and working 
-with 64K blocks at a time.  Unused pins on the Arduino could also be directly tied to additional
-address lines to do bank selecting.
+Chips larger than 64K are supported by using the shift registers for A0..A15 and connecting Arduino pins D10..D12 to the chip's A16..A18
 
 ![TommyPROM Nano Schematic](../docs/TommyPROM-nano-sch.png)
 

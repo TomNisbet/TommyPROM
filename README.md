@@ -1,11 +1,13 @@
 # TommyPROM - An Arduino-based EEPROM programmer
 This is a simple EEPROM programmer and reader that can be assembled using an Arduino and a few additional parts.  It has been sucessfully built using the Arduino UNO, Nano and Boarduino models.
 
-The original code was specific to the 28C256 32Kx8 EEPROM, but it has been extended to also support Intel 8755A EPROMS.
+The original code was specific to the 28C256 32Kx8 EEPROM, but it has been extended to also support Intel 8755A EPROMS and some 29C010 Flash.
 
 The 28C design can be used with other 5V EEPROMS as well. Many 5V chips, including UV EPROMs, such as the 2716, 2764, 27C2001 and 27C040, can be read, but not written, with the basic hardware. Some pin changes may be needed to get the signals to the correct pins on the device.  See the [extension readme](README-extension.md) for details on suggested hardware and software changes needed to support new EPROM and EEPROM families.
 
-The PROM-specific code is modular and can be easily adapted to support additional devices. There are currently drivers and hardware designs for 28C series EEPROMS and the Intel 8755A EPROM. Larger PROMs can be read or written in 64K chunks.
+The PROM-specific code is modular and can be easily adapted to support additional devices. There are currently drivers and hardware designs for 28C series EEPROMS and the Intel 8755A EPROM.
+
+Some 29C series chips, like the 29C010 can be written with the 28C hardware. The 29C series only differs from the 28C in that the 29C chips erase and write an entire sector at a time.  The 29C010 and some 29C020 chips use a 128 byte sector, which matches the XModem buffer in the current code.  Other 29C020s and all 29C040s use a 256 byte sector and cannot be written without code changes to buffer up an entire 256 byte block of data before writing.
 
 Features include:
 * Simple hardware design that can be assembled on a breadboard.
@@ -36,11 +38,12 @@ To use the programmer, connect the Arduino USB to the host computer and run a te
 
 Set the terminal's serial parameters to 115200 baud, 8 bits, no parity, 1 stop bit to match the Arduino.  Press the Enter key.  If the connection is successful, TommyPROM will display a menu of options.
 
-Most of the commands take a start address parameter, always entered as 4 hex characters.  If needed, the end address parameter is also 4 hex characters.  For example, the command:
+Most of the commands take a start address parameter, always entered as 1 to 5 hex characters.  Leading zeros are not required. If needed, the end address parameter is also in hex.  Parameters are separated by a space. For example, either of the commands:
 
     d0000 01ff
+    d0 1ff
 
-dumps memory from 0000H to 01ffH.  Note that commands and parameters can be entered in uppercase or lowercase.
+dump memory from 0000H to 01ffH.  Note that commands and parameters can be entered in uppercase or lowercase.
 
 The R command is used to read from a PROM and save a binary image on the host.  The W command receives a file from the host and writes (burns) it into the device.  The R command needs a start and end address.  The W command determines the end address from the received file size.
 
@@ -58,4 +61,3 @@ The files used for READ and WRITE are simple binary images. This can be created 
 ## Further Work
 * Add a new PromDevice class for 27 series EPROMS.
 * Additional error checking in the CmdLine code.
-* Extend the addressing code to use a U32 instead of a U16 to allow chips larger than 64K to be programmed in a single operation.

@@ -12,7 +12,7 @@
 #define VDDCTL      12
 
 
-PromDevice8755A::PromDevice8755A(unsigned long size)
+PromDevice8755A::PromDevice8755A(uint32_t size)
     : PromDevice(size, 0, 0, false)
 {
 }
@@ -52,7 +52,7 @@ void PromDevice8755A::begin()
 
 // Set an 11 bit address using the 8 address/data bus lines and three more dedicated
 // address lines.  The read and burn code will take care of the ALE line
-void PromDevice8755A::setAddress(word address)
+void PromDevice8755A::setAddress(uint32_t address)
 {
     setDataBusMode(OUTPUT);
     writeDataBus(byte(address & 0xff));
@@ -63,7 +63,7 @@ void PromDevice8755A::setAddress(word address)
 
 
 // Read a byte from a given address
-byte PromDevice8755A::readByte(word address)
+byte PromDevice8755A::readByte(uint32_t address)
 {
     byte data = 0;
     digitalWrite(RD, HIGH);
@@ -72,8 +72,8 @@ byte PromDevice8755A::readByte(word address)
 	// Put the address on the bus and latch it with ALE
     digitalWrite(CE2, HIGH);
     setAddress(address);
-	digitalWrite(ALE, HIGH);
-	digitalWrite(ALE, LOW);
+    digitalWrite(ALE, HIGH);
+    digitalWrite(ALE, LOW);
 
 	// Read a byte
     setDataBusMode(INPUT);
@@ -88,7 +88,7 @@ byte PromDevice8755A::readByte(word address)
 
 
 // Burn a byte to the chip and verify that it was written.
-bool PromDevice8755A::burnByte(byte value, word address)
+bool PromDevice8755A::burnByte(byte value, uint32_t address)
 {
     // Latch the address and the CE lines
     digitalWrite(ALE, HIGH);

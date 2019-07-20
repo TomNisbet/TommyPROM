@@ -5,6 +5,8 @@ There are currently two hardware flavors - one for 28C series EEPROMs and one sp
 
 The basic hardware design, used for the 28C family. is much more adaptable to additional chip families. This design uses two shift registers to create 16 dedicated address lines from only 3 arduino pins. This design, plus manual switching of the program voltage, would be very adaptable to EPROMs like the 2716, 2764, 27040, and 272001. The hardware has already been used with these chips for read-only operations.
 
+The current design can directly address chips as large as 512K bytes, like the 29C040.  Use the shift registers to for A0..A15 and wire Arduino pins D10..D12 to A16..A18.
+
 # Software
 The software design is modular, allowing easy extenstion for chips with different programming algoritms.  A new class can be added for each new chip family. This class will include code for byte reads, byte writes, and optional block writes, if the chip supports it.  All of the chip-specific code will be in this single class.
 

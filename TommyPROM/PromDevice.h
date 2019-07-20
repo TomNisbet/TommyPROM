@@ -17,9 +17,9 @@
 class PromDevice
 {
   public:
-    PromDevice(unsigned long size, word blockSize, unsigned maxWriteTime, bool polling);
-    bool writeData(byte data[], word len, word address);
-    byte readData(word address) { return readByte(address); }
+    PromDevice(uint32_t size, word blockSize, unsigned maxWriteTime, bool polling);
+    bool writeData(byte data[], uint32_t len, uint32_t address);
+    byte readData(uint32_t address) { return readByte(address); }
 
     virtual void begin() = 0;
     virtual const char * getName() = 0;
@@ -27,7 +27,7 @@ class PromDevice
     virtual void enableSoftwareWriteProtect() {}
 
   protected:
-    unsigned int mSize;             // Size of the device, in bytes
+    uint32_t mSize;                 // Size of the device, in bytes
     unsigned int mBlockSize;        // Block size for page writes, zero if N/A
     unsigned int mMaxWriteTime;     // Max time (in ms) to wait for write cycle to complete
     bool mSupportsDataPoll;         // End of write detected by data polling
@@ -36,10 +36,10 @@ class PromDevice
     byte readDataBus();
     void writeDataBus(byte data);
 
-    virtual void setAddress(word address) = 0;
-    virtual byte readByte(word address) = 0;
-    virtual bool burnByte(byte value, word address) = 0;
-    virtual bool burnBlock(byte data[], word len, word address) { return false; }
+    virtual void setAddress(uint32_t address) = 0;
+    virtual byte readByte(uint32_t address) = 0;
+    virtual bool burnByte(byte value, uint32_t address) = 0;
+    virtual bool burnBlock(byte data[], uint32_t len, uint32_t address) { return false; }
 
 };
 

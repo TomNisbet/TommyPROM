@@ -2,7 +2,7 @@
 #include "PromDevice.h"
 
 
-PromDevice::PromDevice(unsigned long size, word blockSize, unsigned maxWriteTime, bool polling)
+PromDevice::PromDevice(uint32_t size, word blockSize, unsigned maxWriteTime, bool polling)
     : mSize(size),
       mBlockSize(blockSize),
       mMaxWriteTime(maxWriteTime),
@@ -14,14 +14,14 @@ PromDevice::PromDevice(unsigned long size, word blockSize, unsigned maxWriteTime
 // Write a block of data to the device.  If the device supports block writes,
 // the data will be broken into chunks and written using the block mode.
 // Otherwise, each byte will be individually written and verified.
-bool PromDevice::writeData(byte data[], word len, word address)
+bool PromDevice::writeData(byte data[], uint32_t len, uint32_t address)
 {
     bool status = true;
 
     if (mBlockSize == 0)
     {
         // Device does not support block writes.
-        for (word ix = 0; (ix < len); ix++)
+        for (uint32_t ix = 0; (ix < len); ix++)
         {
             if (burnByte(data[ix], address + ix) == false)
             {
@@ -32,8 +32,8 @@ bool PromDevice::writeData(byte data[], word len, word address)
     }
     else
     {
-        word offset = 0;
-        word chunkSize;
+        uint32_t offset = 0;
+        uint32_t chunkSize;
         if (address & (mBlockSize - 1))
         {
             // Address does not start on a block boundary.  Adjust the size of
