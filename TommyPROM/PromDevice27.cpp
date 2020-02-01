@@ -85,6 +85,7 @@ bool PromDevice27::burnByte(byte value, uint32_t address)
     bool status = false;
     unsigned writeCount = 0;
 
+    byte data = 0;
     disableOutput();
     disableWrite();
     enableChip();
