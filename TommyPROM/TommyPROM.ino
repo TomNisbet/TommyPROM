@@ -113,7 +113,7 @@ char * readLine(char * buffer, int len)
             buffer[ix++] = c;
             Serial.write(c);
         }
-    } while ((c != '\n') && (ix < len));
+    } while ((c != '\n') && (c != '\r') && (ix < len));
 
     buffer[ix - 1] = 0;
     return buffer;
