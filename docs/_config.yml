@@ -1,1 +1,9 @@
-theme: jekyll-theme-minimal
+title: "TommyPROM"
+remote_theme: pmarsceill/just-the-docs
+color_scheme: "light"
+search_enabled: true
+
+# Aux links for the upper right navigation
+aux_links:
+  "Project Home":
+    - "//github.com/TomNisbet/TommyPROM"
