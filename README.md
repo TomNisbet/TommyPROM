@@ -15,7 +15,7 @@ Software Protection Algorithm.
 ![TommyPROM Nano Hardware](docs/images/TommyPROM-nano.jpg)
 
 
-See the [project page](https://tomnisbet.github.io/TommyPROM/) for the full documentation
+See the [documentation pages](https://tomnisbet.github.io/TommyPROM/) for the full documentation
 with hardware, software, and troubleshooting tips.
 
 ## Further Work

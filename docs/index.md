@@ -12,10 +12,14 @@ Boarduino models.
 
 The original code was specific to the 28C256 32Kx8 EEPROM, but it has been extended to also support Intel 8755A EPROMS and some 29C010 Flash.
 
+![TommyPROM Nano Hardware](images/TommyPROM-nano.jpg)
+
+## Design
+
 The 28C design can be used with other 5V EEPROMS as well. Many 5V chips, including UV
 EPROMs, such as the 2716, 2764, 27C2001 and 27C040, can be read, but not written, with the
 basic hardware. Some pin changes may be needed to get the signals to the correct pins on
-the device.  See the [extension readme](README-extension.md) for details on suggested
+the device.  See the [Extending the design](extending.html) page for details on suggested
 hardware and software changes needed to support new EPROM and EEPROM families.
 
 The PROM-specific code is modular and can be easily adapted to support additional devices.
@@ -36,18 +40,17 @@ Features include:
 * Optimized code that supports the timing requirements needed to unlock the 28C series Software Protection Algorithm.
 * Modular software design to easily support other EEPROM and EPROM families.
 
-The [hardware readme](hardware/README.md) has schematics and more information on the
-hardware design. The [software readme](TommyPROM/README.md) has class definitions and more information on the software design.
-
+The [hardware](hardware.html) page has descriptions of the hardware designs and links to schematics.  The [software](software.html) page has class definitions and more information
+on the software design.
 
 The project was inspired by the
 [MEEPROMMER programmer](http://www.ichbinzustaendig.de/dev/meeprommer-en).
 
-![TommyPROM Nano Hardware](images/TommyPROM-nano.jpg)
-
 ## Compiling
 
-Open the TommyPROM.ino file in the Arduino IDE. It should automatically open the cpp and h files as well. The default code programs 28C series chips using Arduino Nano hardware.  To use this version, just compile and upload it to the Arduino.
+Open the TommyPROM.ino file in the Arduino IDE. It should automatically open the cpp and h
+files as well. The default code programs 28C series chips using Arduino Nano hardware.  To
+use this version, just compile and upload it to the Arduino.
 
 **Note well** that this code has been optimized for the Aduino UNO and Nano hardware so
 that it can run quickly enough to meet 28C series chip timing requirements for SDP
@@ -77,7 +80,7 @@ in hex.  Parameters are separated by a space. For example, either of the command
     d0000 01ff
     d0 1ff
 
-dump memory from 0000H to 01ffH.  Note that commands and parameters can be entered in
+will dump memory from 0000H to 01ffH.  Note that commands and parameters can be entered in
 uppercase or lowercase.
 
 The R command is used to read from a PROM and save a binary image on the host.  The W
@@ -102,7 +105,7 @@ have different port mappings and definitely will not work without software chang
 verify that the data and address paths are good.
 * 28C series EEPROMS, like the X28C256, sometimes ship from the factory with Data
 Protection enabled.  Use the UNLOCK command to disable this. See the
-[28C Readme](28C256-notes.html) for more information.
+[28C256 Notes](28C256-notes.html) for more information.
 * Re-check all hardware connections and verify the the control pins are going to the
 Arduino pins that match the definitions in the code.
 * This repo contains a standalone program called HardwareVerify that allows low-level

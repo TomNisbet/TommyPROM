@@ -1,7 +1,7 @@
 ---
 title: 28C256 Notes
 has_children: false
-nav_order: 3
+nav_order: 5
 ---
 
 # Notes on 28C EEPROMs

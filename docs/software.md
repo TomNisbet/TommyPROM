@@ -6,7 +6,11 @@ nav_order: 3
 
 # Software Design
 
-The software is designed around several major blocks and classes.  The code has been broken out into individual files to make it easy to extend the hardware support to additional EPROM and EEPROM families. See the [extension readme](extending.md) for details on suggested hardware and software changes needed.
+The software is designed around several major blocks and classes.  The code has been
+broken out into individual files to make it easy to extend the hardware support to
+additional EPROM and EEPROM families. See the
+[Adding Chip Families](extending.html) page for details on suggested hardware and software
+changes needed.
 
 ## CommandStatus class
 
@@ -18,15 +22,22 @@ has utility beyond XMODEM because it includes formatting that relieves each comm
 having to build parameterized error messages with multiple print calls.
 
 ## Xmodem class
-The Xmodem class implements the communications protocols needed to do XMODEM CRC transmit and receive.  It calls directly into the PROM read and write code, to the complete files are never stored during the transfer.
+
+The Xmodem class implements the communications protocols needed to do XMODEM CRC transmit
+and receive.  It calls directly into the PROM read and write code, to the complete files
+are never stored during the transfer.
 
 ## CLI code and command implementation
+
 This code parses input commands and parameters and executes the commands.
 
-A compile-time switch in Configure.h enables additional debug commands that are not needed in normal operation, but are very useful to verify proper operation of the hardware.
+A compile-time switch in Configure.h enables additional debug commands that are not needed
+in normal operation, but are very useful to verify proper operation of the hardware.
 
 ## PromDevice class
-The PromDevice class and its subclasses encapsulate all of the communication between the Arduino and the target PROM device.
+
+The PromDevice class and its subclasses encapsulate all of the communication between the
+Arduino and the target PROM device.
 
 To meet the timing requirements for block writes and 28C chip unlocking, the PromDevice
 class accesses the shift registers and data bus using direct port writes instead of 8

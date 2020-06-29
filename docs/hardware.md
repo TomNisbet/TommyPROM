@@ -45,3 +45,6 @@ assembled hardware design, a triple output bench supply was used to provide the 
 5.5V and 5V outputs.
 
 ![TommyPROM Nano Schematic](images/TommyPROM-8755A-sch.png)
+
+Eagle-format schematics can be downloaded from the
+[hardware project page](https://github.com/TomNisbet/TommyPROM/tree/master/hardware).
