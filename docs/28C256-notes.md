@@ -1,5 +1,6 @@
 ---
 title: 28C256 Notes
+description: "Troubleshooting and Programming 28C256 EEPROMs and Software Data Protection"
 has_children: false
 nav_order: 5
 ---

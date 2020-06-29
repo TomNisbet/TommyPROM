@@ -1,5 +1,6 @@
 ---
 title: Troubleshooting
+description: "Troubleshooting TommyPROM hardware"
 has_children: false
 nav_order: 3
 ---

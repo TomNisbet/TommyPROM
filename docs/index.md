@@ -1,5 +1,6 @@
 ---
 title: Overview
+description: "TommyPROM Arduino based programmer for 28C256 EEPROMs"
 has_children: false
 nav_order: 1
 ---
