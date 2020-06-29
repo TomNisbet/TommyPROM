@@ -9,7 +9,7 @@ nav_order: 3
 The software is designed around several major blocks and classes.  The code has been
 broken out into individual files to make it easy to extend the hardware support to
 additional EPROM and EEPROM families. See the
-[Adding Chip Families](extending) page for details on suggested hardware and software
+[Adding Chip Families](../extending) page for details on suggested hardware and software
 changes needed.
 
 ## CommandStatus class
