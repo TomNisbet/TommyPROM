@@ -325,14 +325,14 @@ void dumpBlock(uint32_t start, uint32_t end)
     memset(line, ' ', sizeof(line));
 
     char * pHex = line;
-    char * pChar = line + 58;
+    char * pChar = line + 59;
     for (uint32_t addr = start; (addr <= end); addr++)
     {
         if (count == 0)
         {
             //print out the address at the beginning of the line
             pHex = line;
-            pChar = line + 58;
+            pChar = line + 59;
             *pHex++ = hex[(addr >> 16) & 0x0f];
             *pHex++ = hex[(addr >> 12) & 0x0f];
             *pHex++ = hex[(addr >>  8) & 0x0f];
