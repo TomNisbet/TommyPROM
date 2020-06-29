@@ -19,7 +19,7 @@ The original code was specific to the 28C256 32Kx8 EEPROM, but it has been exten
 The 28C design can be used with other 5V EEPROMS as well. Many 5V chips, including UV
 EPROMs, such as the 2716, 2764, 27C2001 and 27C040, can be read, but not written, with the
 basic hardware. Some pin changes may be needed to get the signals to the correct pins on
-the device.  See the [Extending the design](extending.html) page for details on suggested
+the device.  See the [Extending the design](extending) page for details on suggested
 hardware and software changes needed to support new EPROM and EEPROM families.
 
 The PROM-specific code is modular and can be easily adapted to support additional devices.
@@ -40,7 +40,7 @@ Features include:
 * Optimized code that supports the timing requirements needed to unlock the 28C series Software Protection Algorithm.
 * Modular software design to easily support other EEPROM and EPROM families.
 
-The [hardware](hardware.html) page has descriptions of the hardware designs and links to schematics.  The [software](software.html) page has class definitions and more information
+The [hardware](hardware) page has descriptions of the hardware designs and links to schematics.  The [software](software) page has class definitions and more information
 on the software design.
 
 The project was inspired by the
@@ -105,11 +105,11 @@ have different port mappings and definitely will not work without software chang
 verify that the data and address paths are good.
 * 28C series EEPROMS, like the X28C256, sometimes ship from the factory with Data
 Protection enabled.  Use the UNLOCK command to disable this. See the
-[28C256 Notes](28C256-notes.html) for more information.
+[28C256 Notes](28C256-notes) for more information.
 * Re-check all hardware connections and verify the the control pins are going to the
 Arduino pins that match the definitions in the code.
 * This repo contains a standalone program called HardwareVerify that allows low-level
-access to the address, data, and control lines through a menu-driven interface.  See the [troubleshooting](troubleshooting.html) section for more tips.
+access to the address, data, and control lines through a menu-driven interface.  See the [troubleshooting](troubleshooting) section for more tips.
 
 ## Further Work
 * [ ]Add a new PromDevice class for 27 series EPROMS.
