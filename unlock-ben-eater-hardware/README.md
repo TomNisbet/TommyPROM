@@ -12,4 +12,4 @@ to set and read values on the data bus.  It will work with Arduino Uno and Nano 
 but would require changes for other platforms.
 
 **NOTE** that this sketch **will not** work on TommyPROM hardware.  It is included here
-to help people using that hardware to unlock their chips.
+to help people with locked chips who are using the Ben Eater design.
