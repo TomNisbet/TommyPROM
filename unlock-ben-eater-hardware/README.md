@@ -1,4 +1,4 @@
-#Unlock Ben Eater Hardware
+# Unlock Ben Eater Hardware
 
 ![Ben Eater EEPROM Programmer](../docs/images/ben-eater-hardware.jpg)
 
