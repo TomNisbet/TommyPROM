@@ -1,11 +1,11 @@
 ---
-title: 28C256 Notes
-description: "Troubleshooting and Programming 28C256 EEPROMs and Software Data Protection"
+title: 28C256 and SDP
+description: "Troubleshooting and Programming 28C256 EEPROMs with Software Data Protection (SDP)"
 has_children: false
 nav_order: 5
 ---
 
-# Notes on 28C EEPROMs
+# 28C EEPROMs and Software Data Protection (SDP)
 
 The 28C series parallel EEPROMS, like the 28C256, support fast block writes and algorithms
 to implement Software Data Protection (SDP).  The SDP feature seems to be a leading cause
