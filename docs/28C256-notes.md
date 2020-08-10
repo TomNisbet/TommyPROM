@@ -36,6 +36,10 @@ hand, will refuse to unlock when the timing is outside the acceptable maximum.
 
 # Solution
 
+**Note:** if you are using the Ben Eater EEPROM programmer, see the
+[unlock-ben-eater-hardware sketch](https://github.com/TomNisbet/TommyPROM/tree/master/unlock-ben-eater-hardware)
+for a solution to disable SDP on locked chips.
+
 The TommyProm programmer uses direct port access on the Arduino to control the data bus
 and addressing shift register.  This is much faster than doing individual DigitalWrite
 calls and allows the unlock and page write code to run comfortably within the tBLC
