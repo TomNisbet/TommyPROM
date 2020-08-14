@@ -13,3 +13,8 @@ but would require changes for other platforms.
 
 **NOTE** that this sketch **will not** work on TommyPROM hardware.  It is included here
 to help people with locked chips who are using the Ben Eater design.
+
+![Unlock timing with Ben Eater Hardware](../docs/images/ben-eater-unlock-timing.png)
+
+The timing trace shows the tBLC for the bytes of the unlock sequence within 65us, well
+within the required 150us in the datasheet.

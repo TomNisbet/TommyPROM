@@ -56,16 +56,49 @@ void loop() {
 
 
 // Output the address bits and outputEnable signal using shift registers.
-void setAddress(int address, bool outputEnable) {
-    // Shift the address bits in
-    shiftOut(SHIFT_DATA, SHIFT_CLK, MSBFIRST, (address >> 8) | (outputEnable ? 0x00 : 0x80));
-    shiftOut(SHIFT_DATA, SHIFT_CLK, MSBFIRST, address);
+void setAddress(int addr, bool outputEnable) {
+    // Set the highest bit as the output enable bit (active low)
+    if (outputEnable) {
+        addr &= ~0x8000;
+    } else {
+        addr |= 0x8000;
+    }
+    byte dataMask = 0x04;
+    byte clkMask = 0x08;
+    byte latchMask = 0x10;
+
+    // Make sure the clock is low to start.
+    PORTD &= ~clkMask;
+
+    // Shift 16 bits in, starting with the MSB.
+    for (uint16_t ix = 0; (ix < 16); ix++)
+    {
+        // Set the data bit
+        if (addr & 0x8000)
+        {
+            PORTD |= dataMask;
+        }
+        else
+        {
+            PORTD &= ~dataMask;
+        }
+
+        // Toggle the clock high then low
+        PORTD |= clkMask;
+        delayMicroseconds(3);
+        PORTD &= ~clkMask;
+        addr <<= 1;
+    }
 
     // Latch the shift register contents into the output register.
-    digitalWrite(SHIFT_LATCH, LOW);
-    digitalWrite(SHIFT_LATCH, HIGH);
-    digitalWrite(SHIFT_LATCH, LOW);
+    PORTD &= ~latchMask;
+    delayMicroseconds(1);
+    PORTD |= latchMask;
+    delayMicroseconds(1);
+    PORTD &= ~latchMask;
 }
+
+
 
 // Read a byte from the EEPROM at the specified address.
 byte readEEPROM(int address) {
