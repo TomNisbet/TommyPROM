@@ -63,7 +63,7 @@ To use the 8755A version of the code and matching hardware, uncomment PROM_IS_87
 comment out the other PROM_IS_xx choices in Configure.h.
 
 ## Operation
-![TommyPROM Screenshot](images/tp05.png)
+![TommyPROM console screenshot](images/tommyprom-console.png)
 
 To use the programmer, connect the Arduino USB to the host computer and run a terminal
 program, such as TeraTerm (Windows) or Minicom (Linux).  The Arduino development Serial

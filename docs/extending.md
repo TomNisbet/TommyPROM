@@ -18,8 +18,8 @@ by the Arduino. Most other chips will not use this addressing method. The 8755A 
 also includes a circuit to switch the programming voltage under software control.  This
 may be useful for other chips that use non-5V programming voltages, although many of these
 chips, like the 27 series EPROMS, have a programming voltage that remains on for the
-entire write and verify cycle. For those chips, it may be easier to simply switch the
-programming voltage manually for these chips.
+entire write and verify cycle. It may be easier to simply switch the programming voltage
+manually for these chips.
 
 The basic hardware design, used for the 28C EEPROMs, is much more adaptable to additional
 chip families. This design uses two shift registers to create 16 dedicated address lines

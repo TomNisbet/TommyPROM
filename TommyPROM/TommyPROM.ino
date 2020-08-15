@@ -19,7 +19,7 @@
 #include "XModem.h"
 
 
-static const char * MY_VERSION = "2.0";
+static const char * MY_VERSION = "2.1";
 
 
 // Global status
@@ -79,6 +79,7 @@ enum {
     CMD_ERASED,
     CMD_FILL,
     CMD_LOCK,
+    CMD_POKE,
     CMD_READ,
     CMD_UNLOCK,
     CMD_WRITE,
@@ -136,6 +137,7 @@ byte parseCommand(char c)
         case 'e':  cmd = CMD_ERASED;    break;
         case 'f':  cmd = CMD_FILL;      break;
         case 'l':  cmd = CMD_LOCK;      break;
+        case 'p':  cmd = CMD_POKE;      break;
         case 'r':  cmd = CMD_READ;      break;
         case 'u':  cmd = CMD_UNLOCK;    break;
         case 'w':  cmd = CMD_WRITE;     break;
@@ -184,7 +186,7 @@ byte hexDigit(char c)
 * character.  Leading zeroes are not required.
 *
 * No error checking is performed - if no hex is found then
-* zero is returned.  Similarly, a hex string of more than
+* defaultValue is returned.  Similarly, a hex string of more than
 * 8 digits will return the value of the last 8 digits.
 * @param pointer to string with the hex value of the word (modified)
 * @return unsigned int represented by the digits
@@ -428,6 +430,60 @@ void erasedBlockCheck(uint32_t start, uint32_t end)
 }
 
 
+/**
+ * Write a series of bytes from the command line to the PROM.
+ *
+ * @param cursor - pointer to command line text
+ */
+void pokeBytes(char * pCursor)
+{
+    uint32_t val;
+    uint32_t start;
+    unsigned byteCtr = 0;
+
+    enum { BLOCK_SIZE = 32 };
+    byte data[BLOCK_SIZE];
+
+    //first value returned is the starting address
+    start = getHex32(pCursor, 0);
+
+    while (((val = getHex32(pCursor, 0xffff)) != 0xffff) && (byteCtr < BLOCK_SIZE))
+    {
+        data[byteCtr++] = byte(val);
+    }
+
+    if (byteCtr > 0)
+    {
+        if (!prom.writeData(data, byteCtr, start))
+        {
+            cmdStatus.error("Write failed");
+            return;
+        }
+    }
+    else
+    {
+        cmdStatus.error("Missing address or data");
+        return;
+    }
+    delay(100);
+
+    for (unsigned ix = 0; ix < byteCtr ; ix++)
+    {
+        byte val = prom.readData(start + ix);
+        if (val != data[ix])
+        {
+            cmdStatus.error("Verify failed");
+            cmdStatus.setValueHex(0, "addr", start + ix);
+            cmdStatus.setValueHex(1, "read", val);
+            cmdStatus.setValueHex(2, "expected", data[ix]);
+            return;
+        }
+    }
+    cmdStatus.info("Poke successful");
+}
+
+
+
 #ifdef ENABLE_DEBUG_COMMANDS
 /**
  * Runs through a range of addresses, reading a single address
@@ -535,7 +591,7 @@ void zapTest(uint32_t start)
     }
 
     delay(100);
-    for (int ix = 0; ix < sizeof(testData); ix++)
+    for (unsigned ix = 0; ix < sizeof(testData); ix++)
     {
         byte val = prom.readData(start + ix);
         if (val != testData[ix])
@@ -573,25 +629,7 @@ void setup()
 * executing read or write requestes.
 **/
 
-/* 8085 Test programs
-byte ledTest[] =
-{
-    0xc3, 0x03, 0x80, 0x3e, 0xc0, 0x30, 0x3e, 0xff,
-    0x47, 0x3d, 0x05, 0xc2, 0x0a, 0x80, 0xfe, 0x00,
-    0xc2, 0x09, 0x80, 0x3e, 0x40, 0x30, 0x3e, 0xff,
-    0x47, 0x3d, 0x05, 0xc2, 0x1a, 0x80, 0xfe, 0x00,
-    0xc2, 0x19, 0x80, 0xc3, 0x03, 0x80
-};
-byte charTest[] =
-{
-    0xc3, 0x03, 0x80, 0x0e, 0x55, 0xf3, 0x06, 0x0b, 0xaf, 0x3e, 0x80, 0x1f,
-    0x3f, 0x30, 0x21, 0x19, 0x00, 0x2d, 0xc2, 0x11, 0x80, 0x25, 0xc2, 0x11,
-    0x80, 0x37, 0x79, 0x1f, 0x4f, 0x05, 0xc2, 0x09, 0x80, 0x3e, 0xc0, 0x30,
-    0x3e, 0x40, 0x30, 0x3e, 0xc0, 0x30, 0x3e, 0x40, 0x30, 0x21, 0xff, 0xff,
-    0x2d, 0xc2, 0x30, 0x80, 0x25, 0xc2, 0x30, 0x80, 0xc3, 0x03, 0x80
-};
-*/
-
+char line[120];
 uint32_t start = 0;
 uint32_t end = 0xff;
 byte val = 0xff;
@@ -599,7 +637,6 @@ byte val = 0xff;
 void loop()
 {
     uint32_t w;
-    char line[20];
     uint32_t numBytes;
 
     Serial.print("\n>");
@@ -645,6 +682,10 @@ void loop()
     case CMD_LOCK:
         Serial.println(F("Writing the lock code to enable Software Write Protect mode."));
         prom.enableSoftwareWriteProtect();
+        break;
+
+    case CMD_POKE:
+        pokeBytes(line+1);
         break;
 
     case CMD_READ:
@@ -705,6 +746,7 @@ void loop()
         Serial.println(F("  Esssss eeeee    - Check to see if device range is Erased (all FF)"));
         Serial.println(F("  Fsssss eeeee dd - Fill block on device with fixed value"));
         Serial.println(F("  L               - Lock (enable) device Software Data Protection"));
+        Serial.println(F("  Psssss dd dd... - Poke (write) values to device (up to 32 values)"));
         Serial.println(F("  Rsssss eeeee    - Read from device and save to XMODEM CRC file"));
         Serial.println(F("  U               - Unlock (disable) device Software Data Protection"));
         Serial.println(F("  Wsssss          - Write to device from XMODEM CRC file"));
