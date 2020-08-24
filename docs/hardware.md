@@ -77,7 +77,7 @@ than trying to change the pin assignments in software.  There are a few reasons 
 
 * The Ben Eater hardware uses D13 to control the ROM's Write Enable pin and it ties the
 Chip Enable pin to always be active.  The D13 pin is connected to the Arduino's built-in
-LED, which blinks at boot.  This means that the chip is likely some writing random data at
+LED, which blinks at boot.  This means that the chip is likely writing some random data at
 boot time.  This isn't a problem for the Ben Eater sketches, because they always write
 their own data to the chip anyway.  One use of TommyPROM is to just read data from a chip,
 so a random write on boot would be bad.
