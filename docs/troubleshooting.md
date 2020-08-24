@@ -15,7 +15,7 @@ The verifier sketch can be used without a chip installed to scope out address an
 lines.  It also offers low-level control when the chip is installed.  
 
 THIS TOOL USES DIRECT PORT ACCESS ON THE ARDUINO.  CHECK TO MAKE SURE IT IS COMPATIBLE
-WITH YOUR BOARD BEFORE USING.  It will work correctly on the Unu, Nano, and Boarduino.  It
+WITH YOUR BOARD BEFORE USING.  It will work correctly on the Uno, Nano, and Boarduino.  It
 WILL NOT WORK on the Micro.
 
 Note that the commands write to the individual 28C control lines with some exceptions to
@@ -34,7 +34,7 @@ is unlocked.
 Hardware Verifier - 28C series EEPROM
 
 Valid commands are:
-  Axxxx         - Set address bus to xxxx
+  Axxxx         - Set Address bus to xxxx
   Dxx           - Set Data bus to xx
   Cs            - Set Chip enable to state (e=enable, d=disable)
   Os            - Set Output enable to state (e=enable, d=disable)

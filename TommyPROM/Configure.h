@@ -10,6 +10,11 @@
 //#define PROM_IS_27
 //#define PROM_IS_8755A
 
+// Uncomment the line below to use 74LS595 shift registers instead of the 74LS164s shown
+// in the schematics.  This enables extra code in PromAddressDriver.cpp to control the
+// RCLK line that latches the data to the output pins.
+
+// #define SHIFT_REGISTER_IS_595
 
 // Don't change anything below this comment unless you are adding support for a new device type.
 #if defined(PROM_IS_28C)

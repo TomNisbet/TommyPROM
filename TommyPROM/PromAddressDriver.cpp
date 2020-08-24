@@ -1,8 +1,31 @@
+// This controls the shift register that generates the address lines for A0..A15 for most
+// chip families.  This is not used by the PromDevice8755A code.
+//
+// Note that this uses direct port control instead of digitalWrite calls so that the code
+// can run fast enough to meet the tBLC requirements for SDP and block writes.  This
+// sacrifices portability and readability for speed. //
+//
+// This code will only work on Arduino Uno and Nano hardware.  The ports for other
+// Arduinos map to different IO pins.
+
 #include "PromAddressDriver.h"
 
 #define ADDR_CLK_HI     A3
 #define ADDR_CLK_LO     A4
 #define ADDR_DATA       A5
+
+// Define masks for the address clk and data lines on PC3..PC5 for direct port control.
+#define ADDR_CLK_HI_MASK    0x80
+#define ADDR_CLK_LO_MASK    0x10
+#define ADDR_DATA_MASK      0x20
+
+// For larger ROMs, address lines A16..A18 are controlled by D10..D12 (PB2..PB4).
+#define UPPER_ADDR_MASK     0x1c
+
+// When using the 74LS595 shift registers, the RCLK lines of both shift registers can be
+// connected to D13 (PB5).  Uncomment the #define SHIFT_REGISTER_IS_595 in Configure.h to
+// enable the code for this.
+#define RCLK_595_MASK       0x20
 
 
 void PromAddressDriver::begin()
@@ -14,8 +37,7 @@ void PromAddressDriver::begin()
     digitalWrite(ADDR_DATA, LOW);
     digitalWrite(ADDR_CLK_LO, LOW);
     digitalWrite(ADDR_CLK_HI, LOW);
-    DDRB |= 0x1c; // Set D10..D12 as outputs
-
+    DDRB |= UPPER_ADDR_MASK | RCLK_595_MASK; // Set D10..D13 as outputs
 
     // To save time, the setAddress only writes the hi byte if it has changed.
     // The value used to detect the change is initialized to a non-zero value,
@@ -52,7 +74,7 @@ void PromAddressDriver::setAddress(uint32_t address)
 void PromAddressDriver::setUpperAddress(byte addr)
 {
     // Set the upper address on pins D10..D12.
-    PORTB = (PORTB & 0xe3) | ((addr << 2) & 0x1c);
+    PORTB = (PORTB & ~UPPER_ADDR_MASK) | ((addr << 2) & UPPER_ADDR_MASK);
 }
 
 
@@ -63,9 +85,9 @@ void PromAddressDriver::setAddressRegister(uint8_t clkPin, byte addr)
 {
     byte mask = 0;
     if (clkPin == ADDR_CLK_HI)
-        mask = 0x08;
+        mask = ADDR_CLK_HI_MASK;
     else if (clkPin == ADDR_CLK_LO)
-        mask = 0x10;
+        mask = ADDR_CLK_LO_MASK;
 
     // Make sure the clock is low to start.
     PORTC &= ~mask;
@@ -76,11 +98,11 @@ void PromAddressDriver::setAddressRegister(uint8_t clkPin, byte addr)
         // Set the data bit
         if (addr & 0x80)
         {
-            PORTC |= 0x20;
+            PORTC |= ADDR_DATA_MASK;
         }
         else
         {
-            PORTC &= 0xdf;
+            PORTC &= ~ADDR_DATA_MASK;
         }
 
         // Toggle the clock high then low
@@ -89,4 +111,12 @@ void PromAddressDriver::setAddressRegister(uint8_t clkPin, byte addr)
         PORTC &= ~mask;
         addr <<= 1;
     }
+
+#ifdef SHIFT_REGISTER_IS_595
+    PORTB &= ~RCLK_595_MASK;
+    delayMicroseconds(1);
+    PORTB |= RCLK_595_MASK;
+    delayMicroseconds(1);
+    PORTB &= ~RCLK_595_MASK;
+#endif
 }
