@@ -103,7 +103,16 @@ bool XModem::SendFile(uint32_t address, uint32_t fileSize)
         bytesSent += PKTLEN;
     }
 
+    // Signal end of transfer and process the ACK 
     Serial.write(XMDM_EOT);
+    rxChar = GetChar(5000);
+    if (rxChar != XMDM_ACK)
+    {
+        cmdStatus.error("Expected XModem ACK to EOT, but received:");
+        cmdStatus.setValueDec(0, "char", rxChar);
+        return false;
+    }
+
     return true;
 }
 
@@ -247,6 +256,3 @@ void XModem::SendPacket(uint32_t address, uint8_t seq)
     Serial.write(crc >> 8);
     Serial.write(crc & 0xff);
 }
-
-
-

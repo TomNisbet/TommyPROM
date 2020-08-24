@@ -70,6 +70,10 @@ program, such as TeraTerm (Windows) or Minicom (Linux).  The Arduino development
 Monitor can also be used as a terminal initially, but it does not support XMODEM
 transfers, so the READ and WRITE commands can't be used.
 
+When using minicom, a few parameters need to be set.  Disable both hardware and software
+flow control.  Also add the '-c' command line option to the two xmodem settings to enable
+CRC mode for the file transfers.
+
 Set the terminal's serial parameters to 115200 baud, 8 bits, no parity, 1 stop bit to
 match the Arduino.  Press the Enter key.  If the connection is successful, TommyPROM will
 display a menu of options.
