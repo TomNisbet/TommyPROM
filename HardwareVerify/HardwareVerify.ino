@@ -80,29 +80,38 @@ byte hexDigit(char c)
 
 
 /************************************************************
-* convert a hex byte (00 - ff) to byte
-* @param c-string with the hex value of the byte
-* @return byte represented by the digits
-************************************************************/
-byte hexByte(char * a)
-{
-    return (hexDigit(a[0]) << 4) | hexDigit(a[1]);
-}
-
-
-/************************************************************
-* convert a hex word (0000 - ffff) to unsigned int
-* @param c-string with the hex value of the word
+* Convert a hex string to a uint32_t value.
+* Skips leading spaces and terminates on the first non-hex
+* character.  Leading zeroes are not required.
+*
+* No error checking is performed - if no hex is found then
+* defaultValue is returned.  Similarly, a hex string of more than
+* 8 digits will return the value of the last 8 digits.
+* @param pointer to string with the hex value of the word (modified)
 * @return unsigned int represented by the digits
 ************************************************************/
-unsigned int hexWord(char * data)
+uint32_t getHex32(char *& pData, uint32_t defaultValue=0)
 {
-    return (hexDigit(data[0]) << 12) |
-           (hexDigit(data[1]) <<  8) |
-           (hexDigit(data[2]) <<  4) |
-           (hexDigit(data[3]));
-}
+    uint32_t u32 = 0;
 
+    while (isspace(*pData))
+    {
+        ++pData;
+    }
+
+    if (isxdigit(*pData))
+    {
+        while (isxdigit(*pData)) {
+            u32 = (u32 << 4) | hexDigit(*pData++);
+        }
+    }
+    else
+    {
+        u32 = defaultValue;
+    }
+
+    return u32;
+}
 
 void printByte(byte b)
 {
@@ -153,9 +162,10 @@ void loop()
 static void commandLoop()
 {
     byte b;
-    word w;
+    uint32_t arg;
+    const uint32_t noValue = uint32_t(-1);
     char line[20];
-    uint32_t numBytes;
+    char * cursor = line + 1;
     unsigned long timeStart;
     unsigned long timeEnd;
     bool cmdError = false;
@@ -171,22 +181,20 @@ static void commandLoop()
     switch (c)
     {
     case 'a':
-        if (hexDigit(line[1]) <= 15)
+        if ((arg = getHex32(cursor, noValue)) != noValue)
         {
-            w = hexWord(line + 1);
-            prom.setAddress(w);
+            prom.setAddress(word(arg));
         }
         else
             cmdError = true;
         break;
 
     case 'd':
-        if (hexDigit(line[1]) <= 15)
+        if ((arg = getHex32(cursor, noValue)) != noValue)
         {
             prom.disableOutput();
             prom.setDataBusMode(OUTPUT);
-            b = hexByte(line + 1);
-            prom.writeDataBus(b);
+            prom.writeDataBus(byte(arg));
         }
         else
             cmdError = true;
@@ -202,18 +210,18 @@ static void commandLoop()
         else
         {
             bool enable = line[1] == 'e';
-            if (c == 'c')
+            if (c == 'c') {
                 if (enable) prom.enableChip(); else prom.disableChip();
-            else if (c == 'w')
+            } else if (c == 'w') {
                 if (enable) prom.enableWrite(); else prom.disableWrite();
-            else { // c == 'o'
-                if (enable) 
-                {
+            } else { // c == 'o'
+                if (enable) {
                     // Don't allow the prom and the data bus to output at the same time
                     prom.setDataBusMode(INPUT);
                     prom.enableOutput();
+                } else {
+                    prom.disableOutput();
                 }
-                else prom.disableOutput();
             }
         }
         break;
@@ -261,4 +269,3 @@ static void commandLoop()
         Serial.println(F("  U             - Send Unlock sequence to disable device Software Data Protection"));
     }
 }
-

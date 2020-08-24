@@ -99,25 +99,27 @@ lines from the Arduino.  The result should be measured at the target PROM footpr
 at the Arduino.  To fully test, use a multimeter to verify that the lines that should be
 active are active and that any other lines are not.
 
+Note that the Dx and Ax commands can be a bit confusing.  The command _D5_ means "set the value 05 HEX on the eight data lines".  It does not specifically refer to the D<sub>5</sub> data pin on the ROM or the D5 pin on the Arduino.  In the example above, 05 HEX is the same as 00000101 BINARY.  This would set the ROM D<sub>0</sub> and D<sub>2</sub> pins HIGH and the other six pins would be LOW.
+
 ### Testing the data bus
 
 Issue a set of Data commands from the Hardware Verify sketch and measure EACH data line at
-the PROM footprint.  **If the expected result is "D0 HIGH", verify not only that D0 reads
-HIGH, but that all of the other lines read LOW.**
+the PROM footprint.  **If the expected result is "D<sub>0</sub> HIGH", verify not only
+that D<sub>0</sub> reads HIGH, but that all of the other lines read LOW.**
 
 Data test commands
 
 |Command|Result|
 |:---   |:---  |
 |D0     |All data lines LOW|
-|D1     |D0 HIGH|
-|D2     |D1 HIGH|
-|D4     |D2 HIGH|
-|D8     |D3 HIGH|
-|D10    |D4 HIGH|
-|D20    |D5 HIGH|
-|D40    |D6 HIGH|
-|D80    |D7 HIGH|
+|D1     |D<sub>0</sub> HIGH|
+|D2     |D<sub>1</sub> HIGH|
+|D4     |D<sub>2</sub> HIGH|
+|D8     |D<sub>3</sub> HIGH|
+|D10    |D<sub>4</sub> HIGH|
+|D20    |D<sub>5</sub> HIGH|
+|D40    |D<sub>6</sub> HIGH|
+|D80    |D<sub>7</sub> HIGH|
 |Dff    |all data lines HIGH|
 
 ### Testing the address lines
@@ -128,21 +130,21 @@ other address lines as well.
 |Command|Result|
 |:---   |:---  |
 |A0     |All address lines LOW|
-|A1     |A0 HIGH|
-|A2     |A1 HIGH|
-|A4     |A2 HIGH|
-|A8     |A3 HIGH|
-|A10    |A4 HIGH|
-|A20    |A5 HIGH|
-|A40    |A6 HIGH|
-|A80    |A7 HIGH|
-|A100   |A8 HIGH|
-|A200   |A9 HIGH|
-|A400   |A10 HIGH|
-|A800   |A11 HIGH|
-|A1000  |A12 HIGH|
-|A2000  |A13 HIGH|
-|A4000  |A14 HIGH|
+|A1     |A<sub>0</sub> HIGH|
+|A2     |A<sub>1</sub> HIGH|
+|A4     |A<sub>2</sub> HIGH|
+|A8     |A<sub>3</sub> HIGH|
+|A10    |A<sub>4</sub> HIGH|
+|A20    |A<sub>5</sub> HIGH|
+|A40    |A<sub>6</sub> HIGH|
+|A80    |A<sub>7</sub> HIGH|
+|A100   |A<sub>8</sub> HIGH|
+|A200   |A<sub>9</sub> HIGH|
+|A400   |A<sub>10</sub> HIGH|
+|A800   |A<sub>11</sub> HIGH|
+|A1000  |A<sub>12</sub> HIGH|
+|A2000  |A<sub>13</sub> HIGH|
+|A4000  |A<sub>14</sub> HIGH|
 |A7fff  |all address lines HIGH|
 
 ### Testing the control lines
@@ -161,6 +163,6 @@ commands are complete.
 |Ce     | Chip Enable (CE) LOW, others HIGH|
 |Cd     | CE, OE, WE all HIGH|
 |Oe     | Output Enable (OE) LOW, others HIGH|
-|Cd     | CE, OE, WE all HIGH|
+|Od     | CE, OE, WE all HIGH|
 |We     | Write Enable (WE) LOW, others HIGH|
 |Wd     | CE, OE, WE all HIGH|
