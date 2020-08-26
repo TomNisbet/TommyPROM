@@ -15,7 +15,7 @@
 #define ADDR_DATA       A5
 
 // Define masks for the address clk and data lines on PC3..PC5 for direct port control.
-#define ADDR_CLK_HI_MASK    0x80
+#define ADDR_CLK_HI_MASK    0x08
 #define ADDR_CLK_LO_MASK    0x10
 #define ADDR_DATA_MASK      0x20
 
