@@ -57,6 +57,7 @@ uint32_t XModem::ReceiveFile(uint32_t address)
             // Fail the transfer on anything else
             cmdStatus.error("Unexpected character received waiting for next packet.");
             cmdStatus.setValueDec(0, "char", c);
+            cmdStatus.setValueDec(1, "seq", seq);
             return 0;
             break;
         }
@@ -103,7 +104,7 @@ bool XModem::SendFile(uint32_t address, uint32_t fileSize)
         bytesSent += PKTLEN;
     }
 
-    // Signal end of transfer and process the ACK 
+    // Signal end of transfer and process the ACK
     Serial.write(XMDM_EOT);
     rxChar = GetChar(5000);
     if (rxChar != XMDM_ACK)
