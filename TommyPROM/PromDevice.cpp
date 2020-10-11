@@ -66,6 +66,22 @@ bool PromDevice::writeData(byte data[], uint32_t len, uint32_t address)
     return status;
 }
 
+void PromDevice::resetDebugStats() {
+    debugBlockWrites = 0;
+    debugLastAddress = 0;
+    debugLastExpected = 0;
+    debugLastReadback = 0;
+}
+void PromDevice::printDebugStats() {
+    Serial.print(F("debugBlockWrites:  "));
+    Serial.println(debugBlockWrites);
+    Serial.print(F("debugLastAddress:  "));
+    Serial.println(debugLastAddress, HEX);
+    Serial.print(F("debugLastExpected: "));
+    Serial.println(debugLastExpected, HEX);
+    Serial.print(F("debugLastReadback: "));
+    Serial.println(debugLastReadback, HEX);
+}
 
 // BEGIN PRIVATE METHODS
 //
@@ -105,5 +121,3 @@ void PromDevice::writeDataBus(byte data)
      PORTB = (PORTB & 0xfc) | (data >> 6);
      PORTD = (PORTD & 0x03) | (data << 2);
 }
-
-

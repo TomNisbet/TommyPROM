@@ -20,6 +20,8 @@ class PromDevice
     PromDevice(uint32_t size, word blockSize, unsigned maxWriteTime, bool polling);
     bool writeData(byte data[], uint32_t len, uint32_t address);
     byte readData(uint32_t address) { return readByte(address); }
+    void resetDebugStats();
+    void printDebugStats();
 
     virtual void begin() = 0;
     virtual const char * getName() = 0;
@@ -31,6 +33,11 @@ class PromDevice
     unsigned int mBlockSize;        // Block size for page writes, zero if N/A
     unsigned int mMaxWriteTime;     // Max time (in ms) to wait for write cycle to complete
     bool mSupportsDataPoll;         // End of write detected by data polling
+
+    uint32_t debugBlockWrites;      // Number of block write operations
+    uint32_t debugLastAddress;      // Last address with an issue
+    uint8_t  debugLastExpected;     // Last expected readback value
+    uint8_t  debugLastReadback;     // Last actual readback value
 
     void setDataBusMode(uint8_t mode);
     byte readDataBus();
@@ -45,4 +52,3 @@ class PromDevice
 
 
 #endif  // #define INCLUDE_PROM_DEVICE_H
-

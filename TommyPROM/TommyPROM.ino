@@ -19,7 +19,7 @@
 #include "XModem.h"
 
 
-static const char * MY_VERSION = "2.3";
+static const char * MY_VERSION = "2.4";
 
 
 // Global status
@@ -84,6 +84,7 @@ enum {
     CMD_UNLOCK,
     CMD_WRITE,
 
+    CMD_INFO,
     CMD_SCAN,
     CMD_TEST,
     CMD_ZAP,
@@ -142,6 +143,7 @@ byte parseCommand(char c)
         case 'u':  cmd = CMD_UNLOCK;    break;
         case 'w':  cmd = CMD_WRITE;     break;
 
+        case 'i':  cmd = CMD_INFO;      break;
         case 's':  cmd = CMD_SCAN;      break;
         case 't':  cmd = CMD_TEST;      break;
         case 'z':  cmd = CMD_ZAP;       break;
@@ -583,7 +585,6 @@ void zapTest(uint32_t start)
         0x00, 0xff, 0x55, 0xaa, '0',  '1',  '2',  '3'
     };
 
-
     if (!prom.writeData(testData, sizeof(testData), start))
     {
         cmdStatus.error("Write failed");
@@ -676,6 +677,7 @@ void loop()
         break;
 
     case CMD_FILL:
+        prom.resetDebugStats();
         fillBlock(start, end, val);
         break;
 
@@ -685,6 +687,7 @@ void loop()
         break;
 
     case CMD_POKE:
+        prom.resetDebugStats();
         pokeBytes(line+1);
         break;
 
@@ -703,6 +706,7 @@ void loop()
         break;
 
     case CMD_WRITE:
+        prom.resetDebugStats();
         Serial.println(F("Send the image file using XMODEM CRC"));
         numBytes = xmodem.ReceiveFile(start);
         if (numBytes)
@@ -717,6 +721,10 @@ void loop()
         break;
 
 #ifdef ENABLE_DEBUG_COMMANDS
+    case CMD_INFO:
+        prom.printDebugStats();
+        break;
+
     case CMD_SCAN:
         scanBlock(start, end);
         break;
@@ -726,6 +734,7 @@ void loop()
         break;
 
     case CMD_ZAP:
+        prom.resetDebugStats();
         zapTest(start);
         break;
 #endif /* ENABLE_DEBUG_COMMANDS */
@@ -752,6 +761,7 @@ void loop()
         Serial.println(F("  Wsssss          - Write to device from XMODEM CRC file"));
 #ifdef ENABLE_DEBUG_COMMANDS
         Serial.println();
+        Serial.println(F("  I               - Print debug Info"));
         Serial.println(F("  Ssssss eeeee    - Scan addresses (read each 10x)"));
         Serial.println(F("  Tsssss          - Test read address (read 100x)"));
         Serial.println(F("  Zsssss          - Zap (burn) a 32 byte test pattern"));

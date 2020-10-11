@@ -138,9 +138,9 @@ bool PromDevice28C::burnByte(byte value, uint32_t address)
 bool PromDevice28C::burnBlock(byte data[], uint32_t len, uint32_t address)
 {
     bool status = false;
-
     if (len == 0)  return true;
 
+    ++debugBlockWrites;
     disableOutput();
     disableWrite();
     enableChip();
@@ -162,6 +162,9 @@ bool PromDevice28C::burnBlock(byte data[], uint32_t len, uint32_t address)
     status = waitForWriteCycleEnd(data[len - 1]);
     disableChip();
 
+    if (!status) {
+        debugLastAddress = address + len - 1;
+    }
     return status;
 }
 
@@ -174,29 +177,36 @@ bool PromDevice28C::waitForWriteCycleEnd(byte lastValue)
         // value written twice in a row.  The D7 bit will read the inverse of last written
         // data and the D6 bit will toggle on each read while in programming mode.
         //
-        // Note that the max readcount is set to the device's maxReadTime (in uSecs)
-        // divided by two because there are two 1 uSec delays in the loop.  In reality,
-        // the loop could run for longer because this does not account for the time needed
-        // to run all of the loop code.  In actual practice, the loop will terminate much
+        // This loop code takes about 18uSec to execute.  The max readcount is set to the
+        // device's maxReadTime (in uSecs) divided by ten rather than eighteen to ensure
+        // that it runs at least as long as the chip's timeout value, even if some code
+        // optimizations are made later. In actual practice, the loop will terminate much
         // earlier because it will detect the end of the write well before the max time.
+        byte b1=0, b2=0;
         setDataBusMode(INPUT);
         delayMicroseconds(1);
-        for (int readCount = mMaxWriteTime * 1000 / 2; (readCount > 0); readCount--)
+        for (int readCount = 1; (readCount < (mMaxWriteTime * 100)); readCount++)
         {
+            enableChip();
             enableOutput();
             delayMicroseconds(1);
-            byte b1 = readDataBus();
+            b1 = readDataBus();
             disableOutput();
+            disableChip();
+            enableChip();
             enableOutput();
             delayMicroseconds(1);
-            byte b2 = readDataBus();
+            b2 = readDataBus();
             disableOutput();
+            disableChip();
             if ((b1 == b2) && (b1 == lastValue))
             {
                 return true;
             }
         }
 
+        debugLastExpected = lastValue;
+        debugLastReadback = b2;
         return false;
     }
     else
@@ -224,4 +234,3 @@ void PromDevice28C::setByte(byte value, uint32_t address)
 }
 
 #endif // #if defined(PROM_IS_28C)
-
