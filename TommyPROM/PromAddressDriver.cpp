@@ -112,11 +112,11 @@ void PromAddressDriver::setAddressRegister(uint8_t clkPin, byte addr)
         addr <<= 1;
     }
 
-#ifdef SHIFT_REGISTER_IS_595
+    // Toggle the RCLK pin to output the data for 74LS595 shift registers.  This pin is
+    // not connected when using 74LS164 shift registers.
     PORTB &= ~RCLK_595_MASK;
     delayMicroseconds(1);
     PORTB |= RCLK_595_MASK;
     delayMicroseconds(1);
     PORTB &= ~RCLK_595_MASK;
-#endif
 }

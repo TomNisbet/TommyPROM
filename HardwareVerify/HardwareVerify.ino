@@ -396,6 +396,7 @@ static void commandLoop()
     case 's':
         if ((arg = getHex32(cursor, noValue)) != noValue)
         {
+            Serial.println();
             dumpBlock(arg, arg + 63);
         }
         else
