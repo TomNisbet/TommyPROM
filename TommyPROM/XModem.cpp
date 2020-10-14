@@ -1,5 +1,39 @@
+
 #include "XModem.h"
 #include "CmdStatus.h"
+
+// The original TommyPROM code used XModem CRC protocol but some Linux communication
+// programs do not seem to support this correctly.  The default is now to use basic XModem
+// with the 8-bit checksum instead of the 16-bit CRC error checking.  This shouldn't
+// matter because communication errors aren't likely to happen on a 3 foot USB cable like
+// they did over the long distance dail-up lines that XModem was designed for.  Uncomment
+// the XMODEM_CRC_PROTOCOL line below to restore the original XMODEM CRC support.
+
+//#define XMODEM_CRC_PROTOCOL
+
+enum
+{
+    // XMODEM control characters.
+    XMDM_SOH = 0x01,
+    XMDM_EOT = 0x04,
+    XMDM_ACK = 0x06,
+    XMDM_NAK = 0x15,
+    XMDM_CAN = 0x18,
+    XMDM_ESC = 0x1b,
+    XMDM_CRC = 'C',
+#ifdef XMODEM_CRC_PROTOCOL
+    XMDM_TRANSFER_START = XMDM_CRC
+#else
+    XMDM_TRANSFER_START = XMDM_NAK
+#endif
+};
+
+enum
+{
+    // Misc constants for XMODEM.
+    PKTLEN = 128
+};
+
 
 uint32_t XModem::ReceiveFile(uint32_t address)
 {
@@ -9,6 +43,11 @@ uint32_t XModem::ReceiveFile(uint32_t address)
     uint32_t numBytes = 0;
     bool complete = false;
 
+#ifdef XMODEM_CRC_PROTOCOL
+    Serial.println(F("Send the image file using XMODEM CRC"));
+#else
+    Serial.println(F("Send the image file using XMODEM"));
+#endif
     if (!StartReceive())
     {
         cmdStatus.error("Timeout waiting for transfer to start.");
@@ -78,13 +117,22 @@ bool XModem::SendFile(uint32_t address, uint32_t fileSize)
     int rxChar = -1;
     uint32_t bytesSent = 0;
 
+#ifdef XMODEM_CRC_PROTOCOL
+    Serial.println(F("Set the terminal to receive XModem CRC"));
+#else
+    Serial.println(F("Set the terminal to receive XModem"));
+#endif
     while (rxChar == -1)
     {
         rxChar = GetChar();
     }
-    if (rxChar != XMDM_CRC)
+    if (rxChar != XMDM_TRANSFER_START)
     {
-        cmdStatus.error("Expected XModem CRC start char.");
+#ifdef XMODEM_CRC_PROTOCOL
+        cmdStatus.error("Expected XModem CRC start char");
+#else
+        cmdStatus.error("Expected XModem NAK char to start");
+#endif
         cmdStatus.setValueDec(0, "char", rxChar);
         return false;
     }
@@ -145,6 +193,7 @@ int XModem::GetChar(int msWaitTime)
 
 uint16_t XModem::UpdateCrc(uint16_t crc, uint8_t data)
 {
+#ifdef XMODEM_CRC_PROTOCOL
     crc = crc ^ ((uint16_t)data << 8);
     for (int ix = 0; (ix < 8); ix++)
     {
@@ -157,7 +206,9 @@ uint16_t XModem::UpdateCrc(uint16_t crc, uint8_t data)
             crc <<= 1;
         }
     }
-
+#else
+    crc = (crc + data) & 0xff;
+#endif
     return crc;
 }
 
@@ -166,11 +217,11 @@ bool XModem::StartReceive()
 {
     for (int retries = 30; (retries); --retries)
     {
-        // Send the 'C' character, indicating a CRC16 XMODEM transfer, until the sender
-        // of the file responds with something.  The start character will be sent once a
-        // second for a number of seconds.  If nothing is received in that time then
-        // return false to indicate that the transfer did not start.
-        Serial.write('C');
+        // Send the XMDM_TRANSFER_START until the sender of the file responds with
+        // something.  The start character will be sent once a second for a number of
+        // seconds.  If nothing is received in that time then return false to indicate
+        // that the transfer did not start.
+        Serial.write(XMDM_TRANSFER_START);
         for (int ms = 1000; (ms); --ms)
         {
             if (Serial.available() > 0)
@@ -213,15 +264,22 @@ bool XModem::ReceivePacket(uint8_t buffer[], unsigned bufferSize, uint8_t seq, u
         calcCrc = UpdateCrc(calcCrc, buffer[ix]);
     }
 
+#ifdef XMODEM_CRC_PROTOCOL
     rxCrc  = ((uint16_t) GetChar()) << 8;
     rxCrc |= GetChar();
-
+#else
+    rxCrc = GetChar();
+#endif
     if ((calcCrc != rxCrc) || (rxSeq1 != seq) || ((rxSeq1 ^ rxSeq2) != 0xff))
     {
         // Fail if the CRC or sequence number is not correct or if the two received
         // sequence numbers are not the complement of one another.
         cmdStatus.error("Bad CRC or sequence number.");
         cmdStatus.setValueDec(0, "seq", seq);
+        cmdStatus.setValueDec(1, "rxSeq1", rxSeq1);
+        cmdStatus.setValueDec(2, "rxSeq2", rxSeq2);
+        cmdStatus.setValueHex(3, "calcCrc", calcCrc);
+        cmdStatus.setValueHex(4, "rxCrc", rxCrc);
         Serial.write(XMDM_CAN);
         return false;
     }
@@ -254,6 +312,8 @@ void XModem::SendPacket(uint32_t address, uint8_t seq)
         Serial.write(c);
         crc = UpdateCrc(crc, c);
     }
+#ifdef XMODEM_CRC_PROTOCOL
     Serial.write(crc >> 8);
+#endif
     Serial.write(crc & 0xff);
 }

@@ -27,23 +27,6 @@ class XModem
     void Cancel();
 
   private:
-    enum
-    {
-        // XMODEM control characters.
-        XMDM_SOH = 0x01,
-        XMDM_EOT = 0x04,
-        XMDM_ACK = 0x06,
-        XMDM_NAK = 0x15,
-        XMDM_CAN = 0x18,
-        XMDM_ESC = 0x1b,
-        XMDM_CRC = 'C'
-    };
-    enum
-    {
-        // Misc constants for XMODEM.
-        PKTLEN = 128
-    };
-
     PromDevice & promDevice;
     CmdStatus & cmdStatus;
 
@@ -55,4 +38,3 @@ class XModem
 };
 
 #endif // #define INCLUDE_CONFIGURE_H
-

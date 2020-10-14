@@ -23,7 +23,7 @@ class CmdStatus
 private:
     enum
     {
-        MAX_VALUES = 3
+        MAX_VALUES = 5
     };
     enum StatusLevel { SL_NONE, SL_INFO, SL_ERROR };
     enum ValueType { VT_NONE, VT_DEC, VT_HEX };
@@ -41,4 +41,3 @@ private:
 
     void setLongValue(int index, const char * label, long value, ValueType vt);
 };
-

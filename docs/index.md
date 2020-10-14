@@ -70,9 +70,7 @@ program, such as TeraTerm (Windows) or Minicom (Linux).  The Arduino development
 Monitor can also be used as a terminal initially, but it does not support XMODEM
 transfers, so the READ and WRITE commands can't be used.
 
-When using minicom, a few parameters need to be set.  Disable both hardware and software
-flow control.  Also add the '-c' command line option to the two xmodem settings to enable
-CRC mode for the file transfers.
+Disable both hardware and software flow control in the minicom settings for best results.
 
 Set the terminal's serial parameters to 115200 baud, 8 bits, no parity, 1 stop bit to
 match the Arduino.  Press the Enter key.  If the connection is successful, TommyPROM will
@@ -93,10 +91,15 @@ command receives a file from the host and writes (burns) it into the device.  Th
 command needs a start and end address.  The W command determines the end address from the
 received file size.
 
-The READ and WRITE commands both use XMODEM CRC to complete the file transfers.  Many
-terminal programs default to XMODEM Checksum format, so be sure to select XMODEM CRC as
-the format. Once the READ or WRITE command is issued to the programmer, the transfer must
+Once the READ or WRITE command is issued to the programmer, the transfer must
 be started on the host program.
+
+Note that previous versions of TommyPROM used the XMODEM-CRC protocol to complete the file
+transfers for the READ and WRITE commands.  This did not work well with minicom and other
+Linux programs that rely on the sz/rz commands.  Versions 2.5 and later of TommyPROM now
+use basic XModem with the 8-bit checksum.  The XModem-CRC support is still available as a
+compile-time option.  See [issue #19](https://github.com/TomNisbet/TommyPROM/issues/19)
+for details.
 
 The files used for READ and WRITE are simple binary images. This can be created directly
 by [asm85](http://github.com/TomNisbet/asm85) or can be converted from S-record or Intel

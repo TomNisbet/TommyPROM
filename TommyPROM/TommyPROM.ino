@@ -19,7 +19,7 @@
 #include "XModem.h"
 
 
-static const char * MY_VERSION = "2.4";
+static const char * MY_VERSION = "2.5";
 
 
 // Global status
@@ -692,7 +692,6 @@ void loop()
         break;
 
     case CMD_READ:
-        Serial.println(F("Set the terminal to receive XMODEM CRC"));
         if (xmodem.SendFile(start, uint32_t(end) - start + 1))
         {
             cmdStatus.info("Send complete.");
@@ -707,7 +706,6 @@ void loop()
 
     case CMD_WRITE:
         prom.resetDebugStats();
-        Serial.println(F("Send the image file using XMODEM CRC"));
         numBytes = xmodem.ReceiveFile(start);
         if (numBytes)
         {

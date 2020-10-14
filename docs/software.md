@@ -24,9 +24,9 @@ having to build parameterized error messages with multiple print calls.
 
 ## Xmodem class
 
-The Xmodem class implements the communications protocols needed to do XMODEM CRC transmit
-and receive.  It calls directly into the PROM read and write code, to the complete files
-are never stored during the transfer.
+The Xmodem class implements the communications protocols needed to do XMODEM or XMODEM-CRC
+transmit and receive.  It calls directly into the PROM read and write code, so the
+complete files are never stored during the transfer.
 
 ## CLI code and command implementation
 
