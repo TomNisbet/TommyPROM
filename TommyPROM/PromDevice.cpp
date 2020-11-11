@@ -71,6 +71,7 @@ void PromDevice::resetDebugStats() {
     debugLastAddress = 0;
     debugLastExpected = 0;
     debugLastReadback = 0;
+    debugStartChar = 0;
 }
 void PromDevice::printDebugStats() {
     Serial.print(F("debugBlockWrites:  "));
@@ -81,6 +82,8 @@ void PromDevice::printDebugStats() {
     Serial.println(debugLastExpected, HEX);
     Serial.print(F("debugLastReadback: "));
     Serial.println(debugLastReadback, HEX);
+    Serial.print(F("debugStartChar:    "));
+    Serial.println(debugStartChar, HEX);
 }
 
 // BEGIN PRIVATE METHODS

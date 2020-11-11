@@ -9,7 +9,10 @@
 // they did over the long distance dail-up lines that XModem was designed for.  Uncomment
 // the XMODEM_CRC_PROTOCOL line below to restore the original XMODEM CRC support.
 
-//#define XMODEM_CRC_PROTOCOL
+// Update!!! - Teraterm does not seem to like sending files to TommyPROM with plain
+// XModem, so the default is back to CRC.  For Linux, comment out the line below to use
+// checksum.
+#define XMODEM_CRC_PROTOCOL
 
 enum
 {
@@ -126,6 +129,7 @@ bool XModem::SendFile(uint32_t address, uint32_t fileSize)
     {
         rxChar = GetChar();
     }
+    promDevice.debugStartChar = rxChar;
     if (rxChar != XMDM_TRANSFER_START)
     {
 #ifdef XMODEM_CRC_PROTOCOL
@@ -222,6 +226,7 @@ bool XModem::StartReceive()
         // seconds.  If nothing is received in that time then return false to indicate
         // that the transfer did not start.
         Serial.write(XMDM_TRANSFER_START);
+        promDevice.debugStartChar = XMDM_TRANSFER_START;
         for (int ms = 1000; (ms); --ms)
         {
             if (Serial.available() > 0)
@@ -312,6 +317,7 @@ void XModem::SendPacket(uint32_t address, uint8_t seq)
         Serial.write(c);
         crc = UpdateCrc(crc, c);
     }
+
 #ifdef XMODEM_CRC_PROTOCOL
     Serial.write(crc >> 8);
 #endif

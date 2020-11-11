@@ -19,7 +19,7 @@
 #include "XModem.h"
 
 
-static const char * MY_VERSION = "2.5";
+static const char * MY_VERSION = "2.6";
 
 
 // Global status
@@ -399,7 +399,7 @@ void fillBlock(uint32_t start, uint32_t end, byte val)
 
     for (uint32_t addr = start; (addr <= end); addr += BLOCK_SIZE)
     {
-        uint32_t writeLen = ((end - addr + 1) < BLOCK_SIZE) ? (end - addr + 1) : BLOCK_SIZE;
+        uint32_t writeLen = ((end - addr + 1) < BLOCK_SIZE) ? (end - addr + 1) : uint32_t(BLOCK_SIZE);
         if (!prom.writeData(block, writeLen, addr))
         {
             cmdStatus.error("Write failed");

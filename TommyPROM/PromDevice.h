@@ -28,16 +28,17 @@ class PromDevice
     virtual void disableSoftwareWriteProtect() {}
     virtual void enableSoftwareWriteProtect() {}
 
+    uint32_t debugBlockWrites;      // Number of block write operations
+    uint32_t debugLastAddress;      // Last address with an issue
+    uint8_t  debugLastExpected;     // Last expected readback value
+    uint8_t  debugLastReadback;     // Last actual readback value
+    uint8_t  debugStartChar;        // XModem start char sent or received
+
   protected:
     uint32_t mSize;                 // Size of the device, in bytes
     unsigned int mBlockSize;        // Block size for page writes, zero if N/A
     unsigned int mMaxWriteTime;     // Max time (in ms) to wait for write cycle to complete
     bool mSupportsDataPoll;         // End of write detected by data polling
-
-    uint32_t debugBlockWrites;      // Number of block write operations
-    uint32_t debugLastAddress;      // Last address with an issue
-    uint8_t  debugLastExpected;     // Last expected readback value
-    uint8_t  debugLastReadback;     // Last actual readback value
 
     void setDataBusMode(uint8_t mode);
     byte readDataBus();
