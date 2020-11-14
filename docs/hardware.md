@@ -51,6 +51,10 @@ larger chips like the 27C040.
 3. The D13 pin controls the output register on the '595 shift registers.  The code for
 this must be enabled in Configure.h.  This pin is not connected when using the 74LS164.
 
+Also note that the 74LS595 has an output enable pin, labeled as either G or OE
+in the datasheet.  This pin must be connected to ground for both chips or else
+they will not produce any signal on their output lines.
+
 The two shift registers can produce a sixteen bit address, although the 28C256 only needs
 15 addresses. Chips larger than 64K are supported by using the shift registers for A<sub>0</sub>..A<sub>15</sub>
 and connecting Arduino pins D10..D12 to the chip's A<sub>16</sub>..A<sub>18</sub>
