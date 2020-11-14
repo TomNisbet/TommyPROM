@@ -19,7 +19,7 @@
 #include "XModem.h"
 
 
-static const char * MY_VERSION = "2.6";
+static const char * MY_VERSION = "2.7";
 
 
 // Global status

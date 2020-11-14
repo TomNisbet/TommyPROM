@@ -94,22 +94,11 @@ received file size.
 Once the READ or WRITE command is issued to the programmer, the transfer must
 be started on the host program.
 
-~~Note that previous versions of TommyPROM used the XMODEM-CRC protocol to complete the file
+Note that previous versions of TommyPROM used the XMODEM-CRC protocol to complete the file
 transfers for the READ and WRITE commands.  This did not work well with minicom and other
 Linux programs that rely on the sz/rz commands.  Versions 2.5 and later of TommyPROM now
 use basic XModem with the 8-bit checksum.  The XModem-CRC support is still available as a
 compile-time option.  See [issue #19](https://github.com/TomNisbet/TommyPROM/issues/19)
-for details.~~
-
-**UPDATE: XModem troubles continue!**
-
-It seems that TeraTerm does not like to send files to TommyPROM in XModem checksum mode.
-The default transfer has been restored to XModem-CRC mode.  
-* For TeraTerm, be sure to select the XModem-CRC option in the dialog box when receiving files.  
-* For Linux/minicom, comment out the XMODEM_CRC_PROTOCOL in XModem.cpp and use checksum mode.
-
-Given that there are now problems with both minicomm and TeraTerm, it seems likely that the
-actual problem lies somewhere in the TommyPROM code.  See [issue #20](https://github.com/TomNisbet/TommyPROM/issues/20)
 for details.
 
 The files used for READ and WRITE are simple binary images. This can be created directly

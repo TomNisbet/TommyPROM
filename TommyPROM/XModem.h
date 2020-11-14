@@ -33,7 +33,7 @@ class XModem
     int GetChar(int msWaitTime = 3000);
     uint16_t UpdateCrc(uint16_t crc, uint8_t data);
     bool StartReceive();
-    bool ReceivePacket(uint8_t buffer[], unsigned bufferSize, uint8_t seq, uint32_t destAddr);
+    int ReceivePacket(uint8_t buffer[], unsigned bufferSize, uint8_t seq, uint32_t destAddr);
     void SendPacket(uint32_t address, uint8_t seq);
 };
 

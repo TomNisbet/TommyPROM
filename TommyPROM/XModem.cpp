@@ -2,17 +2,13 @@
 #include "XModem.h"
 #include "CmdStatus.h"
 
-// The original TommyPROM code used XModem CRC protocol but some Linux communication
-// programs do not seem to support this correctly.  The default is now to use basic XModem
+// The original TommyPROM code used XModem CRC protocol but this requires parameters to be
+// changed for the host communication program.  The default is now to use basic XModem
 // with the 8-bit checksum instead of the 16-bit CRC error checking.  This shouldn't
 // matter because communication errors aren't likely to happen on a 3 foot USB cable like
 // they did over the long distance dail-up lines that XModem was designed for.  Uncomment
 // the XMODEM_CRC_PROTOCOL line below to restore the original XMODEM CRC support.
-
-// Update!!! - Teraterm does not seem to like sending files to TommyPROM with plain
-// XModem, so the default is back to CRC.  For Linux, comment out the line below to use
-// checksum.
-#define XMODEM_CRC_PROTOCOL
+//#define XMODEM_CRC_PROTOCOL
 
 enum
 {
@@ -37,6 +33,7 @@ enum
     PKTLEN = 128
 };
 
+enum { RX_OK, RX_ERROR, RX_IGNORE };
 
 uint32_t XModem::ReceiveFile(uint32_t address)
 {
@@ -45,6 +42,7 @@ uint32_t XModem::ReceiveFile(uint32_t address)
     uint8_t seq = 1;
     uint32_t numBytes = 0;
     bool complete = false;
+    int status;
 
 #ifdef XMODEM_CRC_PROTOCOL
     Serial.println(F("Send the image file using XMODEM CRC"));
@@ -70,15 +68,16 @@ uint32_t XModem::ReceiveFile(uint32_t address)
         {
             case XMDM_SOH:
             // Start of a packet
-            if (ReceivePacket(buffer, PKTLEN, seq++, address))
-            {
+            status = ReceivePacket(buffer, PKTLEN, seq, address);
+            if (status == RX_OK) {
+                // Good packet - advance the buffer
                 numBytes += PKTLEN;
                 address += PKTLEN;
-            }
-            else
-            {
+                ++seq;
+            } else if (status == RX_ERROR) {
                 return 0;
             }
+            // else ignore the duplicate packet
             break;
 
             case XMDM_EOT:
@@ -129,7 +128,6 @@ bool XModem::SendFile(uint32_t address, uint32_t fileSize)
     {
         rxChar = GetChar();
     }
-    promDevice.debugStartChar = rxChar;
     if (rxChar != XMDM_TRANSFER_START)
     {
 #ifdef XMODEM_CRC_PROTOCOL
@@ -182,13 +180,14 @@ void XModem::Cancel()
 // Private functions
 int XModem::GetChar(int msWaitTime)
 {
+    msWaitTime *= 4;
     do
     {
         if (Serial.available() > 0)
         {
             return Serial.read();
         }
-        delay(1);
+        delayMicroseconds(250);
     } while (msWaitTime--);
 
     return -1;
@@ -219,21 +218,22 @@ uint16_t XModem::UpdateCrc(uint16_t crc, uint8_t data)
 
 bool XModem::StartReceive()
 {
-    for (int retries = 30; (retries); --retries)
+    delay(2000);
+    for (int retries = 20; (retries); --retries)
     {
         // Send the XMDM_TRANSFER_START until the sender of the file responds with
         // something.  The start character will be sent once a second for a number of
         // seconds.  If nothing is received in that time then return false to indicate
         // that the transfer did not start.
+        ++promDevice.debugRxStarts;
         Serial.write(XMDM_TRANSFER_START);
-        promDevice.debugStartChar = XMDM_TRANSFER_START;
-        for (int ms = 1000; (ms); --ms)
+        for (unsigned ms = 30000; (ms); --ms)
         {
+            delayMicroseconds(100);
             if (Serial.available() > 0)
             {
                 return true;
             }
-            delay(1);
         }
     }
 
@@ -241,7 +241,7 @@ bool XModem::StartReceive()
 }
 
 
-bool XModem::ReceivePacket(uint8_t buffer[], unsigned bufferSize, uint8_t seq, uint32_t destAddr)
+int XModem::ReceivePacket(uint8_t buffer[], unsigned bufferSize, uint8_t seq, uint32_t destAddr)
 {
     int c;
     uint8_t rxSeq1, rxSeq2;
@@ -263,7 +263,7 @@ bool XModem::ReceivePacket(uint8_t buffer[], unsigned bufferSize, uint8_t seq, u
             cmdStatus.error("Timeout waiting for next packet char.");
             cmdStatus.setValueDec(0, "seq", seq);
             Serial.write(XMDM_CAN);
-            return false;
+            return RX_ERROR;
         }
         buffer[ix] = (uint8_t) c;
         calcCrc = UpdateCrc(calcCrc, buffer[ix]);
@@ -275,7 +275,52 @@ bool XModem::ReceivePacket(uint8_t buffer[], unsigned bufferSize, uint8_t seq, u
 #else
     rxCrc = GetChar();
 #endif
-    if ((calcCrc != rxCrc) || (rxSeq1 != seq) || ((rxSeq1 ^ rxSeq2) != 0xff))
+
+    // At this point in the code, there should not be anything in the receive buffer
+    // because the sender has just sent a complete packet and is waiting on a response. If
+    // the XModem transfer is not started quickly on the host side, TeraTerm seems to
+    // buffer the NAK character that starts the transfer and use it as an indication that
+    // the first packet should be sent again.  That can cause the Arduino's 64 byte buffer
+    // to overflow and gets the transfer out of sync.  The normal processing will detect
+    // the first packet and will process it correctly, but the partial packet in the
+    // buffer will cause the processing of the next packet to fail.
+    delay(10);
+    if (Serial.available()) {
+        ++promDevice.debugRxSyncErrors;
+        if (seq == 1) {
+            // If any characters are in the buffer after the first packet, quietly eat
+            // them to get back on a packet boundary and send a NAK to cause a retransmit
+            // of the packet.
+            while (Serial.available() > 0) {
+                delay(1);
+                Serial.read();
+                ++promDevice.debugExtraChars;
+            }
+            delay(1);
+            Serial.write(XMDM_NAK);
+            return RX_IGNORE;
+        } else {
+            // Sync issues shouldn't happen at any other time so fail the transfer.
+            cmdStatus.error("RX sync error.");
+            cmdStatus.setValueDec(0, "seq", seq);
+            cmdStatus.setValueDec(1, "rxSeq1", rxSeq1);
+            cmdStatus.setValueDec(2, "rxSeq2", rxSeq2);
+            cmdStatus.setValueHex(3, "calcCrc", calcCrc);
+            cmdStatus.setValueHex(4, "rxCrc", rxCrc);
+            Serial.write(XMDM_CAN);
+            return RX_ERROR;
+        }
+    }
+
+    if ((calcCrc == rxCrc) && (rxSeq1 == seq - 1) && ((rxSeq1 ^ rxSeq2) == 0xff))
+    {
+        // Resend of previously processed packet.
+        delay(10);
+        ++promDevice.debugRxDuplicates;
+        Serial.write(XMDM_ACK);
+        return RX_IGNORE;
+    }
+    else if ((calcCrc != rxCrc) || (rxSeq1 != seq) || ((rxSeq1 ^ rxSeq2) != 0xff))
     {
         // Fail if the CRC or sequence number is not correct or if the two received
         // sequence numbers are not the complement of one another.
@@ -286,7 +331,7 @@ bool XModem::ReceivePacket(uint8_t buffer[], unsigned bufferSize, uint8_t seq, u
         cmdStatus.setValueHex(3, "calcCrc", calcCrc);
         cmdStatus.setValueHex(4, "rxCrc", rxCrc);
         Serial.write(XMDM_CAN);
-        return false;
+        return RX_ERROR;
     }
     else
     {
@@ -295,12 +340,12 @@ bool XModem::ReceivePacket(uint8_t buffer[], unsigned bufferSize, uint8_t seq, u
         {
             cmdStatus.error("Write failed");
             cmdStatus.setValueHex(0, "address", destAddr);
-            return false;
+            return RX_ERROR;
         }
         Serial.write(XMDM_ACK);
     }
 
-    return true;
+    return RX_OK;
 }
 
 

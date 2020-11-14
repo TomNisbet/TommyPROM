@@ -32,7 +32,10 @@ class PromDevice
     uint32_t debugLastAddress;      // Last address with an issue
     uint8_t  debugLastExpected;     // Last expected readback value
     uint8_t  debugLastReadback;     // Last actual readback value
-    uint8_t  debugStartChar;        // XModem start char sent or received
+    uint32_t debugRxDuplicates;     // XModem received packet duplicates
+    uint32_t debugExtraChars;       // XModem received bytes beyond first packet
+    uint8_t  debugRxStarts;         // XModem start transfer requests
+    uint8_t  debugRxSyncErrors;     // XModem unexpected characters after packet
 
   protected:
     uint32_t mSize;                 // Size of the device, in bytes
