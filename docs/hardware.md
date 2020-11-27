@@ -72,7 +72,7 @@ connected when using the 74LS164.
 Note that the 74LS595s have two additional pins that need to be connected.  
 * An output enable pin, labeled as either G or OE in the datasheet,  must be tied LOW for
 both chips or else they will not produce any signal on their output lines.
-* A reset pin, labeled as RESET or SRCLR must be tied HIGH for both chips or else the
+* A reset pin, labeled as RESET or SRCLR, must be tied HIGH for both chips or else the
 shift registers will be held in a reset state.
 
 ## Ben Eater EEPROM Programmer
