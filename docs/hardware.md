@@ -22,48 +22,58 @@ The basic circuit is as follows:
 * Pins D10..D12 control A16..A18 for chips larger than 64K bytes.
 
 Note that the existing design uses 74LS164 shift registers, but another 8-bit parallel out
-shift register, like the 74LS595, could be used instead with some pin changes.  
-
-When using the 74LS595 instead of the 74LS164, there is an additional output latch that
-needs to be pulsed to put the contents of the shift register on the output lines.  The
-code supports this by uncommenting the _#define SHIFT_REGISTER_IS_595_ line in
-Configure.h.  The D13 line from the Arduino controls the RCLK latch on the '595. The table
-below shows the connections when using either the 74LS164 or the 74LS595 for the address
-shift registers.  USR refers to the Upper Shift Register (A<sub>8</sub>..A<sub>15</sub>)
-and LSR refers to the Lower Shift Register (A<sub>0</sub>..A<sub>7</sub>).
-
-|Arduino        |74LS164      |74LS595|
-|:---:          |:---:        |:---: |
-|A0             |ROM WE      |ROM WE|
-|A1             |ROM CE      |ROM CE|
-|A2             |ROM OE      |ROM OE|
-|A3             |USR CLK     |USR SRCLK|
-|A4             |LSR CLK     |LSR SRCLK|
-|A5<sup>1</sup> |LSR+USR A   |LSR+USR SER|
-|D2..D9         |ROM D<sub>0</sub>..D<sub>7</sub>  |ROM D<sub>0</sub>..D<sub>7</sub>  |
-|D10..D12<sup>2</sup>       |ROM A<sub>16</sub>..A<sub>18</sub>|ROM A<sub>16</sub>..A<sub>18</sub>|
-|D13<sup>3</sup>|--          |LSR+USR RCLK|
-
-Notes:
-1. The data pin on A5 is connected to both the Upper Shift Register (USR) and the Lower Shift Register (LSR).
-2. The upper address lines are not needed for 28C64 and 28C256 chips, but are used for
-larger chips like the 27C040.
-3. The D13 pin controls the output register on the '595 shift registers.  The code for
-this must be enabled in Configure.h.  This pin is not connected when using the 74LS164.
-
-Also note that the 74LS595 has an output enable pin, labeled as either G or OE
-in the datasheet.  This pin must be connected to ground for both chips or else
-they will not produce any signal on their output lines.
+shift register, like the 74LS595, could be used instead with some pin changes.  See the
+[74LS595 Shift Registers](#74ls595-shift-registers) section below for details.
 
 The two shift registers can produce a sixteen bit address, although the 28C256 only needs
-15 addresses. Chips larger than 64K are supported by using the shift registers for A<sub>0</sub>..A<sub>15</sub>
-and connecting Arduino pins D10..D12 to the chip's A<sub>16</sub>..A<sub>18</sub>
+15 addresses. Chips larger than 64K are supported by using the shift registers for
+A<sub>0</sub>..A<sub>15</sub> and connecting Arduino pins D10..D12 to the chip's
+A<sub>16</sub>..A<sub>18</sub>
 
 ![TommyPROM Nano Schematic](images/TommyPROM-nano-sch.png)
 
 **NOTE:**
-The schematic does not show the Vcc and ground pins for the 74LS164 shift registers.
-These must be connected to +5 and ground, respectively.  It is also good practice to place a decoupling capacitor (0.1uF or 0.01uF is good) on the power rails near the Vcc connections.
+The schematic does not show the Vcc and ground pins for the shift registers. These must be
+connected to +5 and ground, respectively.  It is also good practice to place a decoupling
+capacitor (0.1uF or 0.01uF is good) on the power rails near the Vcc connections.
+
+## 74LS595 Shift Registers
+
+When using the 74LS595 instead of the 74LS164, there is an additional output latch that
+is pulsed to put the contents of the shift register on the output lines.  The code
+supports the 164s or the 595s by default.  No code changes are needed to use either
+version of the shift register hardware.
+
+The table below shows the connections when using either the 74LS164 or the 74LS595 for the
+address shift registers.  USR refers to the Upper Shift Register
+(A<sub>8</sub>..A<sub>15</sub>) and LSR refers to the Lower Shift Register
+(A<sub>0</sub>..A<sub>7</sub>).
+
+|Arduino             |74LS164     |74LS595|
+|:---:               |:---:       |:---: |
+|A0                  |ROM WE      |ROM WE|
+|A1                  |ROM CE      |ROM CE|
+|A2                  |ROM OE      |ROM OE|
+|A3                  |USR CLK     |USR SRCLK|
+|A4                  |LSR CLK     |LSR SRCLK|
+|A5<sup>1</sup>      |LSR+USR A   |LSR+USR SER|
+|D2..D9              |ROM D<sub>0</sub>..D<sub>7</sub>  |ROM D<sub>0</sub>..D<sub>7</sub>  |
+|D10..D12<sup>2</sup>|ROM A<sub>16</sub>..A<sub>18</sub>|ROM A<sub>16</sub>..A<sub>18</sub>|
+|D13<sup>3</sup>     |--          |LSR+USR RCLK|
+
+Notes:
+1. The data pin on A5 is connected to both the Upper Shift Register (USR) and the Lower
+Shift Register (LSR).
+2. The upper address lines are not needed for 28C64 and 28C256 chips, but are used for
+larger chips like the 27C040.
+3. The D13 pin controls the output register on the '595 shift registers.  This pin is not
+connected when using the 74LS164.
+
+Note that the 74LS595s have two additional pins that need to be connected.  
+* An output enable pin, labeled as either G or OE in the datasheet,  must be tied LOW for
+both chips or else they will not produce any signal on their output lines.
+* A reset pin, labeled as RESET or SRCLR must be tied HIGH for both chips or else the
+shift registers will be held in a reset state.
 
 ## Ben Eater EEPROM Programmer
 
@@ -72,8 +82,9 @@ Programmer](https://github.com/beneater/eeprom-programmer), note that the design
 similar, but the TommyPROM code will not run on that hardware without some significant
 changes.  If you just need to unlock the Software Data Protection (SDP) on a chip, then
 see the
-[unlock-ben-eater-hardware sketch](https://github.com/TomNisbet/TommyPROM/tree/master/unlock-ben-eater-hardware) for a solution.  That sketch is purpose-built to run on the Ben Eater
-hardware directly and it will not work with the TommyPROM hardware.
+[unlock-ben-eater-hardware sketch](https://github.com/TomNisbet/TommyPROM/tree/master/unlock-ben-eater-hardware)
+for a solution.  That sketch is purpose-built to run on the Ben Eater hardware directly
+and it **will not work** with the TommyPROM hardware.
 
 If you want the functionality of the TommyPROM software on the Ben Eater hardware, the
 easiest path is probably to modify the hardware to match the TommyPROM software rather
@@ -88,7 +99,7 @@ so a random write on boot would be bad.
 * The OE pin is controlled by the Address shift registers.  This doesn't work well with
 the modular architecture of TommyPROM and it definitely would not work with 74LS164s
 because it would toggle the OE pin as new addresses are shifted in.
-* The direct port write software is a bit complicated and is more difficult to change than
+* The direct port write software is a bit complicated and is more difficult to modify than
 just renaming a few pin #defines.  This was done for performance reasons, particularly
 for the SDP timing, but it means that the code is not easy to change.
 
