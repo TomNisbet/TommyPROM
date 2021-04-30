@@ -30,7 +30,7 @@ The two shift registers can produce a sixteen bit address, although the 28C256 o
 A<sub>0</sub>..A<sub>15</sub> and connecting Arduino pins D10..D12 to the chip's
 A<sub>16</sub>..A<sub>18</sub>
 
-![TommyPROM Nano Schematic](images/TommyPROM-nano-sch.png)
+[![TommyPROM Nano Schematic](images/TommyPROM-nano-sch.png)](images/TommyPROM-nano-sch.png)
 
 ## 74LS595 Shift Registers
 
