@@ -32,11 +32,6 @@ A<sub>16</sub>..A<sub>18</sub>
 
 ![TommyPROM Nano Schematic](images/TommyPROM-nano-sch.png)
 
-**NOTE:**
-The schematic does not show the Vcc and ground pins for the shift registers. These must be
-connected to +5 and ground, respectively.  It is also good practice to place a decoupling
-capacitor (0.1uF or 0.01uF is good) on the power rails near the Vcc connections.
-
 ## 74LS595 Shift Registers
 
 When using the 74LS595 instead of the 74LS164, there is an additional output latch that
