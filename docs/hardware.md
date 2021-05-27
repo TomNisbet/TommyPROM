@@ -34,7 +34,8 @@ A<sub>16</sub>..A<sub>18</sub>
 
 ## 74LS595 Shift Registers
 
-When using the 74LS595 instead of the 74LS164, there is an additional output latch that
+When using the [74LS595](images/TommyPROM-595.jpg) instead of the 74LS164, there is
+an additional output latch that
 is pulsed to put the contents of the shift register on the output lines.  The code
 supports the 164s or the 595s by default.  No code changes are needed to use either
 version of the shift register hardware.
