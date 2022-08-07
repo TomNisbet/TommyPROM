@@ -7,7 +7,9 @@ Utility to unlock 28C256 Software Data Protection (SDP) for the
 programmer design.  This hardware is similar to the TommyPROM hardware, but it uses
 different shift register chips and different pin assignments.
 
-To meet the timing requirements of the SDP unlock, this code uses direct port writes
+To meet the 
+[timing requirements of the SDP unlock](https://tomnisbet.github.io/TommyPROM/28C256-notes/), 
+this code uses direct port writes
 to set and read values on the data bus.  It will work with Arduino Uno and Nano hardware,
 but would require changes for other platforms.
 
