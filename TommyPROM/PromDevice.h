@@ -27,6 +27,7 @@ class PromDevice
     virtual const char * getName() = 0;
     virtual void disableSoftwareWriteProtect() {}
     virtual void enableSoftwareWriteProtect() {}
+    virtual bool erase(uint32_t start, uint32_t end) { return false; }
 
     uint32_t debugBlockWrites;      // Number of block write operations
     uint32_t debugLastAddress;      // Last address with an issue

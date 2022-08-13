@@ -19,7 +19,7 @@
 #include "XModem.h"
 
 
-static const char * MY_VERSION = "2.7";
+static const char * MY_VERSION = "2.8";
 
 
 // Global status
@@ -46,6 +46,13 @@ PromDevice27  prom(8 * 1024L, 1000L, 15, 4);  // 2764 with SEEQ intelligent prog
 //PromDevice27  prom(32 * 1024L, 1000L, 25, 3); // 27C256 with SEEQ intelligent programming
 //PromDevice27  prom(2 * 1024L, 50000L, 1, 0);  // 2716 with single 50ms write
 //PromDevice27  prom(64 * 1024L, 100L, 11, 0);  // 27C040 with Atmel rapid programming
+
+#elif defined(PROM_IS_SST39SF)
+// Define a device for anSST39SF Flash with the following parameters:
+//   512K byte device capacity
+//   10ms max write time
+//   Data polling supported
+PromDeviceSST39SF  prom(512 * 1024L, 10, true);
 
 #elif defined(PROM_IS_8755A)
 // Define a device for an Intel 8755A with a fixed size of 2K and no other parameters.
@@ -74,9 +81,10 @@ const char hex[] = "0123456789abcdef";
 enum {
     // CLI Commands
     CMD_INVALID,
+    CMD_BLANK,
     CMD_CHECKSUM,
     CMD_DUMP,
-    CMD_ERASED,
+    CMD_ERASE,
     CMD_FILL,
     CMD_LOCK,
     CMD_POKE,
@@ -133,9 +141,10 @@ byte parseCommand(char c)
 
     switch (c)
     {
+        case 'b':  cmd = CMD_BLANK;     break;
         case 'c':  cmd = CMD_CHECKSUM;  break;
         case 'd':  cmd = CMD_DUMP;      break;
-        case 'e':  cmd = CMD_ERASED;    break;
+        case 'e':  cmd = CMD_ERASE;     break;
         case 'f':  cmd = CMD_FILL;      break;
         case 'l':  cmd = CMD_LOCK;      break;
         case 'p':  cmd = CMD_POKE;      break;
@@ -657,6 +666,10 @@ void loop()
 
     switch (cmd)
     {
+    case CMD_BLANK:
+        erasedBlockCheck(start, end);
+        break;
+
     case CMD_CHECKSUM:
         w = checksumBlock(start, end);
         Serial.print(F("Checksum "));
@@ -672,8 +685,8 @@ void loop()
         dumpBlock(start, end);
         break;
 
-    case CMD_ERASED:
-        erasedBlockCheck(start, end);
+    case CMD_ERASE:
+        prom.erase(start, end);
         break;
 
     case CMD_FILL:
@@ -748,9 +761,10 @@ void loop()
         Serial.println(prom.getName());
         Serial.println();
         Serial.println(F("Valid commands are:"));
+        Serial.println(F("  Bsssss eeeee    - Check to see if device range is Blank/erased (all FF)"));
         Serial.println(F("  Csssss eeeee    - Compute checksum from device"));
         Serial.println(F("  Dsssss eeeee    - Dump bytes from device to terminal"));
-        Serial.println(F("  Esssss eeeee    - Check to see if device range is Erased (all FF)"));
+        Serial.println(F("  Esssss eeeee    - Erase address range on device (needed for some Flash)"));
         Serial.println(F("  Fsssss eeeee dd - Fill block on device with fixed value"));
         Serial.println(F("  L               - Lock (enable) device Software Data Protection"));
         Serial.println(F("  Psssss dd dd... - Poke (write) values to device (up to 32 values)"));
