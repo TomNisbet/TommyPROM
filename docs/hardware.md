@@ -19,10 +19,10 @@ The basic circuit is as follows:
 * Pins D2..D9 are wired to the data lines on the target PROM.
 * Pins A0..A2 are wired to the WE, CE, and OE control lines on the target PROM.
 * Pins A3..A5 control shift registers to produce the address lines.
-* Pins D10..D12 control A16..A18 for chips larger than 64K bytes.
+* Pins D10..D12 control A<sub>16</sub>..A<sub>18</sub> for chips larger than 64K bytes.
 
 Note that the existing design uses 74LS164 shift registers, but another 8-bit parallel out
-shift register, like the 74LS595, could be used instead with some pin changes.  See the
+shift register, like the 74LS595, can be used instead with some pin changes.  See the
 [74LS595 Shift Registers](#74ls595-shift-registers) section below for details.
 
 The two shift registers can produce a sixteen bit address, although the 28C256 only needs
@@ -35,10 +35,9 @@ A<sub>16</sub>..A<sub>18</sub>
 ## 74LS595 Shift Registers
 
 When using the [74LS595](images/TommyPROM-595.jpg) instead of the 74LS164, there is
-an additional output latch that
-is pulsed to put the contents of the shift register on the output lines.  The code
-supports the 164s or the 595s by default.  No code changes are needed to use either
-version of the shift register hardware.
+an additional output latch that is pulsed to put the contents of the shift register on the
+output lines.  The code supports the 164s or the 595s by default.  No code changes are
+needed to use either version of the shift register hardware.
 
 The table below shows the connections when using either the 74LS164 or the 74LS595 for the
 address shift registers.  USR refers to the Upper Shift Register
