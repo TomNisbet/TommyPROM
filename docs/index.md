@@ -14,7 +14,7 @@ Boarduino models.
 The original code was specific to the 28C256 32Kx8 EEPROM, but it has been extended to
 also support SST39SF flash, 27C EPROMs, 29C flash and the Intel 8755A EPROMS.
 
-[![TommyPROM Nano Hardware](images/TommyPROM-nano-700.jpg)](images/TommyPROM-nano.jpg)
+![TommyPROM Nano Hardware](images/TommyPROM-nano-700.jpg)
 
 Features include:
 * Simple hardware design that can be assembled on a breadboard.
