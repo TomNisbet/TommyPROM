@@ -2,7 +2,7 @@
 title: 28C256 and SDP
 description: "Troubleshooting and Programming 28C256 EEPROMs with Software Data Protection (SDP)"
 has_children: false
-nav_order: 5
+nav_order: 60
 ---
 
 # 28C EEPROMs and Software Data Protection (SDP)

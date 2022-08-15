@@ -2,7 +2,7 @@
 title: Troubleshooting
 description: "Troubleshooting TommyPROM hardware"
 has_children: false
-nav_order: 3
+nav_order: 50
 ---
 
 ## Hardware Verifier Tool

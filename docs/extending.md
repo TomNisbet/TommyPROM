@@ -2,7 +2,7 @@
 title: Adding Chip Families
 description: "Extending TommyPROM hardware to support other EEPROM and EPROM chips"
 has_children: false
-nav_order: 5
+nav_order: 70
 ---
 
 # Extending the design to new chip families

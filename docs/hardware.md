@@ -2,7 +2,7 @@
 title: Hardware Design
 description: "TommyPROM Arduino 28C256 programmer hardware design"
 has_children: false
-nav_order: 3
+nav_order: 20
 ---
 
 # Hardware Design
