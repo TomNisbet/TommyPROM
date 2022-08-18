@@ -59,7 +59,7 @@ the chips for a SAP-1 TTL breadboard computer.  The
 [KiCad design files](https://github.com/TomNisbet/TommyPROM/tree/master/schematics) are in
 the project repo.
 
-[![TommyPROM PCB](images/TommyPROM-pcb-500.jpg)](images/TommyPROM-pcb.jpg)
+[![TommyPROM PCB](images/TommyPROM-pcb-with-ui-500.jpg)](images/TommyPROM-pcb.jpg)
 
 ## Compiling
 
