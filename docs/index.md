@@ -54,7 +54,7 @@ The project was inspired by the
 ## PCB Version
 
 Although it was originally designed as a one-off programmer to be used on a breadboard,
-there is not a PCB version for the 28C256 and 28C64 chips.  This was built to reprogram
+there is now a PCB version for the 28C256 and 28C64 chips.  This was built to reprogram
 the chips for a SAP-1 TTL breadboard computer.  The
 [KiCad design files](https://github.com/TomNisbet/TommyPROM/tree/master/schematics) are in
 the project repo.

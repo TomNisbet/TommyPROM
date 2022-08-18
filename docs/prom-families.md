@@ -119,7 +119,7 @@ chips.
 
 **29F Series**
 
-The 29F series flash do not have sectors that must be explicitly erased before writing new
+The 29F series flash have sectors that must be explicitly erased before writing new
 data.  Data is written a byte at a time using a command register to control the
 programming.  TommyPROM does not currently support 29F chips, but it would not be
 difficult to write a driver.  The default 28C driver will read 29F chips.
