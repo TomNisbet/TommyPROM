@@ -116,7 +116,7 @@ is present here for the programming voltage. Because this is designed as a quick
 assembled hardware design, a triple output bench supply was used to provide the 25.5V,
 5.5V and 5V outputs.
 
-![TommyPROM Nano Schematic](images/TommyPROM-8755A-sch.png)
+[![TommyPROM Nano Schematic](images/TommyPROM-8755A-sch.png)](images/TommyPROM-8755A-sch.png)
 
 Eagle-format schematics can be downloaded from the
 [hardware project page](https://github.com/TomNisbet/TommyPROM/tree/master/hardware).

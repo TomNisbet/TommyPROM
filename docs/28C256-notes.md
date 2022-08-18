@@ -55,7 +55,7 @@ were unlocked and burned successfully with the TommyProm code.
 The capture below shows an unlock command sequence where the tBLC is within 80us for each
 byte.
 
-![Unlock Timing](images/Unlock-Timing.png)
+[![Unlock Timing](images/Unlock-Timing.png)](images/Unlock-Timing.png)
 
 # References
 
