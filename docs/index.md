@@ -20,18 +20,18 @@ Features include:
 * Simple hardware design that can be assembled on a breadboard.
 * ROM images transfers using XMODEM - no special host client needed.
 * Support for fast block EEPROM writes - a 32K EEPROM will program in just a few seconds.
-* Optimized code that supports the timing requirements needed to unlock the 28C series Software Protection Algorithm.
+* Optimized code that supports the timing requirements needed to unlock the 28C series [Software Data Protection](82C256-notes) Algorithm.
 * Modular software design to easily support other EEPROM, flash, and EPROM families.
 * Hardware support for 19 address lines, allowing the use of chips as large as 512KB, like the SST39SF040 and 29C040.
 
 ## Design
 
-The 28C hardware and software design can be used with [other 5V PROMS](prom-families) as
-well.  Many 5V chips, including UV EPROMs such as the 2716, 2764, 27C2001 and 27C040, can
-be read, but not written, with the basic hardware. Some pin changes may be needed to get
-the signals to the correct pins on the device.  See the [Extending the design](extending)
-page for details on suggested hardware and software changes needed to support new EPROM,
-flash, and EEPROM families.
+The 28C hardware and software design can be used with other 5V PROMS as well.  Many 5V
+chips, including UV EPROMs such as the 2716, 2764, 27C2001 and 27C040, can be read, but
+not written, with the basic hardware. Some pin changes may be needed to get the signals to
+the correct pins on the device.  See the [Extending the design](extending) page for
+details on suggested hardware and software changes needed to support new
+[EPROM, flash,and EEPROM families](prom-families).
 
 The PROM-specific code is modular and can be easily adapted to support additional devices.
 There are currently drivers for 28C series EEPROMS, SST39SF flash, 27C EPROMs and the
@@ -50,6 +50,16 @@ the software design.
 
 The project was inspired by the
 [MEEPROMMER programmer](https://github.com/mkeller0815/MEEPROMMER).
+
+## PCB Version
+
+Although it was originally designed as a one-off programmer to be used on a breadboard,
+there is not a PCB version for the 28C256 and 28C64 chips.  This was built to reprogram
+the chips for a SAP-1 TTL breadboard computer.  The
+[KiCad design files](https://github.com/TomNisbet/TommyPROM/tree/master/schematics) are in
+the project repo.
+
+[]![TommyPROM PCB](images/TommyPROM-pcb.jpg)](images/TommyPROM-pcb.jpg)
 
 ## Compiling
 

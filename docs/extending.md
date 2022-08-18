@@ -27,9 +27,9 @@ from only 3 Arduino pins. This design, plus manual switching of the program volt
 be very adaptable to EPROMs like the 2716, 2764, 27040, and 272001. The hardware has
 already been used with these chips for read-only operations.
 
-The current design can directly address chips as large as 512K bytes, like the 29C040.
-Use the shift registers for A0..A15 and wire Arduino pins D10..D12 to A16..A18 on the
-target chip.
+The current design can directly address chips as large as 512K bytes, like the 29C040. Use
+the shift registers for A<sub>0</sub>..A<sub>15</sub> and wire Arduino pins D10..D12 to
+A<sub>16</sub>..A<sub>18</sub> on the target chip.
 
 # Software
 

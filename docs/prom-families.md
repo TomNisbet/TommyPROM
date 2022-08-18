@@ -8,7 +8,7 @@ nav_order: 40
 TommyPROM can be used to read and write several different types of PROM chips.  Due to
 differences in the technologies of these chips, some features of TommyPROM may work
 differently or may not be applicable at all.  The standard code can read most types of
-PROM, even if there is no specific softare support for them.
+PROM, even if there is no specific software support for them.
 
 
 # PROM Types
@@ -41,7 +41,7 @@ do multiple writes to the same sector work differently.
 ## OTP ROM - One-time Programmable ROM
 
 One-time Programmable (OTP) ROM is written once, either at the factory or in the field.
-These chips cannot be erased and re-written, but it can be read by TommyPROM.  Interesting
+These chips cannot be erased and re-written, but they can be read by TommyPROM.  Interesting
 trivia - some of the field-programmable OTPs are just EPROMs packaged without the erase
 window.
 
