@@ -14,7 +14,7 @@ Boarduino models.
 The original code was specific to the 28C256 32Kx8 EEPROM, but it has been extended to
 also support SST39SF flash, 27C EPROMs, 29C flash and the Intel 8755A EPROMS.
 
-![TommyPROM Nano Hardware](images/TommyPROM-nano.jpg)
+[![TommyPROM Nano Hardware](images/TommyPROM-nano-700.jpg)](images/TommyPROM-nano.jpg)
 
 Features include:
 * Simple hardware design that can be assembled on a breadboard.
@@ -59,7 +59,7 @@ the chips for a SAP-1 TTL breadboard computer.  The
 [KiCad design files](https://github.com/TomNisbet/TommyPROM/tree/master/schematics) are in
 the project repo.
 
-[![TommyPROM PCB](images/TommyPROM-pcb.jpg)](images/TommyPROM-pcb.jpg)
+[![TommyPROM PCB](images/TommyPROM-pcb-500.jpg)](images/TommyPROM-pcb.jpg)
 
 ## Compiling
 
