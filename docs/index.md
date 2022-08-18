@@ -20,7 +20,7 @@ Features include:
 * Simple hardware design that can be assembled on a breadboard.
 * ROM images transfers using XMODEM - no special host client needed.
 * Support for fast block EEPROM writes - a 32K EEPROM will program in just a few seconds.
-* Optimized code that supports the timing requirements needed to unlock the 28C series [Software Data Protection](82C256-notes) Algorithm.
+* Optimized code that supports the timing requirements needed to unlock the 28C series [Software Data Protection](28C256-notes) Algorithm.
 * Modular software design to easily support other EEPROM, flash, and EPROM families.
 * Hardware support for 19 address lines, allowing the use of chips as large as 512KB, like the SST39SF040 and 29C040.
 
