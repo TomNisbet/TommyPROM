@@ -54,10 +54,8 @@ The project was inspired by the
 ## PCB Version
 
 Although it was originally designed as a one-off programmer to be used on a breadboard,
-there is now a PCB version for the 28C256 and 28C64 chips.  This was built to reprogram
-the chips for a SAP-1 TTL breadboard computer.  The
-[KiCad design files](https://github.com/TomNisbet/TommyPROM/tree/master/schematics) are in
-the project repo.
+there are now some PCB versions as well.  The [PBC](PCB) page has descriptions with links
+to the KiCad schematics and Gerber files.
 
 [![TommyPROM PCB](images/TommyPROM-pcb-with-microcode-500.jpg)](images/TommyPROM-pcb.jpg)
 
@@ -81,6 +79,7 @@ driver to be installed, but it may be necessary to modify the parameters for a s
 chip type.
 
 ## Operation
+
 ![TommyPROM console screenshot](images/tommyprom-console.png)
 
 To use the programmer, connect the Arduino USB to the host computer and run a terminal
@@ -124,6 +123,7 @@ by [asm85](http://github.com/TomNisbet/asm85) or can be converted from S-record 
 HEX using an external utility.
 
 ## Troubleshooting
+
 * Verify that the Arduino type you are using is a supported board or that its I/O port definitions match one of the supported boards.  Some other Arduino boards, like the
 Duemilanove, appear to be compatible but have not been tested. Others, like the Micro,
 have different port mappings and definitely will not work without software changes.
