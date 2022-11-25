@@ -49,11 +49,12 @@ window.
 
 ## 28C EEPROM
 
-The 28C series EEPROMs, specifically the 28C256, are the original chips that TommyPROM supported.  As a result, these have the best support, with all of the interactive features of the command line.  In addition the basic read and write operations, there are also
-commands to enable and disable the
-[Software Data protection (SDP)](../28C256-notes) features of 28C chips.  There is also
-support for the fast block write mode of these chips, allowing a 32KB chip to be
-programmed in just a few seconds.
+The 28C series EEPROMs, specifically the 28C256, are the original chips that TommyPROM
+supported.  As a result, these have the best support, with all of the interactive features
+of the command line.  In addition the basic read and write operations, there are also
+commands to enable and disable the [Software Data protection (SDP)](../28C256-notes)
+features of 28C chips.  There is also support for the fast block write mode of these
+chips, allowing a 32KB chip to be programmed in just a few seconds.
 
 ## 27C EPROM
 

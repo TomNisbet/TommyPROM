@@ -1,5 +1,5 @@
 ---
-title: PCB
+title: Printed Circuit Board
 description: "TommyPROM Arduino 28C256 programmer PCB"
 has_children: false
 nav_order: 35
@@ -12,10 +12,10 @@ there are now some PCB versions.
 
 ## 28C256 PCB
 
-I built a PCB version for the 28C256 and 28C64 chips because so many burns of these were
-needed for a SAP-1 TTL breadboard computer.  The PCB version with the ZIF socket was much
-easier to work with, compared to prying the chips out of a breadboard without disturbing
-any of the wires.
+A PCB version for the 28C256 and 28C64 chips was built to support a SAP-1 TTL breadboard
+computer.  This project required a lot of burns for its  microcode and the PCB version
+with the ZIF socket was much quicker than prying the chips out of a breadboard without
+disturbing any of the wires.
 
 The [KiCad design files](https://github.com/TomNisbet/TommyPROM/tree/master/schematics)
 are in the project repo.
@@ -28,8 +28,22 @@ A new PCB is in progress for 32-pin EEPROM and Flash chips.  This design uses a 
 headers that allow any of the signals to the target chip to be re-routed.  The default
 configuration, with just jumper shunts installed, is wired for the SST39SF0x0 chips.
 
-Many other chips, particularly if they follow JEDEC standards, can be supported be adding
-just a few jumpers.
+Many other chips, particularly if they follow JEDEC standards, can be supported by
+removing shunts and adding just a few jumper wires.
 
-Chips with few pins can also be supported.  There are power pins in place to support
+Chips with fewer pins can also be supported.  There are power pins in place to support
 28-pin and 24-pin chips with a shunt to the correct VCC pin.
+
+Power inputs and a switch are provided to support older flash and EEPROM chips that need
+higher programming voltages.  Many of these chips just need a higher voltage, like 12V,
+applied to the VPP pin continuously during the programing and verification cycle.  In
+normal operation, the 5V VCC signal is also applied to the VPP pin.  The board has VPP
+inputs for two voltages.  Applying 12V to __VPP In High__ and 5V to __VPP In Low__ lets
+the VPP output be switched between these two voltages using a manual slide switch for
+programming.
+
+For chips that require a high voltage VPP pulse during programming, some external
+switching circuitry will be needed to allow the Arduino to control the VPP voltage.  There
+is a header connected to the unused D13 pin that can support this.  See the
+[Intel 8755 version of the hardware](hardware/#intel-8755a-hardware-version) for an
+example of voltage switching by TommyPROM.

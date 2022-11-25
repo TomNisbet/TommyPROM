@@ -66,10 +66,10 @@ files as well. The default code programs 28C series chips using Arduino Nano har
 use this version, just compile and upload it to the Arduino.
 
 **Note well** that this code has been optimized for the Aduino UNO and Nano hardware so
-that it can run quickly enough to meet 28C series chip timing requirements for SDP
-unlocking.  To use different Arduino hardware, like the Micro, the board-specific code in
-PromDevice.cpp and PromAddressDriver.cpp must be change to match the port mappings between
-the ATmega chip and the Arduino I/O pins.
+*that it can run quickly enough to meet 28C series chip timing requirements for SDP
+*unlocking.  To use different Arduino hardware, like the Micro, the board-specific code in
+*PromDevice.cpp and PromAddressDriver.cpp must be changed to match the port mappings
+*between the ATmega chip and the Arduino I/O pins.
 
 Because the Arduino has limited code and RAM space available, only one PROM driver is
 compiled in at a time.  To change drivers, uncomment the desired PROM_IS_xx line in
