@@ -54,7 +54,7 @@ The project was inspired by the
 ## PCB Version
 
 Although it was originally designed as a one-off programmer to be used on a breadboard,
-there are now some PCB versions as well.  The [PBC](PCB) page has descriptions with links
+there are now some PCB versions as well.  The [PCB](pcb) page has descriptions with links
 to the KiCad schematics and Gerber files.
 
 [![TommyPROM PCB](images/TommyPROM-pcb-with-microcode-500.jpg)](images/TommyPROM-pcb.jpg)
