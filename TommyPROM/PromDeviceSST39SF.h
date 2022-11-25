@@ -21,8 +21,6 @@ class PromDeviceSST39SF : public PromDevice
     PromDeviceSST39SF(uint32_t size, word unsigned maxWriteTime, bool polling);
     void begin();
     const char * getName() { return "SST39SF series NOR Flash"; }
-    void disableSoftwareWriteProtect();
-    void enableSoftwareWriteProtect();
     bool erase(uint32_t start, uint32_t end);
 
 

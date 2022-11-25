@@ -45,43 +45,6 @@ void PromDeviceSST39SF::begin()
 }
 
 
-// Write the special six-byte code to turn off Software Data Protection.
-void PromDeviceSST39SF::disableSoftwareWriteProtect()
-{
-    disableOutput();
-    disableWrite();
-    enableChip();
-    setDataBusMode(OUTPUT);
-
-    setByte(0xaa, 0x5555);
-    setByte(0x55, 0x2aaa);
-    setByte(0x80, 0x5555);
-    setByte(0xaa, 0x5555);
-    setByte(0x55, 0x2aaa);
-    setByte(0x20, 0x5555);
-
-    setDataBusMode(INPUT);
-    disableChip();
-}
-
-
-// Write the special three-byte code to turn on Software Data Protection.
-void PromDeviceSST39SF::enableSoftwareWriteProtect()
-{
-    disableOutput();
-    disableWrite();
-    enableChip();
-    setDataBusMode(OUTPUT);
-
-    setByte(0xaa, 0x5555);
-    setByte(0x55, 0x2aaa);
-    setByte(0xa0, 0x5555);
-
-    setDataBusMode(INPUT);
-    disableChip();
-}
-
-
 // Erase all sectors containing the specified address range.
 bool PromDeviceSST39SF::erase(uint32_t start, uint32_t end)
 {
@@ -149,12 +112,10 @@ bool PromDeviceSST39SF::burnByte(byte value, uint32_t address)
     setByte(0x55, 0x2aaa);
     setByte(0xa0, 0x5555);
 
-
     setAddress(address);
     setDataBusMode(OUTPUT);
     writeDataBus(value);
 
-    //enableChip();
     delayMicroseconds(1);
     enableWrite();
     delayMicroseconds(1);
@@ -236,7 +197,6 @@ void PromDeviceSST39SF::eraseSector(uint32_t addr)
 {
     disableOutput();
     disableWrite();
-
     setDataBusMode(OUTPUT);
     enableChip();
     setByte(0xaa, 0x5555);
@@ -245,7 +205,7 @@ void PromDeviceSST39SF::eraseSector(uint32_t addr)
     setByte(0xaa, 0x5555);
     setByte(0x55, 0x2aaa);
     setByte(0x30, addr & 0xfffff000);
-    delay(25);
+    delay(28);
     disableChip();
 }
 
