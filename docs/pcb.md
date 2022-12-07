@@ -38,12 +38,12 @@ Power inputs and a switch are provided to support older flash and EEPROM chips t
 higher programming voltages.  Many of these chips just need a higher voltage, like 12V,
 applied to the VPP pin continuously during the programing and verification cycle.  In
 normal operation, the 5V VCC signal is also applied to the VPP pin.  The board has VPP
-inputs for two voltages.  Applying 12V to __VPP In High__ and 5V to __VPP In Low__ lets
+inputs for two voltages.  Applying 12V to _VPP In High_ and 5V to _VPP In Low_ lets
 the VPP output be switched between these two voltages using a manual slide switch for
 programming.
 
 For chips that require a high voltage VPP pulse during programming, some external
 switching circuitry will be needed to allow the Arduino to control the VPP voltage.  There
 is a header connected to the unused D13 pin that can support this.  See the
-[Intel 8755 version of the hardware](hardware/#intel-8755a-hardware-version) for an
+[Intel 8755 version of the hardware](../hardware/#intel-8755a-hardware-version) for an
 example of voltage switching by TommyPROM.
