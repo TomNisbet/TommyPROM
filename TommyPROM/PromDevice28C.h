@@ -21,8 +21,8 @@ class PromDevice28C : public PromDevice
     PromDevice28C(uint32_t size, word blockSize, unsigned maxWriteTime, bool polling);
     void begin();
     const char * getName() { return "28C series EEPROM"; }
-    void disableSoftwareWriteProtect();
-    void enableSoftwareWriteProtect();
+    ERET disableSoftwareWriteProtect();
+    ERET enableSoftwareWriteProtect();
 
   protected:
     void setAddress(uint32_t address);
@@ -34,4 +34,3 @@ class PromDevice28C : public PromDevice
 };
 
 #endif  // #define INCLUDE_PROM_DEVICE_28C_H
-

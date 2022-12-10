@@ -46,7 +46,7 @@ void PromDeviceSST39SF::begin()
 
 
 // Erase all sectors containing the specified address range.
-bool PromDeviceSST39SF::erase(uint32_t start, uint32_t end)
+ERET PromDeviceSST39SF::erase(uint32_t start, uint32_t end)
 {
     start >>= 12;
     end >>= 12;
@@ -55,7 +55,7 @@ bool PromDeviceSST39SF::erase(uint32_t start, uint32_t end)
         eraseSector(sector << 12);
     }
 
-    return true;
+    return RET_OK;
 }
 
 

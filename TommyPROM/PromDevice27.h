@@ -25,24 +25,35 @@
  * See the constructor definition for an explanation of the parameters that
  * control programming.
  */
+
+enum E27C_PGM {
+    E27C_PGM_WE,  // Dedicated WE or PGM pin that is active LOW
+    E27C_PGM_CE,  // CE is pulsed low to program, CE HIGH for verify
+    E27C_PGM_D13  // Program voltage pulse switched using Arduino D13 pin
+};
+
 class PromDevice27 : public PromDevice
 {
   public:
-    PromDevice27(uint32_t size, unsigned long mPulseWidthUsec, unsigned writeAttempts, unsigned overwriteMultiplier);
+    PromDevice27(uint32_t size, E27C_PGM pgmType, unsigned long pulseWidthUsec,
+                 unsigned writeAttempts, unsigned overwriteMultiplier);
     void begin();
     const char * getName() { return "27 series EPROM"; }
+    ERET erase(uint32_t start, uint32_t end);
 
   protected:
     void setAddress(uint32_t address);
     byte readByte(uint32_t address);
     bool burnByte(byte value, uint32_t address);
 
+    bool burnByteWE(byte value, uint32_t address);
+    bool burnByteCE(byte value, uint32_t address);
     void myDelay(unsigned int us);
 
+    E27C_PGM mPgmType;
     unsigned long mPulseWidthUsec;
     unsigned mWriteAttempts;
     unsigned mOverwriteMultiplier;
 };
 
 #endif  // #define INCLUDE_PROM_DEVICE_27_H
-

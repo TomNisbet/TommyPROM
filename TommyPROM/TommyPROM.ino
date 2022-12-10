@@ -19,7 +19,7 @@
 #include "XModem.h"
 
 
-static const char * MY_VERSION = "3.0";
+static const char * MY_VERSION = "3.1";
 
 
 // Global status
@@ -35,17 +35,20 @@ CmdStatus cmdStatus;
 //   10ms max write time
 //   Data polling supported
 PromDevice28C  prom(32 * 1024L, 64, 10, true);
+//PromDevice28C  prom(8 * 1024L, 0, 10, true);  // 28C64 with no page writes
 
 #elif defined(PROM_IS_27)
 // Define a device for a 2764 EPROM with the following parameters:
 //   8K byte device capacity
+//   PGM pin pulses active LOW
 //   1000us (1ms) write pulse
 //   15 write attempts
 //   4x overwrite pulse
-PromDevice27  prom(8 * 1024L, 1000L, 15, 4);  // 2764 with SEEQ intelligent programming
-//PromDevice27  prom(32 * 1024L, 1000L, 25, 3); // 27C256 with SEEQ intelligent programming
-//PromDevice27  prom(2 * 1024L, 50000L, 1, 0);  // 2716 with single 50ms write
-//PromDevice27  prom(64 * 1024L, 100L, 11, 0);  // 27C040 with Atmel rapid programming
+//PromDevice27  prom(8 * 1024L, E27C_PGM_WE, 1000L, 15, 4);  // 2764 with SEEQ intelligent programming
+//PromDevice27  prom(32 * 1024L, E27C_PGM_WE, 1000L, 25, 3); // 27C256 with SEEQ intelligent programming
+//PromDevice27  prom(2 * 1024L, E27C_PGM_WE, 50000L, 1, 0);  // 2716 with single 50ms write
+//PromDevice27  prom(64 * 1024L, E27C_PGM_WE, 100L, 11, 0);  // 27C040 with Atmel rapid programming
+PromDevice27  prom(32 * 1024L, E27C_PGM_CE, 100L, 25, 0); // 27C257/27E257 with 100uS program pulse on CE
 
 #elif defined(PROM_IS_SST39SF)
 // Define a device for anSST39SF Flash with the following parameters:
@@ -493,7 +496,13 @@ void pokeBytes(char * pCursor)
     cmdStatus.info("Poke successful");
 }
 
-
+void printRetStatus(ERET status)
+{
+    switch (status) {
+    case RET_FAIL:        Serial.println(F("FAILED"));          break;
+    case RET_NOT_SUPPORT: Serial.println(F("NOT SUPPORTED"));   break;
+    }
+}
 
 #ifdef ENABLE_DEBUG_COMMANDS
 /**
@@ -686,7 +695,7 @@ void loop()
         break;
 
     case CMD_ERASE:
-        prom.erase(start, end);
+        printRetStatus(prom.erase(start, end));
         break;
 
     case CMD_FILL:
@@ -695,8 +704,8 @@ void loop()
         break;
 
     case CMD_LOCK:
-        Serial.println(F("Writing the lock code to enable Software Write Protect mode."));
-        prom.enableSoftwareWriteProtect();
+        Serial.print(F("Writing the lock code to enable Software Write Protect mode: "));
+        printRetStatus(prom.enableSoftwareWriteProtect());
         break;
 
     case CMD_POKE:
@@ -713,8 +722,8 @@ void loop()
         break;
 
     case CMD_UNLOCK:
-        Serial.println(F("Writing the unlock code to disable Software Write Protect mode."));
-        prom.disableSoftwareWriteProtect();
+        Serial.print(F("Writing the unlock code to disable Software Write Protect mode: "));
+        printRetStatus(prom.disableSoftwareWriteProtect());
         break;
 
     case CMD_WRITE:

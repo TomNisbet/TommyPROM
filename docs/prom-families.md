@@ -21,11 +21,12 @@ support for programming.
 
 ## EEPROM - Electrically Erasable Programmable Read-only Memory
 
-EEPROMs are the easiest PROMs to use.  They usually can be erased and reprogrammed
+EEPROMs are the easiest PROMs to use.  Modern EEPROMs usually can be erased and reprogrammed
 electrically at the individual byte level.  This makes them appear similar to a slower
 static RAM.  All of the interactive features of TommyPROM work well with EEPROMs.  Due
 to their complexity, EEPROMs typically come in smaller sizes than other technologies.
-The largest EEPROM in the 28C family is 32K bytes.
+The largest EEPROM in the 28C family is 32K bytes.  Some older EEPROMs cannot be reprogrammed at the individual byte level and are instead bulk erased before a new write
+operation.  Programming and erasing for these chips usually requires voltages higher than 5V.
 
 ## Flash ROM
 
@@ -144,3 +145,13 @@ address lines.  The Arduino has enough pins to drive all of these directly, with
 need for shift registers to create address lines.
 
 The 8755 build of TommyPROM also has a circuit to control the 25V programming pulses.
+
+# Verified Chips
+
+|Model     |Manufacturer |Type   |Module |Notes|
+|:---      |:---         |:---   |:---   |:--- |
+|28C256    |Atmel, others|EEPROM |28C    |Fully supported|
+|SST39SF040|Microchip    |Flash  |SST39SF|All SST39SF0x0 supported|
+|27E257    |             |EEPROM |27     |Continual 12V or 14V for program/erase|
+|29C010    |             |Flash  |28C    |Only with 128 byte or less sector size|
+|8755A     |Intel        |EPROM  |8755A  |Requires 25V pulses to program|

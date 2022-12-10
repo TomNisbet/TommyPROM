@@ -21,9 +21,10 @@ static void enableWrite()      { digitalWrite(WE, LOW); }
 static void disableWrite()     { digitalWrite(WE, HIGH);}
 
 
-PromDevice27::PromDevice27(uint32_t size, unsigned long pulseWidthUsec,
+PromDevice27::PromDevice27(uint32_t size, E27C_PGM pgmType, unsigned long pulseWidthUsec,
                            unsigned writeAttempts, unsigned overwriteMultiplier)
     : PromDevice(size, 0, 0, false),
+      mPgmType(pgmType),
       mPulseWidthUsec(pulseWidthUsec),
       mWriteAttempts(writeAttempts),
       mOverwriteMultiplier(overwriteMultiplier)
@@ -82,6 +83,19 @@ byte PromDevice27::readByte(uint32_t address)
 // Burn a byte to the chip and verify that it was written.
 bool PromDevice27::burnByte(byte value, uint32_t address)
 {
+    switch(mPgmType) {
+    case E27C_PGM_WE:  return burnByteWE(value, address);  break;
+    case E27C_PGM_CE:  return burnByteCE(value, address);  break;
+    default: return false;  // PGM_D13 not implemented yet
+    }
+}
+
+
+// Burn a byte to the chip and verify that it was written.
+// This uses a dedicated WE or PGM chip that operates on TTL levels and is active LOW.
+// Overwrite burning is supported.
+bool PromDevice27::burnByteWE(byte value, uint32_t address)
+{
     bool status = false;
     unsigned writeCount = 0;
 
@@ -123,6 +137,91 @@ bool PromDevice27::burnByte(byte value, uint32_t address)
     return status;
 }
 
+
+// Burn a byte to the chip and verify that it was written.
+// This uses an active LOW program pulse on the CE line and a verify operation with CE
+// HIGH.  Overwrite is not supported, but could be added is a chip is found that needs it.
+// Chips that use this mode require a programming voltage on the PGM pin and possibly on
+// other pins as well.
+//
+// VCC may also have a non-standard voltage in program mode.  Be sure to separate the
+// PROM's VCC line from system VCC if a non-standard voltage is used.
+bool PromDevice27::burnByteCE(byte value, uint32_t address)
+{
+    bool status = false;
+    unsigned writeCount = 0;
+
+    byte data = 0;
+    disableOutput();
+    disableWrite();
+    disableChip();
+    setAddress(address);
+
+    while (!status && (writeCount < mWriteAttempts))
+    {
+        setDataBusMode(OUTPUT);
+        writeDataBus(value);
+        delayMicroseconds(2);
+        enableChip();
+        myDelay(mPulseWidthUsec);
+        disableChip();
+        delayMicroseconds(2);
+        ++writeCount;
+
+        setDataBusMode(INPUT);
+        enableOutput();
+        data = readDataBus();
+        disableOutput();
+        status = (readDataBus() == value);
+    }
+
+    return status;
+}
+
+
+ERET PromDevice27::erase(uint32_t start, uint32_t end)
+{
+    if (mPgmType != E27C_PGM_CE)  return RET_NOT_SUPPORT;
+
+    // Erase code for the 27E257 and 27C257.  The Vpp and A9 pins are held at 14V for the
+    // erase and verify cycle.  This erases the entire chip, so the start and end address
+    // parameters are ignored.
+    disableChip();
+    disableOutput();
+    setAddress(0);
+    setDataBusMode(OUTPUT);
+    writeDataBus(0xff);
+    delayMicroseconds(2);
+
+    unsigned writeCount = 0;
+    ERET status = RET_FAIL;
+    while ((status == RET_FAIL) && (writeCount < mWriteAttempts)) {
+        setAddress(0);
+        setDataBusMode(OUTPUT);
+        writeDataBus(0xff);
+        delayMicroseconds(2);
+        enableChip();
+        delay(100);
+        disableChip();
+        delayMicroseconds(2);
+
+        // Read back the data to verify all cells are erased.  Note That this is done
+        // while CE is HIGH.  This is the erase verify mode.
+        setDataBusMode(INPUT);
+        for (uint32_t address = 0; (address < mSize); address++) {
+            setAddress(address);
+            enableOutput();
+            uint8_t b = readDataBus();
+            disableOutput();
+            if (b != 0xff)  break;
+        }
+        status = RET_OK;
+    }
+
+    return status;
+}
+
+
 void PromDevice27::myDelay(unsigned int us)
 {
     if (us > 16000)
@@ -140,4 +239,3 @@ void PromDevice27::myDelay(unsigned int us)
 
 
 #endif // #if defined(PROM_IS_27)
-

@@ -14,6 +14,13 @@
  * Block writes are supported on compatible devices by specifying a blockSize
  * in the constructor.  Use zero for devices that only support byte writes.
  */
+
+enum ERET {
+  RET_OK,
+  RET_FAIL,
+  RET_NOT_SUPPORT
+};
+
 class PromDevice
 {
   public:
@@ -25,9 +32,9 @@ class PromDevice
 
     virtual void begin() = 0;
     virtual const char * getName() = 0;
-    virtual void disableSoftwareWriteProtect() {}
-    virtual void enableSoftwareWriteProtect() {}
-    virtual bool erase(uint32_t start, uint32_t end) { return false; }
+    virtual ERET disableSoftwareWriteProtect() { return RET_NOT_SUPPORT; }
+    virtual ERET enableSoftwareWriteProtect() { return RET_NOT_SUPPORT; }
+    virtual ERET erase(uint32_t start, uint32_t end) { return RET_NOT_SUPPORT; }
 
     uint32_t debugBlockWrites;      // Number of block write operations
     uint32_t debugLastAddress;      // Last address with an issue

@@ -45,7 +45,7 @@ void PromDevice28C::begin()
 
 
 // Write the special six-byte code to turn off Software Data Protection.
-void PromDevice28C::disableSoftwareWriteProtect()
+ERET PromDevice28C::disableSoftwareWriteProtect()
 {
     disableOutput();
     disableWrite();
@@ -61,11 +61,13 @@ void PromDevice28C::disableSoftwareWriteProtect()
 
     setDataBusMode(INPUT);
     disableChip();
+
+    return RET_OK;
 }
 
 
 // Write the special three-byte code to turn on Software Data Protection.
-void PromDevice28C::enableSoftwareWriteProtect()
+ERET PromDevice28C::enableSoftwareWriteProtect()
 {
     disableOutput();
     disableWrite();
@@ -78,6 +80,8 @@ void PromDevice28C::enableSoftwareWriteProtect()
 
     setDataBusMode(INPUT);
     disableChip();
+
+    return RET_OK;
 }
 
 
