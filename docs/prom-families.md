@@ -152,7 +152,7 @@ The 8755 build of TommyPROM also has a circuit to control the 25V programming pu
 |:---      |:---         |:---   |:---   |:--- |
 |AT28C256  |Atmel, others|EEPROM |28C    |Fully supported|
 |SST39SF040|Microchip    |Flash  |SST39SF|All SST39SF0x0 supported|
-|WE27E257  |Winbond      |EEPROM |27     |Continual 12V or 14V for program/erase|
+|WE27C257  |Winbond      |EEPROM |27     |Continual 12V or 14V for program/erase|
 |AT29C010  |Atmel        |Flash  |28C    |Only with 128 byte or less sector size|
 |8755A     |Intel        |EPROM  |8755A  |Requires 25V pulses to program|
 
@@ -178,12 +178,15 @@ writing new data.  The code keeps track of the current sector and will automatic
 an erase operation whenever a write starts to a new sector.  The _Erase_ command is
 supported, but is not needed unless overwriting new data to a single sector.
 
-#### 27E257
+#### 27C257
 
-The Winbond WE27E257 and WE27C257 appear to be identical 32Kx8 EEPROMs.  These have a
-_VPP_ pin that needs a constant 12V during programming. Unlike the newer 28C EEPROMs,
-these chips do not automatically erase before writing to a location.  Instead, the
-entire chip is erased by applying 14V to _VPP_ and _A9_ and then pulsing _CE_.
+The Winbond WE27C257 and WE27E257 appear to be identical 32Kx8 EEPROMs.  The 27C version
+has been tested.
+
+These EEPROMs have a _VPP_ pin that needs a constant 12V during programming. Unlike the
+newer 28C EEPROMs, these chips do not automatically erase before writing to a location.
+Instead, the entire chip is erased by applying 14V to _VPP_ and _A9_ and then pulsing
+_CE_.
 
 Because the chips use a constant high voltage for programming instead of a pulse, an
 external power supply and two diodes can be used to supply either 5V or 12V to the
