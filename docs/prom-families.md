@@ -90,7 +90,7 @@ to that sector.
 
 ## Misc Flash
 
-**29C Series**
+#### 29C Series
 
 The 29C series flash chips are similar to the 28C EEPROMs, except they must erase an
 entire sector before programming new data.  The start of a block write operation causes
@@ -110,7 +110,7 @@ of the sector.  The second write will then erase the data just written and then 
 bytes into the second half of the sector.  To fix this, the code would need to be modified
 to keep 256 bytes of data from two packets before initiating a block write.
 
-**28F Series**
+#### 28F Series
 
 The 28F series flash do not have sectors. The entire chip must be erased before writing
 new data.  Data is written a byte at a time using a command register to control the
@@ -119,7 +119,7 @@ the programming or erase operations**.  TommyPROM does not currently support 28F
 but it would not be difficult to write a driver.  The default 28C driver will read 28F
 chips.
 
-**29F Series**
+#### 29F Series
 
 The 29F series flash have sectors that must be explicitly erased before writing new
 data.  Data is written a byte at a time using a command register to control the
@@ -150,8 +150,55 @@ The 8755 build of TommyPROM also has a circuit to control the 25V programming pu
 
 |Model     |Manufacturer |Type   |Module |Notes|
 |:---      |:---         |:---   |:---   |:--- |
-|28C256    |Atmel, others|EEPROM |28C    |Fully supported|
+|AT28C256  |Atmel, others|EEPROM |28C    |Fully supported|
 |SST39SF040|Microchip    |Flash  |SST39SF|All SST39SF0x0 supported|
-|27E257    |             |EEPROM |27     |Continual 12V or 14V for program/erase|
-|29C010    |             |Flash  |28C    |Only with 128 byte or less sector size|
+|WE27E257  |Winbond      |EEPROM |27     |Continual 12V or 14V for program/erase|
+|AT29C010  |Atmel        |Flash  |28C    |Only with 128 byte or less sector size|
 |8755A     |Intel        |EPROM  |8755A  |Requires 25V pulses to program|
+
+#### 28C256
+
+Tested with chips from several manufacturers including Atmel AT28C256, Xicor X28C256, and
+CSI CAT28C256.  Also works with the smaller 28C64 and 28C16 chips, although some
+parameters may need to be adjusted. Some smaller chips do not support SDP, so the _Lock_
+and _Unlock_ commands have no effect. Check the datasheet to see if block writes are
+supported.  Some 28C16s use a 16 byte block instead of the 64 bytes used on the 28C256.
+It is always safe to just set the block size parameter to zero when declaring the chip to
+disable block writes altogether.
+
+The 28C chips do not need to be explicitly erased.  Each memory cell is automatically
+erased during a write operation, so they are more similar to a slow RAM than to other
+PROMs.
+
+#### SST39SF040
+
+The SST39SF driver supports all chips in this family, so the 040, 020, and 010 chips can
+be all be used with no code change.  These chips use sectors that must be erased before
+writing new data.  The code keeps track of the current sector and will automatically do
+an erase operation whenever a write starts to a new sector.  The _Erase_ command is
+supported, but is not needed unless overwriting new data to a single sector.
+
+#### 27E257
+
+The Winbond WE27E257 and WE27C257 appear to be identical 32Kx8 EEPROMs.  These have a
+_VPP_ pin that needs a constant 12V during programming. Unlike the newer 28C EEPROMs,
+these chips do not automatically erase before writing to a location.  Instead, the
+entire chip is erased by applying 14V to _VPP_ and _A9_ and then pulsing _CE_.
+
+Because the chips use a constant high voltage for programming instead of a pulse, an
+external power supply and two diodes can be used to supply either 5V or 12V to the
+pins for programming and erasing.
+
+Note that the WE27x257 chip are almost a drop-in replacement for the 28C256.  The _WE_,
+_VPP_, and _A14_ pins are the only differences.  For reading, the _VPP_ pin should be
+connected to 5V.
+
+#### 29C010
+
+The 29C0x0 chips are 5V sectored flash chips.  They automatically erase a sector at the
+start of a new write, so they can be used with the default 28C code.
+
+Note that some versions of the 29C040 use a 256 byte sector size.  This will not work
+with the TommyPROM code because the XModem transfer buffer is only 128 bytes.  Code
+changes would be needed to buffer up two packets of data into a single write operation
+for chips with the 256 byte buffer.
