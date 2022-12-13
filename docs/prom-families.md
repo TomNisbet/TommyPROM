@@ -205,3 +205,11 @@ Note that some versions of the 29C040 use a 256 byte sector size.  This will not
 with the TommyPROM code because the XModem transfer buffer is only 128 bytes.  Code
 changes would be needed to buffer up two packets of data into a single write operation
 for chips with the 256 byte buffer.
+
+# Chips to be Tested
+
+|Model     |Manufacturer |Type   |Module |Notes|
+|:---      |:---         |:---   |:---   |:--- |
+|M27C4001  |ST Micro     |EEPROM |       |VCC=6.5V, VPP=12.75V to pgm|
+|SST27SF020|SST          |Flash  |       |12V continuous for pgm/erase|
+|SST28SF040|SST          |Flash  |       |5V with cmds|

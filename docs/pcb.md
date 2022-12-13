@@ -20,7 +20,7 @@ disturbing any of the wires.
 The [KiCad design files](https://github.com/TomNisbet/TommyPROM/tree/master/schematics)
 are in the project repo.
 
-[![TommyPROM PCB](images/TommyPROM-pcb-with-microcode-500.jpg)](images/TommyPROM-pcb.jpg)
+[![TommyPROM PCB](images/TommyPROM-pcb-with-microcode-500.jpg)](../images/TommyPROM-pcb.jpg)
 
 ## TommyPROM32
 
@@ -30,7 +30,7 @@ other chips as well.  It uses a set of headers that allow any of the signals to 
 chip to be re-routed.  The default configuration, with just jumper shunts installed, is
 wired for the SST39SF0x0 chips.
 
-[![TommyPROM PCB](images/TommyPROM32-SST39SF-500.jpg)](images/TommyPROM32-SST39SF.jpg)
+[![TommyPROM PCB](images/TommyPROM32-SST39SF-500.jpg)](../images/TommyPROM32-SST39SF.jpg)
 
 Many other chips, particularly if they follow JEDEC standards, can be supported by
 removing shunts and adding just a few jumper wires.
@@ -40,7 +40,7 @@ Chips with fewer pins can also be supported.  There are power pins in place to s
 28C256 with a power jumper on pin 28, the _WE_ signal moved down to pin 27, and the _A14_
 signal moved from ping 27 to pin 1.
 
-[![TommyPROM PCB](images/TommyPROM32-28C256-500.jpg)](images/TommyPROM32-28C256.jpg)
+[![TommyPROM PCB](images/TommyPROM32-28C256-500.jpg)](../images/TommyPROM32-28C256.jpg)
 
 Power inputs and a switch are provided to support older flash and EEPROM chips that need
 higher programming voltages.  Many of these chips just need a higher voltage, like 12V,
@@ -55,14 +55,14 @@ supply. The _VPP Out_ signal is connected to the chip's VPP on pin 1.  The chip 
 programming mode when the slide switch is set to the _High_ position and is in read mode
 when in the _Low_ position.
 
-[![TommyPROM PCB](images/TommyPROM32-27C257-pgm-500.jpg)](images/TommyPROM32-27C257-pgm.jpg)
+[![TommyPROM PCB](images/TommyPROM32-27C257-pgm-500.jpg)](../images/TommyPROM32-27C257-pgm.jpg)
 
 To erase the WE27C257 chip, the external power supply is providing 14V and the _VPP Out_
 is connected to the chip's _VPP_ and _A9_ pins.  An external breadboard was needed to
 allow the _VPP Out_ signal to be connected to multiple pins.  A new spin of the board is
 planned with multiple _VPP Output_ pins and some general-purpose interconnect pins.
 
-[![TommyPROM PCB](images/TommyPROM32-27C257-erase-500.jpg)](images/TommyPROM32-27C257-erase.jpg)
+[![TommyPROM PCB](images/TommyPROM32-27C257-erase-500.jpg)](../images/TommyPROM32-27C257-erase.jpg)
 
 
 For chips that require a high voltage VPP pulse during programming, some external
