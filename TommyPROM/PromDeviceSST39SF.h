@@ -11,9 +11,6 @@
  *
  * Provides the device-specific interface to read and write data from an
  * SST39SF series parallel NOR Flash using the Arduino.
- *
- * Block writes are supported on compatible devices by specifying a blockSize
- * in the constructor.  Use zero for byte writes.
  */
 class PromDeviceSST39SF : public PromDevice
 {

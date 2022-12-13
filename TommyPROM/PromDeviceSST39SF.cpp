@@ -45,12 +45,12 @@ void PromDeviceSST39SF::begin()
 }
 
 
-// Erase all sectors containing the specified address range.
+// Erase all 4K byte sectors containing the specified address range.
 ERET PromDeviceSST39SF::erase(uint32_t start, uint32_t end)
 {
     start >>= 12;
     end >>= 12;
-    for (uint32_t sector = start; (start <= end); start++)
+    for (uint32_t sector = start; (sector <= end); sector++)
     {
         eraseSector(sector << 12);
     }
@@ -95,7 +95,7 @@ bool PromDeviceSST39SF::burnByte(byte value, uint32_t address)
     bool status = false;
 
     // Erase a sector before writing any new data to it.  Note that multiple
-    // burbByte calls to the same sector will only do an erase on the first call.
+    // burnByte calls to the same sector will only do an erase on the first call.
     // If multiple burn calls will be needed for the same address, it is up to the
     // caller to erase the sector before writing.
     if ((address & 0xfffff000) != currentSector)
@@ -178,10 +178,9 @@ bool PromDeviceSST39SF::waitForWriteCycleEnd(byte lastValue)
 }
 
 
-// Set an address and data value and toggle the write control.  This is used
-// to write control sequences, like the software write protect.  This is not a
-// complete byte write function because it does not set the chip enable or the
-// mode of the data bus.
+// Set an address and data value and toggle the write control.  This is used to write
+// control sequences, like the sector erase.  This is not a complete byte write function
+// because it does not set the chip enable or the mode of the data bus.
 void PromDeviceSST39SF::setByte(byte value, uint32_t address)
 {
     setAddress(address);

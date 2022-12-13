@@ -19,7 +19,7 @@
 #include "XModem.h"
 
 
-static const char * MY_VERSION = "3.1";
+static const char * MY_VERSION = "3.2";
 
 
 // Global status
@@ -53,9 +53,16 @@ PromDevice27  prom(32 * 1024L, E27C_PGM_CE, 100L, 25, 0); // 27C257/27E257 with 
 #elif defined(PROM_IS_SST39SF)
 // Define a device for anSST39SF Flash with the following parameters:
 //   512K byte device capacity
-//   10ms max write time
+//   10us max write time
 //   Data polling supported
 PromDeviceSST39SF  prom(512 * 1024L, 10, true);
+
+#elif defined(PROM_IS_SST28SF)
+// Define a device for anSST28SF Flash with the following parameters:
+//   512K byte device capacity
+//   40us max write time
+//   Data polling supported
+PromDeviceSST28SF  prom(512 * 1024L, 40, true);
 
 #elif defined(PROM_IS_8755A)
 // Define a device for an Intel 8755A with a fixed size of 2K and no other parameters.
@@ -499,6 +506,7 @@ void pokeBytes(char * pCursor)
 void printRetStatus(ERET status)
 {
     switch (status) {
+    case RET_OK:          Serial.println(F("OK"));              break;
     case RET_FAIL:        Serial.println(F("FAILED"));          break;
     case RET_NOT_SUPPORT: Serial.println(F("NOT SUPPORTED"));   break;
     }

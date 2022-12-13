@@ -71,12 +71,13 @@ a version of the programer that supports these chips.
 
 ## Atmel SST39FS Flash
 
-TommyPROM has a driver for Atmel SST39FS flash chips.  This driver replaces the 28C driver at compile time.  See configure.h to enable a different driver.
+TommyPROM has a driver for Atmel SST39FS NOR flash chips.  This driver replaces the 28C
+driver at compile time.  See configure.h to enable a different driver.
 
-The SST39FS chips use fixed 2KB sectors that must be manually erased before a new program
+The SST39FS chips use fixed 4KB sectors that must be manually erased before a new program
 operation, but the code manages this transparently.  Whenever a write is started to a new
 segment, the driver first initiates an erase of that sector. A second write to the same
-sector will not cause an erase, so is is possible to write to a segment multiple times
+sector will not cause an erase, so it is possible to write to a segment multiple times
 with no additional steps as long as the writes are to different parts of the sector.  For
 example, 256 bytes could be written to the start of a sector from one file and then 512
 bytes could be written to the end of the sector from another file.
@@ -87,6 +88,14 @@ a sector boundary is crossed, the new sector is erased and set as the current se
 The SST39FS driver supports a manual erase from the command line using the E command.
 This is only needed if data will be rewritten to the same location after a previous write
 to that sector.
+
+There is also a driver for the SST28SF0x0 SuperFlash chips.  These are an earlier version
+of the 39SF chips, using 256-byte sectors.  The 28SF and 39SF chips are pin compatible,
+but use different command sets for programming and erasing.  For read-only applications,
+they should be identical, although the 28SF are slower.
+
+All programming and erase operations for both the 39SF and 28SF chips require only a
+single 5V power supply.
 
 ## Misc Flash
 
@@ -152,6 +161,7 @@ The 8755 build of TommyPROM also has a circuit to control the 25V programming pu
 |:---      |:---         |:---   |:---   |:--- |
 |AT28C256  |Atmel, others|EEPROM |28C    |Fully supported|
 |SST39SF040|Microchip    |Flash  |SST39SF|All SST39SF0x0 supported|
+|SST28SF040|SST          |Flash  |       |All SST28SF0x0 supported|
 |WE27C257  |Winbond      |EEPROM |27     |Continual 12V or 14V for program/erase|
 |AT29C010  |Atmel        |Flash  |28C    |Only with 128 byte or less sector size|
 |8755A     |Intel        |EPROM  |8755A  |Requires 25V pulses to program|
@@ -177,6 +187,13 @@ be all be used with no code change.  These chips use sectors that must be erased
 writing new data.  The code keeps track of the current sector and will automatically do
 an erase operation whenever a write starts to a new sector.  The _Erase_ command is
 supported, but is not needed unless overwriting new data to a single sector.
+
+#### SST28SF040
+
+This is an earlier version of the SST39SF series chips.  They are pin compatible with the
+39SF series, but use a different command set for programming.  Unlike the 39SF, these
+flash chips support software data protection.  The _Lock_ and _Unlock_ commands can be
+used to enable and disable SDP from the command line.
 
 #### 27C257
 
@@ -212,4 +229,3 @@ for chips with the 256 byte buffer.
 |:---      |:---         |:---   |:---   |:--- |
 |M27C4001  |ST Micro     |EEPROM |       |VCC=6.5V, VPP=12.75V to pgm|
 |SST27SF020|SST          |Flash  |       |12V continuous for pgm/erase|
-|SST28SF040|SST          |Flash  |       |5V with cmds|
