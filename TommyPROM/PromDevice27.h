@@ -36,7 +36,7 @@ class PromDevice27 : public PromDevice
 {
   public:
     PromDevice27(uint32_t size, E27C_PGM pgmType, unsigned long pulseWidthUsec,
-                 unsigned writeAttempts, unsigned overwriteMultiplier);
+                 unsigned writeAttempts, unsigned overwriteMultiplier, bool verify=true);
     void begin();
     const char * getName() { return "27 series EPROM"; }
     ERET erase(uint32_t start, uint32_t end);
@@ -54,6 +54,7 @@ class PromDevice27 : public PromDevice
     unsigned long mPulseWidthUsec;
     unsigned mWriteAttempts;
     unsigned mOverwriteMultiplier;
+    bool     mVerifyByte;
 };
 
 #endif  // #define INCLUDE_PROM_DEVICE_27_H

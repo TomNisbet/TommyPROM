@@ -189,7 +189,7 @@ bool PromDevice28C::waitForWriteCycleEnd(byte lastValue)
         byte b1=0, b2=0;
         setDataBusMode(INPUT);
         delayMicroseconds(1);
-        for (int readCount = 1; (readCount < (mMaxWriteTime * 100)); readCount++)
+        for (unsigned readCount = 1; (readCount < (mMaxWriteTime * 100)); readCount++)
         {
             enableChip();
             enableOutput();

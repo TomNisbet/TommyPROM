@@ -161,7 +161,8 @@ The 8755 build of TommyPROM also has a circuit to control the 25V programming pu
 |:---      |:---         |:---   |:---   |:--- |
 |AT28C256  |Atmel, others|EEPROM |28C    |Fully supported|
 |SST39SF040|Microchip    |Flash  |SST39SF|All SST39SF0x0 supported|
-|SST28SF040|SST          |Flash  |       |All SST28SF0x0 supported|
+|SST28SF040|SST          |Flash  |SST39SF|All SST28SF0x0 supported|
+|SST27SF020|SST          |Flash  |27     |12V continuous for pgm/erase|
 |WE27C257  |Winbond      |EEPROM |27     |Continual 12V or 14V for program/erase|
 |AT29C010  |Atmel        |Flash  |28C    |Only with 128 byte or less sector size|
 |8755A     |Intel        |EPROM  |8755A  |Requires 25V pulses to program|
@@ -194,6 +195,18 @@ This is an earlier version of the SST39SF series chips.  They are pin compatible
 39SF series, but use a different command set for programming.  Unlike the 39SF, these
 flash chips support software data protection.  The _Lock_ and _Unlock_ commands can be
 used to enable and disable SDP from the command line.
+
+#### SST27SF020
+
+The Silicon Storage SST27SF0x0 are programmed similarly to the 27C257 in that a constant
+voltage is applied for program and erase operations.  Unlike the 27C257, these have a
+dedicated WE pin that controls programming and erasing.  Another difference is that they
+do not have a verify operation to read back the programmed data.
+
+These Flash chips have a _VPP_ pin that needs a constant 12V during programming. Unlike
+the newer 28C EEPROMs, these chips do not automatically erase before writing to a
+location. Instead, the entire chip is erased by applying 12V to _VPP_ and _A9_ and then
+pulsing _WE_.
 
 #### 27C257
 
@@ -228,4 +241,3 @@ for chips with the 256 byte buffer.
 |Model     |Manufacturer |Type   |Module |Notes|
 |:---      |:---         |:---   |:---   |:--- |
 |M27C4001  |ST Micro     |EEPROM |       |VCC=6.5V, VPP=12.75V to pgm|
-|SST27SF020|SST          |Flash  |       |12V continuous for pgm/erase|

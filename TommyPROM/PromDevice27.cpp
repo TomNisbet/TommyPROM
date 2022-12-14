@@ -22,12 +22,13 @@ static void disableWrite()     { digitalWrite(WE, HIGH);}
 
 
 PromDevice27::PromDevice27(uint32_t size, E27C_PGM pgmType, unsigned long pulseWidthUsec,
-                           unsigned writeAttempts, unsigned overwriteMultiplier)
+                           unsigned writeAttempts, unsigned overwriteMultiplier, bool verify)
     : PromDevice(size, 0, 0, false),
       mPgmType(pgmType),
       mPulseWidthUsec(pulseWidthUsec),
       mWriteAttempts(writeAttempts),
-      mOverwriteMultiplier(overwriteMultiplier)
+      mOverwriteMultiplier(overwriteMultiplier),
+      mVerifyByte(verify)
 {
 }
 
@@ -99,14 +100,12 @@ bool PromDevice27::burnByteWE(byte value, uint32_t address)
     bool status = false;
     unsigned writeCount = 0;
 
-    byte data = 0;
     disableOutput();
     disableWrite();
     enableChip();
     setAddress(address);
 
-    while (!status && (writeCount < mWriteAttempts))
-    {
+    while (!status && (writeCount < mWriteAttempts)) {
         setDataBusMode(OUTPUT);
         writeDataBus(value);
         delayMicroseconds(1);
@@ -115,15 +114,17 @@ bool PromDevice27::burnByteWE(byte value, uint32_t address)
         disableWrite();
         ++writeCount;
 
-        setDataBusMode(INPUT);
-        enableOutput();
-        data = readDataBus();
-        disableOutput();
-        status = (readDataBus() == value);
+        if (mVerifyByte) {
+			setDataBusMode(INPUT);
+	        enableOutput();
+	        status = readDataBus() == value;
+	        disableOutput();
+		} else {
+            status = true;
+        }
     }
 
-    if (status && (mOverwriteMultiplier > 0))
-    {
+    if (status && (mOverwriteMultiplier > 0)) {
         setDataBusMode(OUTPUT);
         writeDataBus(value);
         delayMicroseconds(1);
@@ -132,8 +133,8 @@ bool PromDevice27::burnByteWE(byte value, uint32_t address)
         disableWrite();
     }
 
+	setDataBusMode(INPUT);
     disableChip();
-
     return status;
 }
 
@@ -151,14 +152,12 @@ bool PromDevice27::burnByteCE(byte value, uint32_t address)
     bool status = false;
     unsigned writeCount = 0;
 
-    byte data = 0;
     disableOutput();
     disableWrite();
     disableChip();
     setAddress(address);
 
-    while (!status && (writeCount < mWriteAttempts))
-    {
+    while (!status && (writeCount < mWriteAttempts)) {
         setDataBusMode(OUTPUT);
         writeDataBus(value);
         delayMicroseconds(2);
@@ -168,24 +167,24 @@ bool PromDevice27::burnByteCE(byte value, uint32_t address)
         delayMicroseconds(2);
         ++writeCount;
 
-        setDataBusMode(INPUT);
-        enableOutput();
-        data = readDataBus();
-        disableOutput();
-        status = (readDataBus() == value);
+        if (mVerifyByte) {
+	        setDataBusMode(INPUT);
+	        enableOutput();
+	        status = readDataBus() == value;
+	        disableOutput();
+		}
     }
 
+	setDataBusMode(INPUT);
+	disableChip();
     return status;
 }
 
 
 ERET PromDevice27::erase(uint32_t start, uint32_t end)
 {
-    if (mPgmType != E27C_PGM_CE)  return RET_NOT_SUPPORT;
+	ERET status = RET_FAIL;
 
-    // Erase code for the 27E257 and 27C257.  The Vpp and A9 pins are held at 14V for the
-    // erase and verify cycle.  This erases the entire chip, so the start and end address
-    // parameters are ignored.
     disableChip();
     disableOutput();
     setAddress(0);
@@ -193,30 +192,46 @@ ERET PromDevice27::erase(uint32_t start, uint32_t end)
     writeDataBus(0xff);
     delayMicroseconds(2);
 
-    unsigned writeCount = 0;
-    ERET status = RET_FAIL;
-    while ((status == RET_FAIL) && (writeCount < mWriteAttempts)) {
-        setAddress(0);
-        setDataBusMode(OUTPUT);
-        writeDataBus(0xff);
-        delayMicroseconds(2);
-        enableChip();
-        delay(100);
-        disableChip();
-        delayMicroseconds(2);
+    if (mPgmType == E27C_PGM_WE) {
+		// Erase code for the SST27C0x0.  The Vpp and A9 pins are held at 12V for the
+		// erase cycle.  This erases the entire chip, so the start and end address
+		// parameters are ignored.  There is no erase verification for this chip.
+		enableChip();
+        delayMicroseconds(1);
+		enableWrite();
+		delayMicroseconds(100);	// Hard coded for SST27F020
+		disableWrite();
+		disableChip();
+		setDataBusMode(INPUT);
+		status = RET_OK;
+    } else {
+		// Erase code for the 27E257 and 27C257.  The Vpp and A9 pins are held at 14V for
+		// the erase and verify cycle.  This erases the entire chip, so the start and end
+		// address parameters are ignored.
+	    unsigned writeCount = 0;
+	    while ((status == RET_FAIL) && (writeCount < mWriteAttempts)) {
+	        setAddress(0);
+	        setDataBusMode(OUTPUT);
+	        writeDataBus(0xff);
+	        delayMicroseconds(2);
+	        enableChip();
+	        delay(100);
+	        disableChip();
+	        delayMicroseconds(2);
 
-        // Read back the data to verify all cells are erased.  Note That this is done
-        // while CE is HIGH.  This is the erase verify mode.
-        setDataBusMode(INPUT);
-        for (uint32_t address = 0; (address < mSize); address++) {
-            setAddress(address);
-            enableOutput();
-            uint8_t b = readDataBus();
-            disableOutput();
-            if (b != 0xff)  break;
-        }
-        status = RET_OK;
-    }
+	        // Read back the data to verify all cells are erased.  Note That this is done
+	        // while CE is HIGH.  This is the erase verify mode.
+	        setDataBusMode(INPUT);
+	        for (uint32_t address = 0; (address < mSize); address++) {
+	            setAddress(address);
+	            enableOutput();
+	            uint8_t b = readDataBus();
+	            disableOutput();
+	            if (b != 0xff)  break;
+	        }
+	        status = RET_OK;
+	    }
+	}
 
     return status;
 }
@@ -224,15 +239,12 @@ ERET PromDevice27::erase(uint32_t start, uint32_t end)
 
 void PromDevice27::myDelay(unsigned int us)
 {
-    if (us > 16000)
-    {
+    if (us > 16000) {
         // The delayMicroseconds code can't do delays longer than 16ms, so use the
         // ms delay code for larger values.  This rounds down to the nearest ms, so
         // it is not possible to delay for 40.5 ms, for example.
         delay(us / 1000);
-    }
-    else
-    {
+    } else {
         delayMicroseconds((unsigned int) us);
     }
 }
