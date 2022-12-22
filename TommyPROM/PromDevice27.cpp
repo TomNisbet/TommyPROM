@@ -93,6 +93,7 @@ bool PromDevice27::burnByte(byte value, uint32_t address)
 
 
 // Burn a byte to the chip and verify that it was written.
+//
 // This uses a dedicated WE or PGM chip that operates on TTL levels and is active LOW.
 // Overwrite burning is supported.
 bool PromDevice27::burnByteWE(byte value, uint32_t address)
@@ -140,10 +141,16 @@ bool PromDevice27::burnByteWE(byte value, uint32_t address)
 
 
 // Burn a byte to the chip and verify that it was written.
+//
 // This uses an active LOW program pulse on the CE line and a verify operation with CE
 // HIGH.  Overwrite is not supported, but could be added is a chip is found that needs it.
-// Chips that use this mode require a programming voltage on the PGM pin and possibly on
-// other pins as well.
+// Chips that use this mode require a programming voltage on the PGM or VPP pin and
+// possibly on other pins as well  The above applies to the W27C257 EEPROM.  The W27C512
+// is a bit more difficult because it does not have a dedicated VPP or PGM pin.  Instead,
+// the programming voltage is applied to OE to put the chip in programming mode and OE is
+// then switched LOW for the verify operation. Because the voltage switch would require
+// additional hardware, this code does not support verify-after-write for the W27C512 chip
+// and will instead just do a single write cycle.
 //
 // VCC may also have a non-standard voltage in program mode.  Be sure to separate the
 // PROM's VCC line from system VCC if a non-standard voltage is used.

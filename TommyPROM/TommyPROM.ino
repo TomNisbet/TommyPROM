@@ -49,7 +49,8 @@ PromDevice28C  prom(32 * 1024L, 64, 10, true);
 //PromDevice27  prom(32 * 1024L, E27C_PGM_WE, 1000L, 25, 3); // 27C256 with SEEQ intelligent programming
 //PromDevice27  prom(2 * 1024L, E27C_PGM_WE, 50000L, 1, 0);  // 2716 with single 50ms write
 //PromDevice27  prom(512 * 1024L, E27C_PGM_WE, 100L, 11, 0); // 27C040 with Atmel rapid programming
-//PromDevice27  prom(32 * 1024L, E27C_PGM_CE, 100L, 25, 0);  // 27C257/27E257 with 100uS program pulse on CE
+//PromDevice27  prom(32 * 1024L, E27C_PGM_CE, 100L, 25, 0);  // W27C257/W27E257 with 100uS program pulse on CE
+//PromDevice27  prom(64 * 1024L, E27C_PGM_CE, 100L, 1, 0, false);  // W27C512 with single 100uS program pulse on CE, no verify
 PromDevice27  prom(256 * 1024L, E27C_PGM_WE, 20L, 1, 0, false); // SST27SF020 with single 20us write, no verify
 
 #elif defined(PROM_IS_SST39SF)

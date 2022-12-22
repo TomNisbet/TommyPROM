@@ -163,7 +163,7 @@ The 8755 build of TommyPROM also has a circuit to control the 25V programming pu
 |SST39SF040|Microchip    |Flash  |SST39SF|All SST39SF0x0 supported|
 |SST28SF040|SST          |Flash  |SST39SF|All SST28SF0x0 supported|
 |SST27SF020|SST          |Flash  |27     |12V continuous for pgm/erase|
-|WE27C257  |Winbond      |EEPROM |27     |Continual 12V or 14V for program/erase|
+|W27C257   |Winbond      |EEPROM |27     |Continual 12V or 14V for program/erase|
 |AT29C010  |Atmel        |Flash  |28C    |Only with 128 byte or less sector size|
 |8755A     |Intel        |EPROM  |8755A  |Requires 25V pulses to program|
 
@@ -208,21 +208,27 @@ the newer 28C EEPROMs, these chips do not automatically erase before writing to 
 location. Instead, the entire chip is erased by applying 12V to _VPP_ and _A9_ and then
 pulsing _WE_.
 
-#### 27C257
+#### W27C257 and W27C512
 
-The Winbond WE27C257 and WE27E257 appear to be identical 32Kx8 EEPROMs.  The 27C version
-has been tested.
+The Winbond W27C257 and W27E257 appear to be identical 32Kx8 EEPROMs.  The 27C version
+has been tested.  The Winbond W27C512 is a 64Kx8 EEPROM with no dedicated _VPP_ pin.
 
-These EEPROMs have a _VPP_ pin that needs a constant 12V during programming. Unlike the
+The 257 EEPROMs have a _VPP_ pin that needs a constant 12V during programming. Unlike the
 newer 28C EEPROMs, these chips do not automatically erase before writing to a location.
 Instead, the entire chip is erased by applying 14V to _VPP_ and _A9_ and then pulsing
 _CE_.
+
+Unlike the 257 chips, the W27C512 does not have a dedicated pin for the programming
+voltage and instead uses the OE pin to place the chip in programming mode.  The verify
+operation requires that the OE pin be switched to _LOW_ and there is no hardware support
+for this, so the current code supports the 512 chip by doing a single write cycle with no
+verify.
 
 Because the chips use a constant high voltage for programming instead of a pulse, an
 external power supply and two diodes can be used to supply either 5V or 12V to the
 pins for programming and erasing.
 
-Note that the WE27x257 chip are almost a drop-in replacement for the 28C256.  The _WE_,
+Note that the W27x257 chip are almost a drop-in replacement for the 28C256.  The _WE_,
 _VPP_, and _A14_ pins are the only differences.  For reading, the _VPP_ pin should be
 connected to 5V.
 
@@ -241,3 +247,4 @@ for chips with the 256 byte buffer.
 |Model     |Manufacturer |Type   |Module |Notes|
 |:---      |:---         |:---   |:---   |:--- |
 |M27C4001  |ST Micro     |EEPROM |       |VCC=6.5V, VPP=12.75V to pgm|
+|W27C512   |Winbond      |EEPROM |27     |Continual 12V or 14V for program/erase,VPP on OE|
