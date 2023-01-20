@@ -1,3 +1,6 @@
 .vscode/
 .DS_Store
 wip/
+*.bak
+*.sch-bak
+*.kicad_pcb-bak
