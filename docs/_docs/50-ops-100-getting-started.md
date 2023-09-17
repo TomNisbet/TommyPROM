@@ -4,7 +4,7 @@ permalink: /docs/getting-started
 exerpt: "Introduction to the operation of TommyPROM"
 ---
 
-![TommyPROM console screenshot](docs/images/tommyprom-console.png)
+![TommyPROM console screenshot](images/tommyprom-console.png)
 
 To use the programmer, connect the Arduino USB to the host computer and run a terminal
 program, such as TeraTerm (Windows) or Minicom (Linux).  The Arduino development Serial
