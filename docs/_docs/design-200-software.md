@@ -1,16 +1,13 @@
 ---
-title: Software Design
-description: "TommyPROM Arduino 28C256 programmer software design"
-has_children: false
-nav_order: 30
+title: "Software Design"
+permalink: /docs/software
+exerpt: "TommyPROM Arduino EEPROM programmer software design"
 ---
-
-# Software Design
 
 The software is designed around several major blocks and classes.  The code has been
 broken out into individual files to make it easy to extend the hardware support to
 additional EPROM and EEPROM families. See the
-[Adding Chip Families](../extending) page for details on suggested hardware and software
+[Adding Chip Families](extending) page for details on suggested hardware and software
 changes needed.
 
 ## CommandStatus class

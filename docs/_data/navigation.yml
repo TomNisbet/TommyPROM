@@ -1,0 +1,30 @@
+# main links
+docs:
+  - title: "Introduction"
+    children:
+      - title: "What is TommyPROM?"
+        url: /
+  - title: "Operation"
+    children:
+      - title: "Troubleshooting"
+        url: /docs/troubleshooting
+  - title: "Design"
+    children:
+      - title: "Hardware"
+        url: /docs/hardware
+      - title: "Software"
+        url: /docs/software
+      - title: "Printed Circuit Board"
+        url: /docs/pcb
+      - title: "Adding Chip Families"
+        url: /docs/extending
+  - title: "References"
+    children:
+      - title: "28C256 and SDP"
+        url: /docs/28C256-notes
+      - title: "PROM Types"
+        url: /docs/prom-families
+  - title: "Links"
+    children:
+      - title: "Code and Schematics"
+        url: "https://github.com/TomNisbet/TommyPROM"

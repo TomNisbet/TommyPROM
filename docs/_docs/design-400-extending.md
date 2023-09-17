@@ -1,11 +1,8 @@
 ---
-title: Adding Chip Families
-description: "Extending TommyPROM hardware to support other EEPROM and EPROM chips"
-has_children: false
-nav_order: 70
+title: "Adding New Chip Families"
+permalink: /docs/extending
+exerpt: "Extending TommyPROM to support new EEPROM, EPROM, and Flash chip families"
 ---
-
-# Extending the design to new chip families
 
 ## Hardware
 

@@ -1,8 +1,7 @@
 ---
-title: Troubleshooting
-description: "Troubleshooting TommyPROM hardware"
-has_children: false
-nav_order: 50
+title: "Troubleshooting a TommyPROM Build"
+permalink: /docs/troubleshooting
+exerpt: "Troubleshooting TommyPROM hardware and software"
 ---
 
 ## Hardware Verifier Tool

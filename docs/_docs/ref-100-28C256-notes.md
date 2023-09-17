@@ -1,11 +1,8 @@
 ---
-title: 28C256 and SDP
-description: "Troubleshooting and Programming 28C256 EEPROMs with Software Data Protection (SDP)"
-has_children: false
-nav_order: 60
+title: "28C EEPROMs and Software Data Protection (SDP)"
+permalink: /docs/28C256-notes
+exerpt: "28C EEPROMs and Software Data Protection (SDP)"
 ---
-
-# 28C EEPROMs and Software Data Protection (SDP)
 
 The 28C series parallel EEPROMS, like the 28C256, support fast block writes and algorithms
 to implement Software Data Protection (SDP).  The SDP feature seems to be a leading cause
@@ -55,7 +52,7 @@ were unlocked and burned successfully with the TommyProm code.
 The capture below shows an unlock command sequence where the tBLC is within 80us for each
 byte.
 
-[![Unlock Timing](images/Unlock-Timing.png)](../images/Unlock-Timing.png)
+[![Unlock Timing](images/Unlock-Timing.png)](images/Unlock-Timing.png)
 
 # References
 

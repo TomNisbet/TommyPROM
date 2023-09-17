@@ -1,8 +1,7 @@
 ---
 title: PROM Types
-description: "PROM types supported by TommyPROM - EPROM, EEPROM, Flash"
-has_children: false
-nav_order: 40
+permalink: /docs/prom-families
+exerpt: "PROM types supported by TommyPROM - EPROM, EEPROM, Flash"
 ---
 
 TommyPROM can be used to read and write several different types of PROM chips.  Due to

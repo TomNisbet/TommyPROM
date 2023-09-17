@@ -1,26 +1,23 @@
 ---
-title: Overview
-description: "TommyPROM Arduino based programmer for 28C256 EEPROMs"
-has_children: false
-nav_order: 10
+title: "TommyPROM - An Arduino-based EEPROM programmer"
+permalink: /
+excerpt: "TommyPROM Arduino based programmer for 28C256 EEPROMs"
 ---
 
-# TommyPROM - An Arduino-based EEPROM programmer
-
-This is a simple EEPROM programmer and reader that can be assembled using an Arduino and a
+TommyPROM is a simple EEPROM programmer and reader that can be assembled using an Arduino and a
 few additional parts.  It has been successfully built using the Arduino UNO, Nano and
 Boarduino models.
 
 The original code was specific to the 28C256 32Kx8 EEPROM, but it has been extended to
 also support SST39SF flash, 27C EPROMs, 29C flash and the Intel 8755A EPROMS.
 
-[![TommyPROM Nano Hardware](images/TommyPROM-nano-700.jpg)](images/TommyPROM-nano.jpg)
+[![TommyPROM Nano Hardware](docs/images/TommyPROM-nano-700.jpg)](docs/images/TommyPROM-nano.jpg)
 
 Features include:
 * Simple hardware design that can be assembled on a breadboard.
 * ROM images transfers using XMODEM - no special host client needed.
 * Support for fast block EEPROM writes - a 32K EEPROM will program in just a few seconds.
-* Optimized code that supports the timing requirements needed to unlock the 28C series [Software Data Protection](28C256-notes) Algorithm.
+* Optimized code that supports the timing requirements needed to unlock the 28C series [Software Data Protection](docs/28C256-notes) Algorithm.
 * Modular software design to easily support other EEPROM, flash, and EPROM families.
 * Hardware support for 19 address lines, allowing the use of chips as large as 512KB, like the SST39SF040 and 29C040.
 
@@ -29,9 +26,9 @@ Features include:
 The 28C hardware and software design can be used with other 5V PROMS as well.  Many 5V
 chips, including UV EPROMs such as the 2716, 2764, 27C2001 and 27C040, can be read, but
 not written, with the basic hardware. Some pin changes may be needed to get the signals to
-the correct pins on the device.  See the [Extending the design](extending) page for
+the correct pins on the device.  See the [Extending the design](docs/extending) page for
 details on suggested hardware and software changes needed to support new
-[EPROM, flash,and EEPROM families](prom-families).
+[EPROM, flash,and EEPROM families](docs/prom-families).
 
 The PROM-specific code is modular and can be easily adapted to support additional devices.
 There are currently drivers for 28C series EEPROMS, SST39SF flash, 27C EPROMs and the
@@ -44,8 +41,8 @@ the XModem buffer in the current code.  Other 29C020s and all 29C040s use a 256 
 sector and cannot be written without code changes to buffer up an entire 256 byte block of
 data before writing.
 
-The [hardware](hardware) page has descriptions of the hardware designs and links to
-schematics.  The [software](software) page has class definitions and more information on
+The [hardware](docs/hardware) page has descriptions of the hardware designs and links to
+schematics.  The [software](docs/software) page has class definitions and more information on
 the software design.
 
 The project was inspired by the
@@ -54,10 +51,10 @@ The project was inspired by the
 ## PCB Version
 
 Although it was originally designed as a one-off programmer to be used on a breadboard,
-there are now some PCB versions as well.  The [PCB](pcb) page has descriptions with links
+there are now some PCB versions as well.  The [PCB](docs/pcb) page has descriptions with links
 to the KiCad schematics and Gerber files.
 
-[![TommyPROM PCB](images/TommyPROM-pcb-with-microcode-500.jpg)](images/TommyPROM-pcb.jpg)
+[![TommyPROM PCB](docs/images/TommyPROM-pcb-with-microcode-500.jpg)](docs/images/TommyPROM-pcb.jpg)
 
 ## Compiling
 
@@ -80,7 +77,7 @@ chip type.
 
 ## Operation
 
-![TommyPROM console screenshot](images/tommyprom-console.png)
+![TommyPROM console screenshot](docs/images/tommyprom-console.png)
 
 To use the programmer, connect the Arduino USB to the host computer and run a terminal
 program, such as TeraTerm (Windows) or Minicom (Linux).  The Arduino development Serial
@@ -131,8 +128,8 @@ have different port mappings and definitely will not work without software chang
 verify that the data and address paths are good.
 * 28C series EEPROMS, like the X28C256, sometimes ship from the factory with Data
 Protection enabled.  Use the UNLOCK command to disable this. See the
-[28C256 Notes](28C256-notes) for more information.
+[28C256 Notes](docs/28C256-notes) for more information.
 * Re-check all hardware connections and verify the the control pins are going to the
 Arduino pins that match the definitions in the code.
 * This repo contains a standalone program called HardwareVerify that allows low-level
-access to the address, data, and control lines through a menu-driven interface.  See the [troubleshooting](troubleshooting) section for more tips.
+access to the address, data, and control lines through a menu-driven interface.  See the [troubleshooting](docs/troubleshooting) section for more tips.

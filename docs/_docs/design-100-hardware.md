@@ -1,11 +1,8 @@
 ---
-title: Hardware Design
-description: "TommyPROM Arduino 28C256 programmer hardware design"
-has_children: false
-nav_order: 20
+title: "Hardware Design"
+permalink: /docs/hardware
+exerpt: "TommyPROM Arduino EEPROM programmer software design"
 ---
-
-# Hardware Design
 
 ## Basic Hardware Version
 
@@ -30,7 +27,7 @@ The two shift registers can produce a sixteen bit address, although the 28C256 o
 A<sub>0</sub>..A<sub>15</sub> and connecting Arduino pins D10..D12 to the chip's
 A<sub>16</sub>..A<sub>18</sub>
 
-[![TommyPROM Nano Schematic](images/TommyPROM-nano-sch.png)](../images/TommyPROM-nano-sch.png)
+[![TommyPROM Nano Schematic](images/TommyPROM-nano-sch.png)](images/TommyPROM-nano-sch.png)
 
 ## 74LS595 Shift Registers
 
@@ -116,7 +113,7 @@ is present here for the programming voltage. Because this is designed as a quick
 assembled hardware design, a triple output bench supply was used to provide the 25.5V,
 5.5V and 5V outputs.
 
-[![TommyPROM Nano Schematic](images/TommyPROM-8755A-sch.png)](../images/TommyPROM-8755A-sch.png)
+[![TommyPROM Nano Schematic](images/TommyPROM-8755A-sch.png)](images/TommyPROM-8755A-sch.png)
 
 Eagle-format schematics can be downloaded from the
 [hardware project page](https://github.com/TomNisbet/TommyPROM/tree/master/hardware).
