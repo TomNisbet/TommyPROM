@@ -6,6 +6,8 @@ docs:
         url: /
   - title: "Operation"
     children:
+      - title: "Getting Started"
+        url: /docs/getting-started
       - title: "Troubleshooting"
         url: /docs/troubleshooting
   - title: "Design"
