@@ -9,7 +9,19 @@ differences in the technologies of these chips, some features of TommyPROM may w
 differently or may not be applicable at all.  The standard code can read most types of
 PROM, even if there is no specific software support for them.
 
-# PromDevice Drivers
+# Verified Chips
+
+|Model     |Manufacturer |Type   |Module |Notes|
+|:---      |:---         |:---   |:---   |:--- |
+|AT28C256  |Atmel, others|EEPROM |28C    |Fully supported|
+|SST39SF040|Microchip    |Flash  |SST39SF|All SST39SF0x0 supported|
+|SST28SF040|SST          |Flash  |SST28SF|All SST28SF0x0 supported|
+|SST27SF020|SST          |Flash  |27     |12V continuous for pgm/erase|
+|W27C257   |Winbond      |EEPROM |27     |Continual 12V or 14V for program/erase|
+|AT29C010  |Atmel        |Flash  |28C    |Only with 128 byte or less sector size|
+|8755A     |Intel        |EPROM  |8755A  |Requires 25V pulses to program|
+
+# PromDevice Modules
 
 ## PromDevice28C
 
@@ -54,7 +66,7 @@ to that sector.
 
 All programming and erase operations for the 39SF chips require only a single 5V power supply.
 
-## PromDeviceSST39SF
+## PromDeviceSST28SF
 
 The SST28SF0x0 SuperFlash chips are an earlier version of the 39SF chips, using 256-byte
 sectors.  The 28SF and 39SF chips are pin compatible, but use different command sets for
@@ -82,17 +94,6 @@ need for shift registers to create address lines.
 
 The 8755 build of TommyPROM also has a circuit to control the 25V programming pulses.
 
-# Verified Chips
-
-|Model     |Manufacturer |Type   |Module |Notes|
-|:---      |:---         |:---   |:---   |:--- |
-|AT28C256  |Atmel, others|EEPROM |28C    |Fully supported|
-|SST39SF040|Microchip    |Flash  |SST39SF|All SST39SF0x0 supported|
-|SST28SF040|SST          |Flash  |SST28SF|All SST28SF0x0 supported|
-|SST27SF020|SST          |Flash  |27     |12V continuous for pgm/erase|
-|W27C257   |Winbond      |EEPROM |27     |Continual 12V or 14V for program/erase|
-|AT29C010  |Atmel        |Flash  |28C    |Only with 128 byte or less sector size|
-|8755A     |Intel        |EPROM  |8755A  |Requires 25V pulses to program|
 
 
 # Misc Flash
