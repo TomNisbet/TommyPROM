@@ -240,12 +240,12 @@ connected to 5V.
 
 |Name     |Code |Notes|
 |:---      |:---         |:---   |
+|AMS - Advanced Memory Systems|AMS |Merged with Intersil|
 |AMD - Advanced Micro Devices |AM  ||
 |Atmel                        |AT  |Aquired by Microchip|
 |CSI - Catalyst Semiconductor |CAT |Purchased by ON Semiconductor|
 |Intel                        |i   ||
-|ST Microelectronics          |M   ||
-|Xicor                        |X   ||
 |SST - Silicon Storage Tech   |ST  |Aquired by Microchip|
+|ST Microelectronics          |M   ||
 |Winbond                      |W   ||
-|AMS - Advanced Memory Systems|AMS |Merged with Intersil|
+|Xicor                        |X   ||
