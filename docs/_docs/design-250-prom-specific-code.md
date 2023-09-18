@@ -1,6 +1,6 @@
 ---
-title: PROM Types
-permalink: /docs/prom-families
+title: Chips Supported
+permalink: /docs/supported-chips
 exerpt: "PROM types supported by TommyPROM - EPROM, EEPROM, Flash"
 ---
 
@@ -9,54 +9,18 @@ differences in the technologies of these chips, some features of TommyPROM may w
 differently or may not be applicable at all.  The standard code can read most types of
 PROM, even if there is no specific software support for them.
 
+# PromDevice Drivers
 
-# PROM Types
-
-## EPROM - Erasable Programmable Read-only Memory
-
-EPROMs can be written once, but must then be erased by exposing them to UV light for
-several minutes.  They are usually easily read by TommyPROM, but there is limited
-support for programming.
-
-## EEPROM - Electrically Erasable Programmable Read-only Memory
-
-EEPROMs are the easiest PROMs to use.  Modern EEPROMs usually can be erased and reprogrammed
-electrically at the individual byte level.  This makes them appear similar to a slower
-static RAM.  All of the interactive features of TommyPROM work well with EEPROMs.  Due
-to their complexity, EEPROMs typically come in smaller sizes than other technologies.
-The largest EEPROM in the 28C family is 32K bytes.  Some older EEPROMs cannot be reprogrammed at the individual byte level and are instead bulk erased before a new write
-operation.  Programming and erasing for these chips usually requires voltages higher than 5V.
-
-## Flash ROM
-
-Flash is similar to EEPROM, in that it can be electrically erased and reprogrammed. Unlike
-EEPROMs, Flash cannot erase single bytes individually.  Instead, the chip is arranged into
-memory blocks called sectors.  The programmer can erase individual sectors or, sometimes,
-the entire chip.  Some chip families require an explicit erase command and others initiate
-an erase at the start of a programming operation.
-
-Most of the features of TommyPROM are supported for Flash, but some operations that would
-do multiple writes to the same sector work differently.
-
-## OTP ROM - One-time Programmable ROM
-
-One-time Programmable (OTP) ROM is written once, either at the factory or in the field.
-These chips cannot be erased and re-written, but they can be read by TommyPROM.  Interesting
-trivia - some of the field-programmable OTPs are just EPROMs packaged without the erase
-window.
-
-# Supported Chip Families
-
-## 28C EEPROM
+## PromDevice28C
 
 The 28C series EEPROMs, specifically the 28C256, are the original chips that TommyPROM
 supported.  As a result, these have the best support, with all of the interactive features
 of the command line.  In addition the basic read and write operations, there are also
-commands to enable and disable the [Software Data protection (SDP)](../28C256-notes)
+commands to enable and disable the [Software Data protection (SDP)](28C256-notes)
 features of 28C chips.  There is also support for the fast block write mode of these
 chips, allowing a 32KB chip to be programmed in just a few seconds.
 
-## 27C EPROM
+## PromDevice27
 
 The 27C EPROMs use a variety of programming algorithms.  Code exists for some of these,
 but very few of the chips have been tested.
@@ -68,7 +32,7 @@ add an external power supply and manually assert the voltage before starting a w
 those with switched voltages, some elements of the 8755 hardware may be leveraged to build
 a version of the programer that supports these chips.
 
-## Atmel SST39SF Flash
+## PromDeviceSST39SF
 
 TommyPROM has a driver for Atmel SST39SF NOR flash chips.  This driver replaces the 28C
 driver at compile time.  See configure.h to enable a different driver.
@@ -88,15 +52,50 @@ The SST39SF driver supports a manual erase from the command line using the E com
 This is only needed if data will be rewritten to the same location after a previous write
 to that sector.
 
-There is also a driver for the SST28SF0x0 SuperFlash chips.  These are an earlier version
-of the 39SF chips, using 256-byte sectors.  The 28SF and 39SF chips are pin compatible,
-but use different command sets for programming and erasing.  For read-only applications,
-they should be identical, although the 28SF are slower.
+All programming and erase operations for the 39SF chips require only a single 5V power supply.
 
-All programming and erase operations for both the 39SF and 28SF chips require only a
-single 5V power supply.
+## PromDeviceSST39SF
 
-## Misc Flash
+The SST28SF0x0 SuperFlash chips are an earlier version of the 39SF chips, using 256-byte
+sectors.  The 28SF and 39SF chips are pin compatible, but use different command sets for
+programming and erasing.  For read-only applications, they should be identical, although
+the 28SF are slower.
+
+All programming and erase operations for the 28SF chips require only a single 5V power supply.
+
+## PromDevice8755
+
+TommyPROM has a driver for Intel 8755 EPROMs.  This driver replaces the 28C driver at
+compile time.  See configure.h to enable a different driver.  This driver will also read
+Intel 8355 OTP EPROMs.  Also note that the TommyPROM hardware for the 8755 is drastically
+different from the other versions.
+
+The Intel 8755 is a peripheral chip designed for 8085 systems.  It is a 40 pin device that
+contains a 2KB EPROM plus two general-purpose I/O ports.  The 8355 is a one-time
+programmable version of the 8755.  The 8755 requires a 25V programming pulse for each byte
+to be written.  
+
+A new hardware build was created to support the 8755 chips.  Because the 8755 has a multiplexed data and address bus, the usual shift registers are not used for addressing.
+The chip only needs 8 connects that are shared for address and data, plus three dedicated
+address lines.  The Arduino has enough pins to drive all of these directly, without the
+need for shift registers to create address lines.
+
+The 8755 build of TommyPROM also has a circuit to control the 25V programming pulses.
+
+# Verified Chips
+
+|Model     |Manufacturer |Type   |Module |Notes|
+|:---      |:---         |:---   |:---   |:--- |
+|AT28C256  |Atmel, others|EEPROM |28C    |Fully supported|
+|SST39SF040|Microchip    |Flash  |SST39SF|All SST39SF0x0 supported|
+|SST28SF040|SST          |Flash  |SST28SF|All SST28SF0x0 supported|
+|SST27SF020|SST          |Flash  |27     |12V continuous for pgm/erase|
+|W27C257   |Winbond      |EEPROM |27     |Continual 12V or 14V for program/erase|
+|AT29C010  |Atmel        |Flash  |28C    |Only with 128 byte or less sector size|
+|8755A     |Intel        |EPROM  |8755A  |Requires 25V pulses to program|
+
+
+# Misc Flash
 
 #### 29C Series
 
@@ -134,27 +133,6 @@ data.  Data is written a byte at a time using a command register to control the
 programming.  TommyPROM does not currently support 29F chips, but it would not be
 difficult to write a driver.  The default 28C driver will read 29F chips.
 
-
-## Intel 8755/8355 EPROM
-
-TommyPROM has a driver for Intel 8755 EPROMs.  This driver replaces the 28C driver at
-compile time.  See configure.h to enable a different driver.  This driver will also read
-Intel 8355 OTP EPROMs.  Also note that the TommyPROM hardware for the 8755 is drastically
-different from the other versions.
-
-The Intel 8755 is a peripheral chip designed for 8085 systems.  It is a 40 pin device that
-contains a 2KB EPROM plus two general-purpose I/O ports.  The 8355 is a one-time
-programmable version of the 8755.  The 8755 requires a 25V programming pulse for each byte
-to be written.  
-
-A new hardware build was created to support the 8755 chips.  Because the 8755 has a multiplexed data and address bus, the usual shift registers are not used for addressing.
-The chip only needs 8 connects that are shared for address and data, plus three dedicated
-address lines.  The Arduino has enough pins to drive all of these directly, without the
-need for shift registers to create address lines.
-
-The 8755 build of TommyPROM also has a circuit to control the 25V programming pulses.
-
-# Chips
 
 #### 28C256
 
@@ -230,3 +208,10 @@ Note that some versions of the 29C040 use a 256 byte sector size.  This will not
 with the TommyPROM code because the XModem transfer buffer is only 128 bytes.  Code
 changes would be needed to buffer up two packets of data into a single write operation
 for chips with the 256 byte buffer.
+
+# Chips to be Tested
+
+|Model     |Manufacturer |Type   |Module |Notes|
+|:---      |:---         |:---   |:---   |:--- |
+|M27C4001  |ST Micro     |EEPROM |       |VCC=6.5V, VPP=12.75V to pgm|
+|W27C512   |Winbond      |EEPROM |27     |Continual 12V or 14V for program/erase,VPP on OE|

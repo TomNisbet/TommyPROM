@@ -16,6 +16,8 @@ docs:
         url: /docs/hardware
       - title: "Software"
         url: /docs/software
+      - title: "PROM-specific Code"
+        url: /docs/prom-specific-code
       - title: "Printed Circuit Board"
         url: /docs/pcb
       - title: "Adding Chip Families"
