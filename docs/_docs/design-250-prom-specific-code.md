@@ -221,6 +221,5 @@ for chips with the 256 byte buffer.
 |M27C4001  |ST Micro     |EEPROM |       |VCC=6.5V, VPP=12.75V to pgm|
 |W27C512   |Winbond      |EEPROM |27     |Continual 12V or 14V for program/erase,VPP on OE|
 |AM28F512  |AMD          |EEPROM |       ||
-|AM28F512  |AMD          |EEPROM |       ||
 |AM29F040  |AMD          |EEPROM |       ||
 |AMS29AF010|             |       |       ||
