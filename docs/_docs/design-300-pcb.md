@@ -61,9 +61,10 @@ planned with multiple _VPP Output_ pins and some general-purpose interconnect pi
 
 [![TommyPROM PCB](images/TommyPROM32-27C257-erase-500.jpg)](images/TommyPROM32-27C257-erase.jpg)
 
-
 For chips that require a high voltage VPP pulse during programming, some external
 switching circuitry will be needed to allow the Arduino to control the VPP voltage.  There
 is a header connected to the unused D13 pin that can support this.  See the
 [Intel 8755 version of the hardware](hardware/#intel-8755a-hardware-version) for an
 example of voltage switching by TommyPROM.
+
+[![TommyPROM PCB](images/TommyPROM32-sch-700.png)](images/TommyPROM32-sch.png)
