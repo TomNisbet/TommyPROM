@@ -14,6 +14,7 @@ PROM, even if there is no specific software support for them.
 |Model     |Manufacturer |Type   |Module |Notes|
 |:---      |:---         |:---   |:---   |:--- |
 |AT28C256  |Atmel, others|EEPROM |28C    |Fully supported|
+|AT28C64   |Atmel, others|EEPROM |28C    |Fully supported|
 |SST39SF040|Microchip    |Flash  |SST39SF|All SST39SF0x0 supported|
 |SST28SF040|SST          |Flash  |SST28SF|All SST28SF0x0 supported|
 |SST27SF020|SST          |Flash  |27     |12V continuous for pgm/erase|
@@ -22,6 +23,12 @@ PROM, even if there is no specific software support for them.
 |8755A     |Intel        |EPROM  |8755A  |Requires 25V pulses to program|
 
 # PromDevice Modules
+
+This PromDevice28C module is enabled by default to program 28C256 EEPROMS. To use a
+different module, make the following edits:
+* In configure.h, comment out the #define PROM_IS_28C line
+* Uncomment one of the other PROM_IS_ lines to compile a different module
+* In TommyPROM.ino, uncomment or add a new PromDevice declaration for the specific chip
 
 ## PromDevice28C
 
@@ -42,14 +49,11 @@ them.  Some need the voltage constantly applied while programming and others use
 voltage pulses for each byte.  For constant voltage chips, it is probably easiest to just
 add an external power supply and manually assert the voltage before starting a write.  For
 those with switched voltages, some elements of the 8755 hardware may be leveraged to build
-a version of the programer that supports these chips.
+a version of the programmer that supports these chips.
 
 ## PromDeviceSST39SF
 
-TommyPROM has a driver for Atmel SST39SF NOR flash chips.  This driver replaces the 28C
-driver at compile time.  See configure.h to enable a different driver.
-
-The SST39SF chips use fixed 4KB sectors that must be manually erased before a new program
+The SST39SF0x0 NOR Flash chips use fixed 4KB sectors that must be manually erased before a new program
 operation, but the code manages this transparently.  Whenever a write is started to a new
 segment, the driver first initiates an erase of that sector. A second write to the same
 sector will not cause an erase, so it is possible to write to a segment multiple times
@@ -216,3 +220,7 @@ for chips with the 256 byte buffer.
 |:---      |:---         |:---   |:---   |:--- |
 |M27C4001  |ST Micro     |EEPROM |       |VCC=6.5V, VPP=12.75V to pgm|
 |W27C512   |Winbond      |EEPROM |27     |Continual 12V or 14V for program/erase,VPP on OE|
+|AM28F512  |AMD          |EEPROM |       ||
+|AM28F512  |AMD          |EEPROM |       ||
+|AM29F040  |AMD          |EEPROM |       ||
+|AMS29AF010|             |       |       ||
