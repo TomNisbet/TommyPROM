@@ -20,6 +20,8 @@ docs:
         url: /docs/pcb
       - title: "Adding Chip Families"
         url: /docs/extending
+      - title: "8755A Hardware"
+        url: /docs/8755A-hardware
   - title: "References"
     children:
       - title: "28C256 and SDP"
