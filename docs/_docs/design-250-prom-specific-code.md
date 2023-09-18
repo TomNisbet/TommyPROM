@@ -1,6 +1,6 @@
 ---
 title: Chips Supported
-permalink: /docs/supported-chips
+permalink: /docs/prom-specific-code
 exerpt: "PROM types supported by TommyPROM - EPROM, EEPROM, Flash"
 ---
 
