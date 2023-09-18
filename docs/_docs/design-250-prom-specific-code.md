@@ -235,3 +235,17 @@ connected to 5V.
 |AM28F512  |AMD          |EEPROM |       ||
 |AM29F040  |AMD          |EEPROM |       ||
 |AMS29AF010|             |       |       ||
+
+# Chip Manufacturers
+
+|Name     |Code |Notes|
+|:---      |:---         |:---   |
+|AMD - Advanced Micro Devices |AM  ||
+|Atmel                        |AT  |Aquired by Microchip|
+|CSI - Catalyst Semiconductor |CAT |Purchased by ON Semiconductor|
+|Intel                        |i   ||
+|ST Microelectronics          |M   ||
+|Xicor                        |X   ||
+|SST - Silicon Storage Tech   |ST  |Aquired by Microchip|
+|Winbond                      |W   ||
+|AMS - Advanced Memory Systems|AMS |Merged with Intersil|
