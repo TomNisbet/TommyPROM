@@ -27,18 +27,20 @@ enable and disable Software Data Protection, but uses a direct write for program
 TommyPROM has a variety of PromDevice Modules that can be compiled in to support these
 different chip technologies.
 
+
 # Verified Chips
 
 |Model     |Manufacturer |Type   |Module |Notes|
 |:---      |:---         |:---   |:---   |:--- |
 |AT28C256  |Atmel, others|EEPROM |28C    |Fully supported|
 |AT28C64   |Atmel, others|EEPROM |28C    |Fully supported|
+|AT29C010  |Atmel        |Flash  |28C    |Only with 128 byte or less sector size|
 |SST39SF040|Microchip    |Flash  |SST39SF|All SST39SF0x0 supported|
 |SST28SF040|SST          |Flash  |SST28SF|All SST28SF0x0 supported|
 |SST27SF020|SST          |Flash  |27     |12V continuous for pgm/erase|
-|W27C257   |Winbond      |EEPROM |27     |Continual 12V or 14V for program/erase|
-|AT29C010  |Atmel        |Flash  |28C    |Only with 128 byte or less sector size|
+|W27C257   |Winbond      |EEPROM |27     |Continuous 12V or 14V for program/erase|
 |8755A     |Intel        |EPROM  |8755A  |Requires 25V pulses to program|
+
 
 # PromDevice Modules
 
@@ -57,27 +59,15 @@ commands to enable and disable the [Software Data protection (SDP)](28C256-notes
 features of 28C chips.  There is also support for the fast block write mode of these
 chips, allowing a 32KB chip to be programmed in just a few seconds.
 
-## PromDevice27
-
-The 27C EPROMs use a variety of programming algorithms.  Code exists for some of these,
-but very few of the chips have been tested.
-
-Most, if not all, 27C series chips are not 5V only and require a higher voltage to program
-them.  Some need the voltage constantly applied while programming and others use high
-voltage pulses for each byte.  For constant voltage chips, it is probably easiest to just
-add an external power supply and manually assert the voltage before starting a write.  For
-those with switched voltages, some elements of the 8755 hardware may be leveraged to build
-a version of the programmer that supports these chips.
-
 ## PromDeviceSST39SF
 
-The SST39SF0x0 NOR Flash chips use fixed 4KB sectors that must be manually erased before a new program
-operation, but the code manages this transparently.  Whenever a write is started to a new
-segment, the driver first initiates an erase of that sector. A second write to the same
-sector will not cause an erase, so it is possible to write to a segment multiple times
-with no additional steps as long as the writes are to different parts of the sector.  For
-example, 256 bytes could be written to the start of a sector from one file and then 512
-bytes could be written to the end of the sector from another file.
+The SST39SF0x0 NOR Flash chips use fixed 4KB sectors that must be manually erased before a
+new program operation, but the code manages this transparently.  Whenever a write is
+started to a new segment, the driver first initiates an erase of that sector. A second
+write to the same sector will not cause an erase, so it is possible to write to a segment
+multiple times with no additional steps as long as the writes are to different parts of
+the sector.  For example, 256 bytes could be written to the start of a sector from one
+file and then 512 bytes could be written to the end of the sector from another file.
 
 Writing data that spans multiple sectors also works with no additional steps.  When
 a sector boundary is crossed, the new sector is erased and set as the current sector.
@@ -97,6 +87,24 @@ the 28SF are slower.
 
 All programming and erase operations for the 28SF chips require only a single 5V power supply.
 
+## PromDevice27
+
+The 27C supports Flash, EEPROM, and EPROM chips that use a variety of programming algorithms.  
+
+Most, if not all, 27C series chips are not 5V-only and require a higher voltage to program
+or erase. This driver supports chips that need the voltage constantly applied while
+programming or erasing.  The programming voltages are provided by an external power supply
+and manually switched before starting a write or erase operation.  See the [TommyPROM32
+hardware](pcb#TommyPROM32) for a diode circuit that allows the programming voltage to be
+switched between Vcc and a higher voltage.  
+
+Check the [Chip Details](#27c-and-27e-series-eproms-and-flash) for the high voltage
+connections for a particular chip or consult your data sheet.
+
+Chips that use high voltage pulses for each byte are not supported.  For those chips, some
+elements of the [8755A hardware](8755A-hardware) may be leveraged to build a version of
+the programmer that is able to provide high voltage pulses.
+
 ## PromDevice8755
 
 TommyPROM has a driver for Intel 8755 EPROMs.  This driver replaces the 28C driver at
@@ -115,7 +123,6 @@ address lines.  The Arduino has enough pins to drive all of these directly, with
 need for shift registers to create address lines.
 
 The 8755 build of TommyPROM also has a circuit to control the 25V programming pulses.
-
 
 
 # Chip Details
@@ -148,6 +155,32 @@ This is an earlier version of the SST39SF series chips.  They are pin compatible
 39SF series, but use a different command set for programming.  Unlike the 39SF, these
 flash chips support software data protection.  The _Lock_ and _Unlock_ commands can be
 used to enable and disable SDP from the command line.
+
+## 27C and 27E Series EPROMs and Flash
+
+### W27C257 and W27C512
+
+The Winbond W27C257 and W27E257 appear to be identical 32Kx8 EEPROMs.  The 27C version
+has been tested.  The Winbond W27C512 is a 64Kx8 EEPROM with no dedicated _VPP_ pin.
+
+The 257 EEPROMs have a _VPP_ pin that needs a constant 12V during programming. Unlike the
+newer 28C EEPROMs, these chips do not automatically erase before writing to a location.
+Instead, the entire chip is erased by applying 14V to _VPP_ and _A9_ and then pulsing
+_CE_.
+
+Unlike the 257 chips, the W27C512 does not have a dedicated pin for the programming
+voltage and instead uses the OE pin to place the chip in programming mode.  The verify
+operation requires that the OE pin be switched to _LOW_ and there is no hardware support
+for this, so the current code supports the 512 chip by doing a single write cycle with no
+verify.
+
+Because the chips use a constant high voltage for programming instead of a pulse, an
+external power supply and two diodes can be used to supply either 5V or 12V to the
+pins for programming and erasing.
+
+Note that the W27x257 chip are almost a drop-in replacement for the 28C256.  The _WE_,
+_VPP_, and _A14_ pins are the only differences.  For reading, the _VPP_ pin should be
+connected to 5V.
 
 ## 29C Series
 
@@ -187,7 +220,6 @@ data.  Data is written a byte at a time using a command register to control the
 programming.  TommyPROM does not currently support 29F chips, but it would not be
 difficult to write a driver.  The default 28C driver will read 29F chips.
 
-
 ## SST27SF020
 
 The Silicon Storage SST27SF0x0 are programmed similarly to the 27C257 in that a constant
@@ -200,31 +232,6 @@ the newer 28C EEPROMs, these chips do not automatically erase before writing to 
 location. Instead, the entire chip is erased by applying 12V to _VPP_ and _A9_ and then
 pulsing _WE_.
 
-## 27C and 27E Series EPROMs and flash
-
-#### W27C257 and W27C512
-
-The Winbond W27C257 and W27E257 appear to be identical 32Kx8 EEPROMs.  The 27C version
-has been tested.  The Winbond W27C512 is a 64Kx8 EEPROM with no dedicated _VPP_ pin.
-
-The 257 EEPROMs have a _VPP_ pin that needs a constant 12V during programming. Unlike the
-newer 28C EEPROMs, these chips do not automatically erase before writing to a location.
-Instead, the entire chip is erased by applying 14V to _VPP_ and _A9_ and then pulsing
-_CE_.
-
-Unlike the 257 chips, the W27C512 does not have a dedicated pin for the programming
-voltage and instead uses the OE pin to place the chip in programming mode.  The verify
-operation requires that the OE pin be switched to _LOW_ and there is no hardware support
-for this, so the current code supports the 512 chip by doing a single write cycle with no
-verify.
-
-Because the chips use a constant high voltage for programming instead of a pulse, an
-external power supply and two diodes can be used to supply either 5V or 12V to the
-pins for programming and erasing.
-
-Note that the W27x257 chip are almost a drop-in replacement for the 28C256.  The _WE_,
-_VPP_, and _A14_ pins are the only differences.  For reading, the _VPP_ pin should be
-connected to 5V.
 
 # Chips to be Tested
 
@@ -234,12 +241,13 @@ connected to 5V.
 |W27C512   |Winbond      |EEPROM |27     |Continual 12V or 14V for program/erase,VPP on OE|
 |AM28F512  |AMD          |EEPROM |       ||
 |AM29F040  |AMD          |EEPROM |       ||
-|AMS29AF010|             |       |       ||
+|AMS29AF010|AMS          |       |       ||
+
 
 # Chip Manufacturers
 
 |Name     |Code |Notes|
-|:---      |:---         |:---   |
+|:---                         |:---|:---|
 |AMS - Advanced Memory Systems|AMS |Merged with Intersil|
 |AMD - Advanced Micro Devices |AM  ||
 |Atmel                        |AT  |Aquired by Microchip|
