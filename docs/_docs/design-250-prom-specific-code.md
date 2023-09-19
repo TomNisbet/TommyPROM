@@ -61,7 +61,8 @@ chips, allowing a 32KB chip to be programmed in just a few seconds.
 
 ## PromDeviceSST39SF
 
-The SST39SF0x0 NOR Flash chips use fixed 4KB sectors that must be manually erased before a
+SST39SF0x0 NOR Flash chips are 5V-only chips that use a command register for program and
+erase operations.  They use fixed 4K-byte sectors that must be manually erased before a
 new program operation, but the code manages this transparently.  Whenever a write is
 started to a new segment, the driver first initiates an erase of that sector. A second
 write to the same sector will not cause an erase, so it is possible to write to a segment
@@ -69,14 +70,15 @@ multiple times with no additional steps as long as the writes are to different p
 the sector.  For example, 256 bytes could be written to the start of a sector from one
 file and then 512 bytes could be written to the end of the sector from another file.
 
-Writing data that spans multiple sectors also works with no additional steps.  When
-a sector boundary is crossed, the new sector is erased and set as the current sector.
+Writing data that spans multiple sectors also works with no additional steps.  When a
+sector boundary is crossed, the new sector is erased and set as the current sector.
 
-The SST39SF driver supports a manual erase from the command line using the E command.
-This is only needed if data will be rewritten to the same location after a previous write
-to that sector.
+The SST39SF driver supports a manual erase from the command line using the E command. This
+is only needed if data will be rewritten to the same location after a previous write to
+that sector.
 
-All programming and erase operations for the 39SF chips require only a single 5V power supply.
+All programming and erase operations for the 39SF chips require only a single 5V power
+supply.
 
 ## PromDeviceSST28SF
 
@@ -237,11 +239,15 @@ pulsing _WE_.
 
 |Model     |Manufacturer |Type   |Module |Notes|
 |:---      |:---         |:---   |:---   |:--- |
-|M27C4001  |ST Micro     |EEPROM |       |VCC=6.5V, VPP=12.75V to pgm|
+|M27C2001  |ST Micro     |EPROM  |       |VCC=6.5V, VPP=12.75V to pgm|
+|M27C4001  |ST Micro     |EPROM  |       |VCC=6.5V, VPP=12.75V to pgm|
 |W27C512   |Winbond      |EEPROM |27     |Continual 12V or 14V for program/erase,VPP on OE|
 |AM28F512  |AMD          |EEPROM |       ||
 |AM29F040  |AMD          |EEPROM |       ||
-|AMS29AF010|AMS          |       |       ||
+|AMS29AF010|             |       |       ||
+|2764      |SEEQ         |EPROM  |       ||
+|W29C040   |Winbond      |       |       ||
+
 
 
 # Chip Manufacturers
