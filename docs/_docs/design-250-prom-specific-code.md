@@ -37,8 +37,9 @@ different chip technologies.
 |AT29C010  |Atmel        |Flash  |28C    |Only with 128 byte or less sector size|
 |SST39SF040|Microchip    |Flash  |SST39SF|All SST39SF0x0 supported|
 |SST28SF040|SST          |Flash  |SST28SF|All SST28SF0x0 supported|
-|SST27SF020|SST          |Flash  |27     |12V continuous for pgm/erase|
+|M27C256   |ST Micro     |EPROM  |       |VCC=6.5V, VPP=12.75V to pgm|
 |W27C257   |Winbond      |EEPROM |27     |Continuous 12V or 14V for program/erase|
+|SST27SF020|SST          |Flash  |27     |12V continuous for pgm/erase|
 |8755A     |Intel        |EPROM  |8755A  |Requires 25V pulses to program|
 
 
@@ -101,7 +102,8 @@ hardware](pcb#TommyPROM32) for a diode circuit that allows the programming volta
 switched between Vcc and a higher voltage.  
 
 Check the [Chip Details](#27c-and-27e-series-eproms-and-flash) for the high voltage
-connections for a particular chip or consult your data sheet.
+connections for a particular chip or consult your data sheet. Also note the warning in
+that section about issuing other commands while the programming voltage is asserted.
 
 Chips that use high voltage pulses for each byte are not supported.  For those chips, some
 elements of the [8755A hardware](8755A-hardware) may be leveraged to build a version of
@@ -119,7 +121,8 @@ contains a 2KB EPROM plus two general-purpose I/O ports.  The 8355 is a one-time
 programmable version of the 8755.  The 8755 requires a 25V programming pulse for each byte
 to be written.  
 
-A new hardware build was created to support the 8755 chips.  Because the 8755 has a multiplexed data and address bus, the usual shift registers are not used for addressing.
+A new hardware build was created to support the 8755 chips.  Because the 8755 has a
+multiplexed data and address bus, the usual shift registers are not used for addressing.
 The chip only needs 8 connects that are shared for address and data, plus three dedicated
 address lines.  The Arduino has enough pins to drive all of these directly, without the
 need for shift registers to create address lines.
@@ -160,6 +163,32 @@ used to enable and disable SDP from the command line.
 
 ## 27C and 27E Series EPROMs and Flash
 
+*WARNING*: Some chips in this series use the _CE_ and _OE_ pins in non-standard ways when
+ the high voltage is asserted on _VPP_.  Because the programming voltage is switched
+ manually, care needs to be taken when using chips that pulse the _CE_ pin for
+ programming. The programming code itself knows how to manage this, but other commands,
+ like the DUMP command, will also toggle _CE_.  If the programming voltage is asserted,
+ these other commands can inadvertently cause a write operation.  Be sure to assert the
+ programming voltage, issue the needed write commands, and then remove the high voltage
+ before issuing and additional commands that may corrupt the data.
+
+### M27C256
+
+The M27C256 is a 32Kx8 byte UV-erasable EPROM.  It needs two special voltages for
+programming.  _VPP_ must be raised to 12.75V and _VCC_ must be raised to 6.25V.  Be sure
+to isolate the chip's _VCC_ pin from other Vcc connections so that the 6.25V is not fed
+back into the  Adbuino or into the shift registers.
+
+This chip does not have a dedicated _PGM_ or _WE_ pin, so programming and verify are
+controlled by the _E_ (Chip Enable) and _G_ (Output Enable) pins.  The _CE_ pin is pulsed
+to program bytes into a location.  To verify, the _OE_ pin is asserted, but the _CE_ pin
+is not.
+
+Note the warning in the section above about data corruption from issuing other commands
+while the programming voltages are present.
+
+This chip can only be erased with UV light, so the erase command is not supported.
+
 ### W27C257 and W27C512
 
 The Winbond W27C257 and W27E257 appear to be identical 32Kx8 EEPROMs.  The 27C version
@@ -168,11 +197,12 @@ has been tested.  The Winbond W27C512 is a 64Kx8 EEPROM with no dedicated _VPP_ 
 The 257 EEPROMs have a _VPP_ pin that needs a constant 12V during programming. Unlike the
 newer 28C EEPROMs, these chips do not automatically erase before writing to a location.
 Instead, the entire chip is erased by applying 14V to _VPP_ and _A9_ and then pulsing
-_CE_.
+_CE_.  To erase the chip, assert the voltages on _VPP_ and _A9_ and then issue the
+_Erase_ command from the terminal.
 
 Unlike the 257 chips, the W27C512 does not have a dedicated pin for the programming
-voltage and instead uses the OE pin to place the chip in programming mode.  The verify
-operation requires that the OE pin be switched to _LOW_ and there is no hardware support
+voltage and instead uses the _OE_ pin to place the chip in programming mode.  The verify
+operation requires that the _OE_ pin be switched to _LOW_ and there is no hardware support
 for this, so the current code supports the 512 chip by doing a single write cycle with no
 verify.
 
@@ -257,8 +287,9 @@ pulsing _WE_.
 |AMS - Advanced Memory Systems|AMS |Merged with Intersil|
 |AMD - Advanced Micro Devices |AM  ||
 |Atmel                        |AT  |Aquired by Microchip|
-|CSI - Catalyst Semiconductor |CAT |Purchased by ON Semiconductor|
+|CSI - Catalyst Semiconductor |CAT |Aquired by ON Semiconductor|
 |Intel                        |i   ||
+|Seeq Technology              |    |Aquired by LSI Logic|
 |SST - Silicon Storage Tech   |ST  |Aquired by Microchip|
 |ST Microelectronics          |M   ||
 |Winbond                      |W   ||

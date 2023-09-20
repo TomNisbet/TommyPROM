@@ -35,6 +35,7 @@ class PromDevice
     virtual ERET disableSoftwareWriteProtect() { return RET_NOT_SUPPORT; }
     virtual ERET enableSoftwareWriteProtect() { return RET_NOT_SUPPORT; }
     virtual ERET erase(uint32_t start, uint32_t end) { return RET_NOT_SUPPORT; }
+    virtual bool is_readback_safe() { return true; }
 
     uint32_t debugBlockWrites;      // Number of block write operations
     uint32_t debugLastAddress;      // Last address with an issue

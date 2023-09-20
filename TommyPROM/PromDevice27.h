@@ -17,10 +17,11 @@
  * 27 or 27C series parallel EPROM using the Arduino.  Supported chips
  * include 2716, 2732, 2764, 27C040, and 27C2001.
  *
- * Intelligent programming algorithms, like TurboProgram, are supported.
- * These allow a variable number of shorter program pulses until the byte
- * verifies.  This is optionally followed by an overprogram pulse that is
- * a multiple of the number of program pulses that were written.
+ * Intelligent programming algorithms, like TurboProgram and Presto II, are supported.
+ * These allow a variable number of shorter program pulses until the byte verifies.  This
+ * is optionally followed by an overprogram pulse that is a multiple of the number of
+ * program pulses that were written.
+ *
  *
  * See the constructor definition for an explanation of the parameters that
  * control programming.
@@ -40,6 +41,7 @@ class PromDevice27 : public PromDevice
     void begin();
     const char * getName() { return "27 series EPROM"; }
     ERET erase(uint32_t start, uint32_t end);
+    bool is_readback_safe() { return mPgmType != E27C_PGM_CE; }
 
   protected:
     void setAddress(uint32_t address);
