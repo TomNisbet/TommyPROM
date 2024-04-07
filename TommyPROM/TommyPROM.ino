@@ -36,6 +36,7 @@ CmdStatus cmdStatus;
 //   Data polling supported
 PromDevice28C  prom(32 * 1024L, 64, 10, true);
 //PromDevice28C  prom(8 * 1024L, 0, 10, true);  // 28C64 with no page writes
+//PromDevice28C  prom(2 * 1024L, 0, 10, true);  // 28C16 with no page writes
 
 #elif defined(PROM_IS_27)
 // Define a device for a 2764 EPROM with the following parameters:
@@ -71,6 +72,9 @@ PromDeviceSST28SF  prom(512 * 1024L, 40, true);
 #elif defined(PROM_IS_8755A)
 // Define a device for an Intel 8755A with a fixed size of 2K and no other parameters.
 PromDevice8755A  prom(2 * 1024L);
+
+#elif defined(PROM_IS_23)
+PromDevice23 prom(2 * 1024L);	// 2316
 
 // Additional device-specific code goes here...
 //#elif defined(PROM_IS...

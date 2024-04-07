@@ -11,6 +11,7 @@
 //#define PROM_IS_SST39SF
 //#define PROM_IS_SST28SF
 //#define PROM_IS_8755A
+//#define PROM_IS_23
 
 // Don't change anything below this comment unless you are adding support for a new device type.
 #if defined(PROM_IS_28C)
@@ -23,6 +24,9 @@
 #include "PromDeviceSST28SF.h"
 #elif defined(PROM_IS_8755A)
 #include "PromDevice8755A.h"
+#elif defined(PROM_IS_23)
+#include "PromDevice23.h"
+
 // Additional device support goes here...
 // Also add matching code in TommyPROM.ino to declare the new device
 #else
