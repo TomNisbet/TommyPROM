@@ -24,8 +24,12 @@ class PromDevice23 : public PromDevice
     PromDevice23(uint32_t size);
     void begin();
     const char *getName() { return "23 series PROM"; }
+    ERET disableSoftwareWriteProtect();  // use the Unlock command to scan the chip selects
 
   protected:
+    void printCSbits(unsigned bits);
+    bool scanAddress(uint32_t addrBase);
+    void printByte(byte b);
     void setAddress(uint32_t address);
     byte readByte(uint32_t address);
     bool burnByte(byte value, uint32_t address) { return false; }

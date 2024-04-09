@@ -19,7 +19,7 @@
 #include "XModem.h"
 
 
-static const char * MY_VERSION = "3.3";
+static const char * MY_VERSION = "3.4";
 
 
 // Global status
@@ -74,7 +74,7 @@ PromDeviceSST28SF  prom(512 * 1024L, 40, true);
 PromDevice8755A  prom(2 * 1024L);
 
 #elif defined(PROM_IS_23)
-PromDevice23 prom(2 * 1024L);	// 2316
+PromDevice23 prom(2 * 1024L);   // 2316
 
 // Additional device-specific code goes here...
 //#elif defined(PROM_IS...

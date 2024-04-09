@@ -114,6 +114,8 @@ void PromDevice::setDataBusMode(uint8_t mode)
     {
         DDRB &= 0xfc;
         DDRD &= 0x03;
+        PORTB |= 0x03;  // set pullup resistors
+        PORTD |= 0xfc;
     }
 }
 
