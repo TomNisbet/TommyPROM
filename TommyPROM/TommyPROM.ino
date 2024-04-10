@@ -95,7 +95,7 @@ XModem xmodem(prom, cmdStatus);
  * CLI parse functions
  */
 const char hex[] = "0123456789abcdef";
-const uint32_t unspec = ~0;;
+const uint32_t unspec = ~0;
 inline uint32_t if_unspec(uint32_t val, uint32_t repl) { return val == unspec? repl: val; }
 
 enum {
@@ -406,7 +406,8 @@ uint32_t dumpBlock(uint32_t start, uint32_t end)
     {
         Serial.println();
     }
-	return end+1;
+
+    return end+1;
 }
 
 
