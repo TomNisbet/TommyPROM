@@ -728,7 +728,7 @@ void loop()
         break;
 
     case CMD_DUMP:
-        start = dumpBlock(start, start + if_unspec(end, 0xff));
+        start = dumpBlock(start, if_unspec(end, start + 0xff));
         break;
 
     case CMD_ERASE:
