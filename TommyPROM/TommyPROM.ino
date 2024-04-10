@@ -395,7 +395,7 @@ uint32_t dumpBlock(uint32_t start, uint32_t end)
             Serial.println(line);
             if (checkForBreak())
             {
-                return;
+                return addr;
             }
             memset(line, ' ', sizeof(line));
             count = 0;
@@ -711,10 +711,11 @@ void loop()
     switch (cmd)
     {
     case CMD_BLANK:
-        erasedBlockCheck(start, if_unspec(end, prom.end()));
+        erasedBlockCheck(if_unspec(start, 0), if_unspec(end, prom.end()));
         break;
 
     case CMD_CHECKSUM:
+	start = if_unspec(start, 0);
 	end = if_unspec(end, prom.end());
         w = checksumBlock(start, end);
         Serial.print(F("Checksum "));
@@ -764,6 +765,7 @@ void loop()
         break;
 
     case CMD_READ:
+	start = if_unspec(start, 0);
 	end = if_unspec(end, prom.end());
         if (xmodem.SendFile(start, end - start + 1))
         {
@@ -779,6 +781,7 @@ void loop()
 
     case CMD_WRITE:
         prom.resetDebugStats();
+	start = if_unspec(start, 0);
         numBytes = xmodem.ReceiveFile(start);
         if (numBytes)
         {
@@ -797,16 +800,16 @@ void loop()
         break;
 
     case CMD_SCAN:
-        scanBlock(start, if_unspec(end, prom.end()));
+        scanBlock(if_unspec(start, 0), if_unspec(end, prom.end()));
         break;
 
     case CMD_TEST:
-        testAddr(start);
+        testAddr(if_unspec(start, 0));
         break;
 
     case CMD_ZAP:
         prom.resetDebugStats();
-        zapTest(start);
+        zapTest(if_unspec(start, 0));
         break;
 #endif /* ENABLE_DEBUG_COMMANDS */
 
