@@ -37,10 +37,11 @@ different chip technologies.
 |AT29C010  |Atmel        |Flash  |28C    |Only with 128 byte or less sector size|
 |SST39SF040|Microchip    |Flash  |SST39SF|All SST39SF0x0 supported|
 |SST28SF040|SST          |Flash  |SST28SF|All SST28SF0x0 supported|
-|M27C256   |ST Micro     |EPROM  |       |VCC=6.5V, VPP=12.75V to pgm|
+|M27C256   |ST Micro     |EPROM  |27     |VCC=6.5V, VPP=12.75V to pgm|
 |W27C257   |Winbond      |EEPROM |27     |Continuous 12V or 14V for program/erase|
 |SST27SF020|SST          |Flash  |27     |12V continuous for pgm/erase|
 |8755A     |Intel        |EPROM  |8755A  |Requires 25V pulses to program|
+|2316      |Commodore    |ROM    |23     |Read-only|
 
 
 # PromDevice Modules
@@ -108,6 +109,29 @@ that section about issuing other commands while the programming voltage is asser
 Chips that use high voltage pulses for each byte are not supported.  For those chips, some
 elements of the [8755A hardware](8755A-hardware) may be leveraged to build a version of
 the programmer that is able to provide high voltage pulses.
+
+## PromDevice23
+
+The PromDevice23 driver is used to read Commodore 2316, 2332, and 2364 mask-programmed ROMs.
+This were used in early computers like the Commodore PET, Atari, and others.
+
+Most ROM chips can be read using the standard 28C driver.  The 23 series ROMs are unique because
+the chip select polarity is configurable when the chip is initally programmed.  This means that, for example, 
+some chips will use CS1 as an active HIGH signal and other will use it active LOW.  This existing
+Unlock command was repurposed in this driver to scan the chip to determine the polarity of the
+Chip Select pin(s).
+
+For the 2316 make the following connections:
+
+* CS3 to Arduino A0 (WE)
+* CS2 to Arduino A1 (CE)
+* CS1 to Arduino A2 (OE)
+
+The 2332 does not have a CS3, and the 2364 does not have CS3 or CS2, so those Arduino pins are not used.
+
+Before reading the chip, run the Unlock command to scan the Chip Selects.  This will try all combinations
+of CS values to read data from the chip.  After the Unlock command runs successfully, the Dump or Read commands
+can then be used to read from the chip.
 
 ## PromDevice8755
 
