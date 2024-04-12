@@ -113,7 +113,7 @@ the programmer that is able to provide high voltage pulses.
 ## PromDevice23
 
 The PromDevice23 driver is used to read Commodore 2316, 2332, and 2364 mask-programmed ROMs.
-This were used in early computers like the Commodore PET, Atari, and others.
+These were used in early computers like the Commodore PET, Atari, Apple II, and others.
 
 Most ROM chips can be read using the standard 28C driver.  The 23 series ROMs are unique because
 the chip select polarity is configurable when the chip is initally programmed.  This means that, for example, 
