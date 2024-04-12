@@ -684,9 +684,7 @@ void setup()
 **/
 
 char line[120];
-uint32_t start = 0;
-uint32_t end = 0xff;
-uint32_t val = 0xff;
+uint32_t next = 0;
 
 void loop()
 {
@@ -699,9 +697,9 @@ void loop()
     Serial.println();
     byte cmd = parseCommand(line[0]);
     char * pCursor = line+1;
-    start = getHex32(pCursor, start);
-    end = getHex32(pCursor);
-    val = (byte) getHex32(pCursor);
+    uint32_t start = getHex32(pCursor);
+    uint32_t end = getHex32(pCursor);
+    uint32_t val = getHex32(pCursor);
 
     if ((cmd != CMD_LAST_STATUS) && (cmd != CMD_INVALID))
     {
@@ -728,7 +726,8 @@ void loop()
         break;
 
     case CMD_DUMP:
-        start = dumpBlock(start, if_unspec(end, start + 0xff));
+	start = if_unspec(start, next);
+        next = dumpBlock(start, if_unspec(end, start + 0xff));
         break;
 
     case CMD_ERASE:
