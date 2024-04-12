@@ -19,7 +19,7 @@
 #include "XModem.h"
 
 
-static const char * MY_VERSION = "3.4";
+static const char * MY_VERSION = "3.5";
 
 
 // Global status
@@ -95,6 +95,8 @@ XModem xmodem(prom, cmdStatus);
  * CLI parse functions
  */
 const char hex[] = "0123456789abcdef";
+const uint32_t unspec = ~0;
+inline uint32_t if_unspec(uint32_t val, uint32_t repl) { return val == unspec? repl: val; }
 
 enum {
     // CLI Commands
@@ -220,7 +222,7 @@ byte hexDigit(char c)
 * @param pointer to string with the hex value of the word (modified)
 * @return unsigned int represented by the digits
 ************************************************************/
-uint32_t getHex32(char *& pData, uint32_t defaultValue=0)
+uint32_t getHex32(char *& pData, uint32_t defaultValue=unspec)
 {
     uint32_t u32 = 0;
 
@@ -346,7 +348,7 @@ word checksumBlock(uint32_t start, uint32_t end)
 /**
 * Read data from the device and dump it in hex and ascii.
 **/
-void dumpBlock(uint32_t start, uint32_t end)
+uint32_t dumpBlock(uint32_t start, uint32_t end)
 {
     char line[81];
 //  01234567891 234567892 234567893 234567894 234567895 234567896 234567897 23456789
@@ -393,7 +395,7 @@ void dumpBlock(uint32_t start, uint32_t end)
             Serial.println(line);
             if (checkForBreak())
             {
-                return;
+                return addr;
             }
             memset(line, ' ', sizeof(line));
             count = 0;
@@ -404,6 +406,8 @@ void dumpBlock(uint32_t start, uint32_t end)
     {
         Serial.println();
     }
+
+    return end+1;
 }
 
 
@@ -476,7 +480,7 @@ void pokeBytes(char * pCursor)
     //first value returned is the starting address
     start = getHex32(pCursor, 0);
 
-    while (((val = getHex32(pCursor, 0xffff)) != 0xffff) && (byteCtr < BLOCK_SIZE))
+    while (((val = getHex32(pCursor)) != unspec) && (byteCtr < BLOCK_SIZE))
     {
         data[byteCtr++] = byte(val);
     }
@@ -680,9 +684,6 @@ void setup()
 **/
 
 char line[120];
-uint32_t start = 0;
-uint32_t end = 0xff;
-byte val = 0xff;
 
 void loop()
 {
@@ -695,9 +696,10 @@ void loop()
     Serial.println();
     byte cmd = parseCommand(line[0]);
     char * pCursor = line+1;
-    start = getHex32(pCursor, 0);
-    end = getHex32(pCursor, 0xff);
-    val = (byte) getHex32(pCursor, 0);
+    uint32_t start = getHex32(pCursor);
+    uint32_t end = getHex32(pCursor);
+    uint32_t val = getHex32(pCursor);
+    static uint32_t dump_next = 0;
 
     if ((cmd != CMD_LAST_STATUS) && (cmd != CMD_INVALID))
     {
@@ -707,10 +709,12 @@ void loop()
     switch (cmd)
     {
     case CMD_BLANK:
-        erasedBlockCheck(start, end);
+        erasedBlockCheck(if_unspec(start, 0), if_unspec(end, prom.end()));
         break;
 
     case CMD_CHECKSUM:
+	start = if_unspec(start, 0);
+	end = if_unspec(end, prom.end());
         w = checksumBlock(start, end);
         Serial.print(F("Checksum "));
         printWord(start);
@@ -722,16 +726,31 @@ void loop()
         break;
 
     case CMD_DUMP:
-        dumpBlock(start, end);
+	start = if_unspec(start, dump_next);
+        dump_next = dumpBlock(start, if_unspec(end, start + 0xff));
         break;
 
     case CMD_ERASE:
-        printRetStatus(prom.erase(start, end));
+	if (start == unspec || end == unspec)
+	{
+		Serial.println(F("Erase requires explicit start, end"));
+	}
+	else
+	{
+        	printRetStatus(prom.erase(start, end));
+	}
         break;
 
     case CMD_FILL:
-        prom.resetDebugStats();
-        fillBlock(start, end, val);
+	if (start == unspec || end == unspec || val == unspec)
+	{
+		Serial.println(F("Fill requires explicit start, end and value"));
+	}
+	else
+	{
+        	prom.resetDebugStats();
+        	fillBlock(start, end, (byte)val);
+	}
         break;
 
     case CMD_LOCK:
@@ -745,10 +764,12 @@ void loop()
         break;
 
     case CMD_READ:
-        if (xmodem.SendFile(start, uint32_t(end) - start + 1))
+	start = if_unspec(start, 0);
+	end = if_unspec(end, prom.end());
+        if (xmodem.SendFile(start, end - start + 1))
         {
             cmdStatus.info("Send complete.");
-            cmdStatus.setValueDec(0, "NumBytes", uint32_t(end) - start + 1);
+            cmdStatus.setValueDec(0, "NumBytes", end - start + 1);
         }
         break;
 
@@ -759,6 +780,7 @@ void loop()
 
     case CMD_WRITE:
         prom.resetDebugStats();
+	start = if_unspec(start, 0);
         numBytes = xmodem.ReceiveFile(start);
         if (numBytes)
         {
@@ -777,16 +799,16 @@ void loop()
         break;
 
     case CMD_SCAN:
-        scanBlock(start, end);
+        scanBlock(if_unspec(start, 0), if_unspec(end, prom.end()));
         break;
 
     case CMD_TEST:
-        testAddr(start);
+        testAddr(if_unspec(start, 0));
         break;
 
     case CMD_ZAP:
         prom.resetDebugStats();
-        zapTest(start);
+        zapTest(if_unspec(start, 0));
         break;
 #endif /* ENABLE_DEBUG_COMMANDS */
 

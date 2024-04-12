@@ -29,6 +29,7 @@ class PromDevice
     byte readData(uint32_t address) { return readByte(address); }
     void resetDebugStats();
     void printDebugStats();
+    uint32_t end() const { return mSize-1; }
 
     virtual void begin() = 0;
     virtual const char * getName() = 0;
