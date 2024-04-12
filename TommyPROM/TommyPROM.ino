@@ -684,7 +684,6 @@ void setup()
 **/
 
 char line[120];
-uint32_t next = 0;
 
 void loop()
 {
@@ -700,6 +699,7 @@ void loop()
     uint32_t start = getHex32(pCursor);
     uint32_t end = getHex32(pCursor);
     uint32_t val = getHex32(pCursor);
+    static uint32_t dump_next = 0;
 
     if ((cmd != CMD_LAST_STATUS) && (cmd != CMD_INVALID))
     {
@@ -726,8 +726,8 @@ void loop()
         break;
 
     case CMD_DUMP:
-	start = if_unspec(start, next);
-        next = dumpBlock(start, if_unspec(end, start + 0xff));
+	start = if_unspec(start, dump_next);
+        dump_next = dumpBlock(start, if_unspec(end, start + 0xff));
         break;
 
     case CMD_ERASE:
