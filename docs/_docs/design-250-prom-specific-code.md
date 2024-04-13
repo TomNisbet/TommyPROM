@@ -129,7 +129,7 @@ For the 2316 make the following connections:
 
 The 2332 does not have a CS3, and the 2364 does not have CS3 or CS2, so those Arduino pins are not used.
 
-Before reading the chip, run the Unlock command to scan the Chip Selects.  This will try all combinations
+__Before reading the chip, run the Unlock command to scan the Chip Selects__.  This will try all combinations
 of CS values to read data from the chip.  After the Unlock command runs successfully, the Dump or Read commands
 can then be used to read from the chip.
 

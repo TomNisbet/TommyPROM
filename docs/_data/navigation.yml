@@ -30,6 +30,10 @@ docs:
         url: /docs/28C256-notes
       - title: "PROM Types"
         url: /docs/prom-families
+      - title: "2316 and 2332 ROMs"
+        url: /docs/2316-roms
+      - title: "Release History"
+        url: /docs/release-history
   - title: "Links"
     children:
       - title: "Code and Schematics"
