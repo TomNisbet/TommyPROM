@@ -21,4 +21,4 @@ are in the project repo.
 
 [![TommyPROM PCB](images/TommyPROM-pcb-with-microcode-500.jpg)](images/TommyPROM-pcb-with-microcode.jpg)
 
-[![TommyPROM schematic](images/TommyPROM-nano-sch.png)](images/TommyPROM-pcb.jpg)
+[![TommyPROM schematic](images/TommyPROM-nano-sch.png)](images/TommyPROM-nano-sch.png)

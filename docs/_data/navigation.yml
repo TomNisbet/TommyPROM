@@ -20,6 +20,8 @@ docs:
         url: /docs/prom-specific-code
       - title: "Printed Circuit Board"
         url: /docs/pcb
+      - title: "TommyPROM32 PCB"
+        url: /docs/tommyprom32-pcb
       - title: "Adding Chip Families"
         url: /docs/extending
       - title: "8755A Hardware"
