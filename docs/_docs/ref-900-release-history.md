@@ -28,7 +28,5 @@ exerpt: "What's New in TommyPROM"
 |3.3      |2022-12-14 |Support 29C0x0 flash|
 |         |2022-12-23 |Documentation for TommyPROM32 PCB|
 |3.4      |2024-04-09 |Support 2316,2332, and 2364 mask-programmed ROMs|
-|3.5      |2024-04-12 |jcranes's updates to CLI for better parameter defaults and additional error checking.|
-
-
-
+|3.5      |2024-04-12 |jcranes's updates to CLI for better parameter defaults and additional error checking|
+|3.6      |2024-04-23 |Remove debug commands by default - can be enabled in Configure.h|
