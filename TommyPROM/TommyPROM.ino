@@ -19,7 +19,7 @@
 #include "XModem.h"
 
 
-static const char * MY_VERSION = "3.5";
+static const char * MY_VERSION = "3.6";
 
 
 // Global status
@@ -106,16 +106,17 @@ enum {
     CMD_DUMP,
     CMD_ERASE,
     CMD_FILL,
+    CMD_INFO,
     CMD_LOCK,
     CMD_POKE,
     CMD_READ,
     CMD_UNLOCK,
     CMD_WRITE,
+    CMD_ZAP,
 
-    CMD_INFO,
     CMD_SCAN,
     CMD_TEST,
-    CMD_ZAP,
+    CMD_PATTERN32,
     CMD_LAST_STATUS
 };
 
@@ -166,16 +167,17 @@ byte parseCommand(char c)
         case 'd':  cmd = CMD_DUMP;      break;
         case 'e':  cmd = CMD_ERASE;     break;
         case 'f':  cmd = CMD_FILL;      break;
+        case 'i':  cmd = CMD_INFO;      break;
         case 'l':  cmd = CMD_LOCK;      break;
         case 'p':  cmd = CMD_POKE;      break;
         case 'r':  cmd = CMD_READ;      break;
         case 'u':  cmd = CMD_UNLOCK;    break;
         case 'w':  cmd = CMD_WRITE;     break;
+        case 'z':  cmd = CMD_ZAP;       break;
 
-        case 'i':  cmd = CMD_INFO;      break;
         case 's':  cmd = CMD_SCAN;      break;
         case 't':  cmd = CMD_TEST;      break;
-        case 'z':  cmd = CMD_ZAP;       break;
+        case '!':  cmd = CMD_PATTERN32; break;
         case '/':  cmd = CMD_LAST_STATUS;break;
         default:   cmd = CMD_INVALID;   break;
     }
@@ -522,6 +524,56 @@ void pokeBytes(char * pCursor)
     cmdStatus.info("Poke successful");
 }
 
+
+/**
+ * Write a 32 byte test pattern to the PROM device and verify it
+ * by reading back.  The pattern includes a walking 1 and a
+ * walking zero, which may help to detect pins that are tied
+ * together or swapped.
+ *
+ * @param start - start address
+ */
+void zapTest(uint32_t start)
+{
+    byte testData[] =
+    {
+        'A',  'B',  'C',  'D',  'E',  'F',  'G',  'H',
+        0x01, 0x02, 0x04, 0x08, 0x10, 0x20, 0x40, 0x80,
+        0x7f, 0xbf, 0xdf, 0xef, 0xf7, 0xfb, 0xfd, 0xfe,
+        0x00, 0xff, 0x55, 0xaa, '0',  '1',  '2',  '3'
+    };
+
+    if (!prom.writeData(testData, sizeof(testData), start))
+    {
+        cmdStatus.error("Write failed");
+        return;
+    }
+
+    delay(100);
+
+    if (!prom.is_readback_safe()) {
+        // This chip uses the CE line for write control, so don't do the read because it
+        // could cause a write operation that would corrupt the data.
+        cmdStatus.info("Write test complete");
+        return;
+    }
+
+    for (unsigned ix = 0; ix < sizeof(testData); ix++)
+    {
+        byte val = prom.readData(start + ix);
+        if (val != testData[ix])
+        {
+            cmdStatus.error("Verify failed");
+            cmdStatus.setValueHex(0, "addr", start + ix);
+            cmdStatus.setValueHex(1, "read", val);
+            cmdStatus.setValueHex(2, "expected", testData[ix]);
+            return;
+        }
+    }
+    cmdStatus.info("Write test successful");
+}
+
+
 void printRetStatus(ERET status)
 {
     switch (status) {
@@ -613,51 +665,31 @@ void testAddr(uint32_t addr)
 
 
 /**
- * Write a 32 byte test pattern to the PROM device and verify it
- * by reading back.  The pattern includes a walking 1 and a
- * walking zero, which may help to detect pins that are tied
- * together or swapped.
- *
- * @param start - start address
+ * Fill a 32K PROM with a test pattern.
  */
-void zapTest(uint32_t start)
+void pattern32()
 {
-    byte testData[] =
+    enum { BLOCK_SIZE = 32 };
+    byte block[BLOCK_SIZE];
+
+
+    for (uint32_t addr = 0; (addr < 0x8000); addr += BLOCK_SIZE)
     {
-        'A',  'B',  'C',  'D',  'E',  'F',  'G',  'H',
-        0x01, 0x02, 0x04, 0x08, 0x10, 0x20, 0x40, 0x80,
-        0x7f, 0xbf, 0xdf, 0xef, 0xf7, 0xfb, 0xfd, 0xfe,
-        0x00, 0xff, 0x55, 0xaa, '0',  '1',  '2',  '3'
-    };
-
-    if (!prom.writeData(testData, sizeof(testData), start))
-    {
-        cmdStatus.error("Write failed");
-        return;
-    }
-
-    delay(100);
-
-    if (!prom.is_readback_safe()) {
-        // This chip uses the CE line for write control, so don't do the read because it
-        // could cause a write operation that would corrupt the data.
-        cmdStatus.info("Write test complete");
-        return;
-    }
-
-    for (unsigned ix = 0; ix < sizeof(testData); ix++)
-    {
-        byte val = prom.readData(start + ix);
-        if (val != testData[ix])
+        for (int ix = 0; ix < BLOCK_SIZE; ix++)
         {
-            cmdStatus.error("Verify failed");
-            cmdStatus.setValueHex(0, "addr", start + ix);
-            cmdStatus.setValueHex(1, "read", val);
-            cmdStatus.setValueHex(2, "expected", testData[ix]);
+            // 256 byte pattern is:
+            // 00 00 00 01 00 02 00 03 .. 00 7f
+            // 01 00 01 01 01 02 01 03 .. 01 7f
+            // ...
+            // 3f 00 3f 01 3f 02 3f 03 .. 3f 7f
+            block[ix] = (ix & 1) ? (((addr + ix) >> 1) & 0x7f) : (addr + ix) >> 8;
+        }
+        if (!prom.writeData(block, BLOCK_SIZE, addr))
+        {
+            cmdStatus.error("Write failed");
             return;
         }
     }
-    cmdStatus.info("Write test successful");
 }
 #endif /* ENABLE_DEBUG_COMMANDS */
 
@@ -713,8 +745,8 @@ void loop()
         break;
 
     case CMD_CHECKSUM:
-	start = if_unspec(start, 0);
-	end = if_unspec(end, prom.end());
+        start = if_unspec(start, 0);
+        end = if_unspec(end, prom.end());
         w = checksumBlock(start, end);
         Serial.print(F("Checksum "));
         printWord(start);
@@ -726,31 +758,35 @@ void loop()
         break;
 
     case CMD_DUMP:
-	start = if_unspec(start, dump_next);
+        start = if_unspec(start, dump_next);
         dump_next = dumpBlock(start, if_unspec(end, start + 0xff));
         break;
 
     case CMD_ERASE:
-	if (start == unspec || end == unspec)
-	{
-		Serial.println(F("Erase requires explicit start, end"));
-	}
-	else
-	{
-        	printRetStatus(prom.erase(start, end));
-	}
+        if (start == unspec || end == unspec)
+        {
+            Serial.println(F("Erase requires explicit start, end"));
+        }
+        else
+        {
+            printRetStatus(prom.erase(start, end));
+        }
         break;
 
     case CMD_FILL:
-	if (start == unspec || end == unspec || val == unspec)
-	{
-		Serial.println(F("Fill requires explicit start, end and value"));
-	}
-	else
-	{
-        	prom.resetDebugStats();
-        	fillBlock(start, end, (byte)val);
-	}
+        if (start == unspec || end == unspec || val == unspec)
+        {
+            Serial.println(F("Fill requires explicit start, end and value"));
+        }
+        else
+        {
+            prom.resetDebugStats();
+            fillBlock(start, end, (byte)val);
+        }
+        break;
+
+    case CMD_INFO:
+        prom.printDebugStats();
         break;
 
     case CMD_LOCK:
@@ -764,8 +800,8 @@ void loop()
         break;
 
     case CMD_READ:
-	start = if_unspec(start, 0);
-	end = if_unspec(end, prom.end());
+        start = if_unspec(start, 0);
+        end = if_unspec(end, prom.end());
         if (xmodem.SendFile(start, end - start + 1))
         {
             cmdStatus.info("Send complete.");
@@ -780,7 +816,7 @@ void loop()
 
     case CMD_WRITE:
         prom.resetDebugStats();
-	start = if_unspec(start, 0);
+        start = if_unspec(start, 0);
         numBytes = xmodem.ReceiveFile(start);
         if (numBytes)
         {
@@ -793,11 +829,12 @@ void loop()
         }
         break;
 
-#ifdef ENABLE_DEBUG_COMMANDS
-    case CMD_INFO:
-        prom.printDebugStats();
+    case CMD_ZAP:
+        prom.resetDebugStats();
+        zapTest(if_unspec(start, 0));
         break;
 
+#ifdef ENABLE_DEBUG_COMMANDS
     case CMD_SCAN:
         scanBlock(if_unspec(start, 0), if_unspec(end, prom.end()));
         break;
@@ -806,9 +843,8 @@ void loop()
         testAddr(if_unspec(start, 0));
         break;
 
-    case CMD_ZAP:
-        prom.resetDebugStats();
-        zapTest(if_unspec(start, 0));
+    case CMD_PATTERN32:
+        pattern32();
         break;
 #endif /* ENABLE_DEBUG_COMMANDS */
 
@@ -824,21 +860,22 @@ void loop()
         Serial.println();
         Serial.println(F("Valid commands are:"));
         Serial.println(F("  Bsssss eeeee    - Check to see if device range is Blank/erased (all FF)"));
-        Serial.println(F("  Csssss eeeee    - Compute checksum from device"));
+        Serial.println(F("  Csssss eeeee    - Compute Checksum from device"));
         Serial.println(F("  Dsssss eeeee    - Dump bytes from device to terminal"));
         Serial.println(F("  Esssss eeeee    - Erase address range on device (needed for some Flash)"));
         Serial.println(F("  Fsssss eeeee dd - Fill block on device with fixed value"));
+        Serial.println(F("  I               - Print debug Info"));
         Serial.println(F("  L               - Lock (enable) device Software Data Protection"));
         Serial.println(F("  Psssss dd dd... - Poke (write) values to device (up to 32 values)"));
         Serial.println(F("  Rsssss eeeee    - Read from device and save to XMODEM CRC file"));
         Serial.println(F("  U               - Unlock (disable) device Software Data Protection"));
         Serial.println(F("  Wsssss          - Write to device from XMODEM CRC file"));
+        Serial.println(F("  Zsssss          - Zap (burn) a 32 byte test pattern"));
 #ifdef ENABLE_DEBUG_COMMANDS
         Serial.println();
-        Serial.println(F("  I               - Print debug Info"));
         Serial.println(F("  Ssssss eeeee    - Scan addresses (read each 10x)"));
         Serial.println(F("  Tsssss          - Test read address (read 100x)"));
-        Serial.println(F("  Zsssss          - Zap (burn) a 32 byte test pattern"));
+        Serial.println(F("  !               - Fill a 32K device with a test pattern"));
 #endif /* ENABLE_DEBUG_COMMANDS */
         break;
     }

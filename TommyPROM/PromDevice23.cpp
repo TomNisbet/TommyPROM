@@ -8,12 +8,16 @@
 
 // IO lines for the EPROM device control
 // Pins D2..D9 are used for the data bus.
-#define CS3_PIN          A0
-#define CS2_PIN          A1
-#define CS1_PIN          A2
-#define CS3_BIT          0x04
-#define CS2_BIT          0x02
-#define CS1_BIT          0x01
+enum {
+    CS3_PIN = A0,   // WE on 28C schematic
+    CS2_PIN = A1,   // CE on 28C schematic
+    CS1_PIN = A2    // OE on 28C schematic
+};
+enum {
+    CS3_BIT = 0x04,
+    CS2_BIT = 0x02,
+    CS1_BIT = 0x01
+};
 
 static unsigned csBits;
 
@@ -45,7 +49,7 @@ void PromDevice23::begin()
     pinMode(CS1_PIN, OUTPUT);
     pinMode(CS2_PIN, OUTPUT);
     pinMode(CS3_PIN, OUTPUT);
-    
+
     disableCS1();
     disableCS2();
     disableCS3();
@@ -61,7 +65,7 @@ void PromDevice23::begin()
 ERET PromDevice23::disableSoftwareWriteProtect()
 {
     // Finish out the Unlock message printed by the UI code
-    Serial.println("just kidding!");
+    Serial.println(F("no unlock needed, scanning chip selects..."));
 
     // Scan a few different addresses in case there are legitimate empty blocks.  With
     // the total ROM size of 2K, it is very unlikely that there are several unused
@@ -70,14 +74,14 @@ ERET PromDevice23::disableSoftwareWriteProtect()
     {
         if (scanAddress(addrBase))
         {
-            Serial.print("Setting CS bits to ");
+            Serial.print(F("Setting CS bits to "));
             printCSbits(csBits);
             Serial.println();
             return RET_OK;
         }
     }
 
-    Serial.println("No valid CS settings found");
+    Serial.println(F("No valid CS settings found"));
 
     return RET_FAIL;
 }
@@ -89,11 +93,11 @@ ERET PromDevice23::disableSoftwareWriteProtect()
 // Print the current CS bit settings.
 void PromDevice23::printCSbits(unsigned bits)
 {
-        Serial.print("CS3:");
+        Serial.print("CS3/WE:");
         Serial.print((bits & CS3_BIT) ? 'H':'L');
-        Serial.print("  CS2:");
+        Serial.print("  CS2/CE:");
         Serial.print((bits & CS2_BIT) ? 'H':'L');
-        Serial.print("  CS1:");
+        Serial.print("  CS1/OE:");
         Serial.print((bits & CS1_BIT) ? 'H':'L');
 }
 
@@ -104,7 +108,7 @@ bool PromDevice23::scanAddress(uint32_t addrBase)
 {
     unsigned saveBits = 0xff;
 
-    Serial.print("\nScanning Chip Select combinations starting at address ");
+    Serial.print(F("\nScanning Chip Select combinations starting at address "));
     printByte(addrBase >> 8);
     printByte(addrBase & 0xff);
     Serial.println();
