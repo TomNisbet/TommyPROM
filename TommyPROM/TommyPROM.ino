@@ -60,7 +60,9 @@ PromDevice27  prom(32 * 1024L, E27C_PGM_CE, 100L, 25, 0); // M27C256 with Presto
 //   512K byte device capacity
 //   10us max write time
 //   Data polling supported
-PromDeviceSST39SF  prom(512 * 1024L, 10, true);
+//PromDeviceSST39SF  prom(128 * 1024L, 10, true);  // SST39SF010
+//PromDeviceSST39SF  prom(256 * 1024L, 10, true);  // SST39SF020
+PromDeviceSST39SF  prom(512 * 1024L, 10, true);  // SST39SF040
 
 #elif defined(PROM_IS_SST28SF)
 // Define a device for anSST28SF Flash with the following parameters:
@@ -116,7 +118,7 @@ enum {
 
     CMD_SCAN,
     CMD_TEST,
-    CMD_PATTERN32,
+    CMD_PATTERN_FILL,
     CMD_LAST_STATUS
 };
 
@@ -177,8 +179,8 @@ byte parseCommand(char c)
 
         case 's':  cmd = CMD_SCAN;      break;
         case 't':  cmd = CMD_TEST;      break;
-        case '!':  cmd = CMD_PATTERN32; break;
-        case '/':  cmd = CMD_LAST_STATUS;break;
+        case '!':  cmd = CMD_PATTERN_FILL;break;
+        case '/':  cmd = CMD_LAST_STATUS; break;
         default:   cmd = CMD_INVALID;   break;
     }
 
@@ -665,25 +667,45 @@ void testAddr(uint32_t addr)
 
 
 /**
- * Fill a 32K PROM with a test pattern.
+ * Fill a PROM with a test pattern
+ *
+ * Each 8-byte block contains two bytes of 256-byte block number
+ * followed by six bytes of byte number.
+ *   00000  00 00 02 03 04 05 06 07  00 00 0a 0b 0c 0d 0e 0f
+ *   00010  00 00 12 13 14 15 16 17  00 00 1a 1b 1c 1d 1e 1f
+ *   00020  00 00 22 23 24 25 26 27  00 00 2a 2b 2c 2d 2e 2f
+ *   ...
+ *   000f0  00 00 f2 f3 f4 f5 f6 f7  00 00 fa fb fc fd fe ff
+ *   00100  00 01 02 03 04 05 06 07  00 01 0a 0b 0c 0d 0e 0f
+ *   00010  00 01 12 13 14 15 16 17  00 01 1a 1b 1c 1d 1e 1f
+ *   ...
+ *   3fff0  03 ff f2 f3 f4 f5 f6 f7  03 ff fa fb fc fd fe ff
  */
-void pattern32()
+void patternFill()
 {
     enum { BLOCK_SIZE = 32 };
     byte block[BLOCK_SIZE];
 
+    Serial.print("Filling with pattern from 0 to ");
+    printHex32(prom.end());
+    Serial.print("...");
 
-    for (uint32_t addr = 0; (addr < 0x8000); addr += BLOCK_SIZE)
+    for (uint32_t addr = 0; (addr <= prom.end()); addr += BLOCK_SIZE)
     {
-        for (int ix = 0; ix < BLOCK_SIZE; ix++)
+        for (unsigned ix = 0; (ix < BLOCK_SIZE); ix+= 2)
         {
-            // 256 byte pattern is:
-            // 00 00 00 01 00 02 00 03 .. 00 7f
-            // 01 00 01 01 01 02 01 03 .. 01 7f
-            // ...
-            // 3f 00 3f 01 3f 02 3f 03 .. 3f 7f
-            block[ix] = (ix & 1) ? (((addr + ix) >> 1) & 0x7f) : (addr + ix) >> 8;
+            if ((ix & 7) == 0)
+            {
+                block[ix]   = (addr >> 16) & 0xff;
+                block[ix+1] = (addr >> 8)  & 0xff;
+            }
+            else
+            {
+                block[ix]   = (addr + ix)     & 0xff;
+                block[ix+1] = (addr + ix + 1) & 0xff;
+            }
         }
+
         if (!prom.writeData(block, BLOCK_SIZE, addr))
         {
             cmdStatus.error("Write failed");
@@ -843,8 +865,8 @@ void loop()
         testAddr(if_unspec(start, 0));
         break;
 
-    case CMD_PATTERN32:
-        pattern32();
+    case CMD_PATTERN_FILL:
+        patternFill();
         break;
 #endif /* ENABLE_DEBUG_COMMANDS */
 
@@ -875,7 +897,7 @@ void loop()
         Serial.println();
         Serial.println(F("  Ssssss eeeee    - Scan addresses (read each 10x)"));
         Serial.println(F("  Tsssss          - Test read address (read 100x)"));
-        Serial.println(F("  !               - Fill a 32K device with a test pattern"));
+        Serial.println(F("  !               - Fill entire device with a test pattern"));
 #endif /* ENABLE_DEBUG_COMMANDS */
         break;
     }
