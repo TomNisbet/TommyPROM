@@ -50,7 +50,7 @@ class PromDevice27 : public PromDevice
 
     bool burnByteWE(byte value, uint32_t address);
     bool burnByteCE(byte value, uint32_t address);
-    void myDelay(unsigned int us);
+    void myDelay(uint32_t us);
 
     E27C_PGM mPgmType;
     unsigned long mPulseWidthUsec;

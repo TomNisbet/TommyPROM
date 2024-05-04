@@ -30,3 +30,4 @@ exerpt: "What's New in TommyPROM"
 |3.4      |2024-04-09 |Support 2316,2332, and 2364 mask-programmed ROMs|
 |3.5      |2024-04-12 |jcranes's updates to CLI for better parameter defaults and additional error checking|
 |3.6      |2024-04-23 |Remove debug commands by default - can be enabled in Configure.h|
+|3.7      |2024-05-03 |Change overwrite algorithm for 27 series to match SEEQ and M27256 datasheets|

@@ -19,7 +19,7 @@
 #include "XModem.h"
 
 
-static const char * MY_VERSION = "3.6";
+static const char * MY_VERSION = "3.7";
 
 
 // Global status
@@ -49,6 +49,7 @@ PromDevice28C  prom(32 * 1024L, 64, 10, true);
 //PromDevice27  prom(8 * 1024L, E27C_PGM_WE, 1000L, 15, 4);  // 2764 with SEEQ intelligent programming
 //PromDevice27  prom(32 * 1024L, E27C_PGM_WE, 1000L, 25, 3); // 27C256 with SEEQ intelligent programming
 PromDevice27  prom(32 * 1024L, E27C_PGM_CE, 100L, 25, 0); // M27C256 with Presto II intelligent programming
+//PromDevice27  prom(32 * 1024L, E27C_PGM_CE, 1000L, 25, 3); // M27256 with fast programming
 //PromDevice27  prom(2 * 1024L, E27C_PGM_WE, 50000L, 1, 0);  // 2716 with single 50ms write
 //PromDevice27  prom(512 * 1024L, E27C_PGM_CE, 100L, 11, 0); // 27C040 with Atmel rapid programming, CE connected to CE#/PGM#
 //PromDevice27  prom(32 * 1024L, E27C_PGM_CE, 100L, 25, 0);  // W27C257/W27E257 with 100uS program pulse on CE
@@ -337,6 +338,7 @@ bool checkForBreak()
 word checksumBlock(uint32_t start, uint32_t end)
 {
     word checksum = 0;
+#if 1
     for (uint32_t addr = start; (addr <= end); addr += 2)
     {
         word w = prom.readData(addr);
@@ -344,6 +346,25 @@ word checksumBlock(uint32_t start, uint32_t end)
         w |= prom.readData(addr + 1);
         checksum += w;
     }
+#else
+    uint16_t crc = 0xffff;
+    for (uint32_t addr = start; (addr <= end); addr++)
+    {
+        crc = crc ^ (uint16_t(prom.readData(addr)) << 8);
+        for (int ix = 0; (ix < 8); ix++)
+        {
+            if (crc & 0x8000)
+            {
+                crc = (crc << 1) ^ 0x1021;
+            }
+            else
+            {
+                crc <<= 1;
+            }
+        }
+    }
+    checksum = crc;
+#endif
 
     return checksum;
 }

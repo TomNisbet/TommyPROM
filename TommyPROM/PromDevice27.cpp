@@ -130,7 +130,7 @@ bool PromDevice27::burnByteWE(byte value, uint32_t address)
         writeDataBus(value);
         delayMicroseconds(1);
         enableWrite();
-        myDelay(mPulseWidthUsec * mOverwriteMultiplier);
+        myDelay(mPulseWidthUsec * mOverwriteMultiplier * (writeCount + 1));
         disableWrite();
     }
 
@@ -179,7 +179,18 @@ bool PromDevice27::burnByteCE(byte value, uint32_t address)
 	        enableOutput();
 	        status = readDataBus() == value;
 	        disableOutput();
-		}
+		} else {
+            status = true;
+        }
+    }
+
+    if (status && (mOverwriteMultiplier > 0)) {
+        setDataBusMode(OUTPUT);
+        writeDataBus(value);
+        delayMicroseconds(1);
+        enableChip();
+        myDelay(mPulseWidthUsec * mOverwriteMultiplier * (writeCount + 1));
+        disableChip();
     }
 
 	setDataBusMode(INPUT);
@@ -244,15 +255,15 @@ ERET PromDevice27::erase(uint32_t start, uint32_t end)
 }
 
 
-void PromDevice27::myDelay(unsigned int us)
+void PromDevice27::myDelay(uint32_t us)
 {
     if (us > 16000) {
         // The delayMicroseconds code can't do delays longer than 16ms, so use the
         // ms delay code for larger values.  This rounds down to the nearest ms, so
         // it is not possible to delay for 40.5 ms, for example.
-        delay(us / 1000);
+        delay(uint16_t(us / 1000));
     } else {
-        delayMicroseconds((unsigned int) us);
+        delayMicroseconds(uint16_t(us));
     }
 }
 
