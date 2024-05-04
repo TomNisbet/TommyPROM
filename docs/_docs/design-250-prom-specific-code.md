@@ -37,6 +37,7 @@ different chip technologies.
 |AT29C010  |Atmel        |Flash  |28C    |Only with 128 byte or less sector size|
 |SST39SF040|Microchip    |Flash  |SST39SF|All SST39SF0x0 supported|
 |SST28SF040|SST          |Flash  |SST28SF|All SST28SF0x0 supported|
+|M27256    |ST Micro     |EPROM  |27     |VCC=6V, VPP=12.5V to pgm|
 |M27C256   |ST Micro     |EPROM  |27     |VCC=6.5V, VPP=12.75V to pgm|
 |W27C257   |Winbond      |EEPROM |27     |Continuous 12V or 14V for program/erase|
 |SST27SF020|SST          |Flash  |27     |12V continuous for pgm/erase|
@@ -212,6 +213,10 @@ Note the warning in the section above about data corruption from issuing other c
 while the programming voltages are present.
 
 This chip can only be erased with UV light, so the erase command is not supported.
+
+### M27256
+
+This is an older version of the M27C256.  Pin connections are the same, but for programming Vcc=6V and Vpp=12.5V.  The programming pulse width is 1ms instead of 100us, and the programming algorithm uses an overwrite pulse equal to 3ms * the number of program pulses written.
 
 ### W27C257 and W27C512
 

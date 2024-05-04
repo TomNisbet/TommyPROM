@@ -41,10 +41,10 @@ PromDevice28C  prom(32 * 1024L, 64, 10, true);
 #elif defined(PROM_IS_27)
 // Define a device for a 2764 EPROM with the following parameters:
 //   8K byte device capacity
-//   PGM pin pulses active LOW
+//   Program using dedicated WR pin
 //   1000us (1ms) write pulse
-//   15 write attempts
-//   4x overwrite pulse
+//   Max 15 write attempts
+//   4x overwrite pulse (4 * writePulseLength * numberOfPulsesWritten)
 //   (true) verify data byte after writing
 //PromDevice27  prom(8 * 1024L, E27C_PGM_WE, 1000L, 15, 4);  // 2764 with SEEQ intelligent programming
 //PromDevice27  prom(32 * 1024L, E27C_PGM_WE, 1000L, 25, 3); // 27C256 with SEEQ intelligent programming
