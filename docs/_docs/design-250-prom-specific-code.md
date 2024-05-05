@@ -49,6 +49,7 @@ different chip technologies.
 
 This PromDevice28C module is enabled by default to program 28C256 EEPROMS. To use a
 different module, make the following edits:
+
 * In configure.h, comment out the #define PROM_IS_28C line
 * Uncomment one of the other PROM_IS_ lines to compile a different module
 * In TommyPROM.ino, uncomment or add a new PromDevice declaration for the specific chip
@@ -195,7 +196,7 @@ used to enable and disable SDP from the command line.
  like the DUMP command, will also toggle _CE_.  If the programming voltage is asserted,
  these other commands can inadvertently cause a write operation.  Be sure to assert the
  programming voltage, issue the needed write commands, and then remove the high voltage
- before issuing and additional commands that may corrupt the data.
+ before issuing any additional commands that may corrupt the data.
 
 ### M27C256
 
@@ -218,7 +219,7 @@ This chip can only be erased with UV light, so the erase command is not supporte
 
 This is an older version of the M27C256.  Pin connections are the same, but for programming Vcc=6V and Vpp=12.5V.  The programming pulse width is 1ms instead of 100us, and the programming algorithm uses an overwrite pulse equal to 3ms * the number of program pulses written.
 
-### W27C257 and W27C512
+### W27C257, W27E257 and W27C512
 
 The Winbond W27C257 and W27E257 appear to be identical 32Kx8 EEPROMs.  The 27C version
 has been tested.  The Winbond W27C512 is a 64Kx8 EEPROM with no dedicated _VPP_ pin.
@@ -230,7 +231,7 @@ _CE_.  To erase the chip, assert the voltages on _VPP_ and _A9_ and then issue t
 _Erase_ command from the terminal.
 
 Unlike the 257 chips, the W27C512 does not have a dedicated pin for the programming
-voltage and instead uses the _OE_ pin to place the chip in programming mode.  The verify
+voltage and instead uses the 12V on _OE_ pin to place the chip in programming mode.  The verify
 operation requires that the _OE_ pin be switched to _LOW_ and there is no hardware support
 for this, so the current code supports the 512 chip by doing a single write cycle with no
 verify.
@@ -303,11 +304,17 @@ pulsing _WE_.
 |W27C512   |Winbond      |EEPROM |27     |Continual 12V or 14V for program/erase,VPP on OE|
 |AM28F512  |AMD          |EEPROM |       ||
 |AM29F040  |AMD          |EEPROM |       ||
-|AMS29AF010|             |       |       ||
+|AMS29AF010|AMS          |       |       ||
+|W29C040   |Winbond      |Flash  |       ||
 |2764      |SEEQ         |EPROM  |       ||
-|W29C040   |Winbond      |       |       ||
-
-
+|MBM2732A  |Fujitsu      |EPROM  |       ||
+|M5L2764K  |Mitsubishi   |EPROM  |       ||
+|B2732     |Intel        |EPROM  |       ||
+|D2764     |Intel        |EPROM  |       ||
+|D27128    |Intel        |EPROM  |       ||
+|TMS2564   |TI           |EPROM  |       ||
+|AM2764-2  |AMD          |EPROM  |       ||
+|MCM68766  |Motorola     |EPROM  |       ||
 
 # Chip Manufacturers
 
@@ -317,9 +324,13 @@ pulsing _WE_.
 |AMD - Advanced Micro Devices |AM  ||
 |Atmel                        |AT  |Aquired by Microchip|
 |CSI - Catalyst Semiconductor |CAT |Aquired by ON Semiconductor|
+|Fujitsu                      |MBM ||
 |Intel                        |i   ||
+|Mitsubishi                   |M5L ||
+|Motorola                     |MCM ||
 |Seeq Technology              |    |Aquired by LSI Logic|
 |SST - Silicon Storage Tech   |ST  |Aquired by Microchip|
 |ST Microelectronics          |M   ||
+|Texas Instruments            |TMS ||
 |Winbond                      |W   ||
 |Xicor                        |X   ||

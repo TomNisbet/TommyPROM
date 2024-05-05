@@ -28,17 +28,17 @@ Two power inputs and switches are provided to support older flash and EEPROM chi
 
 Note that some of the photos below show the initial version of the TommyPROM32 board that only contained a single switchable voltage.  The version 2.0 boards added a second switchable Vpp voltage section with multiple _VPP Output_ pins.  The _5V_ and _Vpp in low_ pins are now adjacent so that a wire is not needed for the common case where Vpp low is set to 5V.  There are also some general-purpose 5v, GND, and interconnect pins.
 
-### WE27C257 
+### W27C257 
 
-The photo below shows the WE27C257 set up for programming.  The _VPP in Low_ signal is connected to _VCC_ and the _VPP in High_ signal is using 12V from an external power supply. The _VPP Out_ signal is connected to the chip's VPP on pin 1.  The chip is in programming mode when the slide switch is set to the _High_ position and is in read mode when in the _Low_ position.
+The photo below shows the W27C257 set up for programming.  The _VPP in Low_ signal is connected to _VCC_ and the _VPP in High_ signal is using 12V from an external power supply. The _VPP Out_ signal is connected to the chip's VPP on pin 1.  The chip is in programming mode when the slide switch is set to the _High_ position and is in read mode when in the _Low_ position.
 
-[![TommyPROM32 WE27C257 programming](images/TommyPROM32-27C257-pgm-500.jpg)](images/TommyPROM32-27C257-pgm.jpg)
+[![TommyPROM32 W27C257 programming](images/TommyPROM32-27C257-pgm-500.jpg)](images/TommyPROM32-27C257-pgm.jpg)
 
-To erase the WE27C257 chip, the external power supply is providing 14V and the _VPP Out_ is connected to the chip's _VPP_ and _A9_ pins.  
+To erase the W27C257 chip, the external power supply is providing 14V and the _VPP Out_ is connected to the chip's _VPP_ and _A9_ pins.  
 
 Note the the top picture showed the version 1.0 board and a jumper wire was needed to connect +5V to the _Vpp in low_ pin.  The newer board, shown below, has a jumper cap to make this connection, so no additional wire is needed.
 
-[![TommyPROM32 WE27C257 erase](images/TommyPROM32-27C257-erase-500.jpg)](images/TommyPROM32-27C257-erase.jpg)
+[![TommyPROM32 W27C257 erase](images/TommyPROM32-27C257-erase-500.jpg)](images/TommyPROM32-27C257-erase.jpg)
 
 ### M27C256
 
