@@ -118,7 +118,7 @@ The PromDevice23 driver is used to read Commodore 2316, 2332, and 2364 mask-prog
 These were used in early computers like the Commodore PET, Atari, Apple II, and others.
 
 Most ROM chips can be read using the standard 28C driver.  The 23 series ROMs are unique because
-the chip select polarity is configurable when the chip is initally programmed.  This means that, for example, 
+the chip select polarity is configurable when the chip is initally programmed.  This means that, for example,
 some chips will use CS1 as an active HIGH signal and other will use it active LOW.  This existing
 Unlock command was repurposed in this driver to scan the chip to determine the polarity of the
 Chip Select pin(s).
@@ -299,21 +299,24 @@ pulsing _WE_.
 
 |Model     |Manufacturer |Type   |Module |Notes|
 |:---      |:---         |:---   |:---   |:--- |
-|M27C2001  |ST Micro     |EPROM  |       |VCC=6.5V, VPP=12.75V to pgm|
-|M27C4001  |ST Micro     |EPROM  |       |VCC=6.5V, VPP=12.75V to pgm|
-|W27C512   |Winbond      |EEPROM |27     |Continual 12V or 14V for program/erase,VPP on OE|
-|AM28F512  |AMD          |EEPROM |       ||
-|AM29F040  |AMD          |EEPROM |       ||
-|AMS29AF010|AMS          |       |       ||
-|W29C040   |Winbond      |Flash  |       ||
-|2764      |SEEQ         |EPROM  |       ||
-|MBM2732A  |Fujitsu      |EPROM  |       ||
-|M5L2764K  |Mitsubishi   |EPROM  |       ||
+|TMS2564   |TI           |EPROM  |       ||
+|AM2716    |AMD          |EPROM  |       ||
 |B2732     |Intel        |EPROM  |       ||
+|MBM2732A  |Fujitsu      |EPROM  |       ||
+|2764      |SEEQ         |EPROM  |       ||
+|AM2764-2  |AMD          |EPROM  |       ||
+|M5L2764K  |Mitsubishi   |EPROM  |       ||
 |D2764     |Intel        |EPROM  |       ||
 |D27128    |Intel        |EPROM  |       ||
-|TMS2564   |TI           |EPROM  |       ||
-|AM2764-2  |AMD          |EPROM  |       ||
+|W27C512   |Winbond      |EEPROM |27     |Continual 12V or 14V for program/erase,VPP on OE|
+|M27C2001  |ST Micro     |EPROM  |       |VCC=6.5V, VPP=12.75V to pgm|
+|M27C4001  |ST Micro     |EPROM  |       |VCC=6.5V, VPP=12.75V to pgm|
+|AT28C16   |Atmel        |EEPROM |       ||
+|AM28F512  |AMD          |EEPROM |       ||
+|W29C040   |Winbond      |Flash  |       ||
+|AM29F040  |AMD          |EEPROM |       ||
+|M29F040   |ST Micro     |       |       ||
+|AMS29AF010|AMS          |       |       ||
 |MCM68766  |Motorola     |EPROM  |       ||
 
 # Chip Manufacturers
