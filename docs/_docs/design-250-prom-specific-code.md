@@ -299,15 +299,15 @@ pulsing _WE_.
 
 |Model     |Manufacturer |Type   |Module |Notes|
 |:---      |:---         |:---   |:---   |:--- |
-|TMS2564   |TI           |EPROM  |       ||
+|TMS2564   |TI           |EPROM  |       |VPP=25V, 50ms low pulse on PGM|
 |AM2716    |AMD          |EPROM  |       ||
-|B2732     |Intel        |EPROM  |       ||
+|B2732     |Intel        |EPROM  |       |VPP/OE=25V, 50ms low pulse CE|
 |MBM2732A  |Fujitsu      |EPROM  |       ||
-|2764      |SEEQ         |EPROM  |       ||
-|AM2764-2  |AMD          |EPROM  |       ||
-|M5L2764K  |Mitsubishi   |EPROM  |       ||
-|D2764     |Intel        |EPROM  |       ||
-|D27128    |Intel        |EPROM  |       ||
+|2764      |SEEQ         |EPROM  |       |VPP/OE=21V, 50ms low pulse CE|
+|AM2764-2  |AMD          |EPROM  |       |VPP=21V, 50ms low pulse PGM|
+|M5L2764K  |Mitsubishi   |EPROM  |       |VCC=6V, VPP=21V, 1ms low pulse PGM 4x overwrite|
+|D2764     |Intel        |EPROM  |       |VCC=6V, VPP=12.5V, 1ms low pulse PGM 3x overwrite|
+|D27128    |Intel        |EPROM  |       |VCC=6V, VPP=12.5V, 1ms low pulse PGM 3x overwrite|
 |W27C512   |Winbond      |EEPROM |27     |Continual 12V or 14V for program/erase,VPP on OE|
 |M27C2001  |ST Micro     |EPROM  |       |VCC=6.5V, VPP=12.75V to pgm|
 |M27C4001  |ST Micro     |EPROM  |       |VCC=6.5V, VPP=12.75V to pgm|
@@ -317,7 +317,7 @@ pulsing _WE_.
 |AM29F040  |AMD          |EEPROM |       ||
 |M29F040   |ST Micro     |       |       ||
 |AMS29AF010|AMS          |       |       ||
-|MCM68766  |Motorola     |EPROM  |       ||
+|MCM68766  |Motorola     |EPROM  |       |PGM pulse is 25V|
 
 # Chip Manufacturers
 
