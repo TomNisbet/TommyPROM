@@ -1,5 +1,5 @@
 ---
-title: Chips Supported
+title: Other Device Types
 permalink: /docs/other-devices
 exerpt: "Other PROM device types"
 ---
