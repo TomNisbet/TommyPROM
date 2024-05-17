@@ -18,7 +18,7 @@ Chips that use high voltage pulses for each byte are not supported.  For those c
 |:---                    |:---         |:---   |:---   |:--- |
 |[M27256](#m27256)       |ST Micro     |EPROM  |27     |VCC=6V, VPP=12.5V to pgm|
 |[M27C256](#m27c256)      |ST Micro     |EPROM  |27     |VCC=6.5V, VPP=12.75V to pgm|
-|[W27C257](#w27c257-27e257-27c512)      |Winbond      |EEPROM |27     |Continuous 12V or 14V for program/erase|
+|[W27C257](#w27c257-w27e257-w27c512)      |Winbond      |EEPROM |27     |Continuous 12V or 14V for program/erase|
 |[SST27SF020](#sst27sf020)|SST          |Flash  |27     |12V continuous for pgm/erase|
 
 
