@@ -1,7 +1,7 @@
 ---
 title: Chips Supported
-permalink: /docs/prom-specific-code
-exerpt: "PROM types supported by TommyPROM - EPROM, EEPROM, Flash"
+permalink: /docs/other-devices
+exerpt: "Other PROM device types"
 ---
 
 Several other chip families have been identified and aquired, but are not yet supported.
