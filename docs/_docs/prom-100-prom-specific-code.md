@@ -25,7 +25,7 @@ Some chips use a combination of both methods.  The 28C256 uses a command registe
 enable and disable Software Data Protection, but uses a direct write for programming.
 
 TommyPROM has a variety of PromDevice Modules that can be compiled in to support these
-different chip technologies.
+different chip technologies.  Only one PromDevice module can be compiled into a build.
 
 
 ## Suported Chips

@@ -35,7 +35,3 @@ This is an earlier version of the SST39SF series chips.  They are pin compatible
 |SST39SF040|Microchip    |Flash  |SST39SF|All SST39SF0x0 supported|
 |SST28SF040|SST          |Flash  |SST28SF|All SST28SF0x0 supported|
 
-## Chips to be Tested
-
-|Model     |Manufacturer |Type   |Module |Notes|
-|:---      |:---         |:---   |:---   |:--- |

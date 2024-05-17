@@ -6,11 +6,21 @@ exerpt: "TommyPROM support for 27 series EPROM - 2716, 2732, 2764, 27C128, etc"
 
 The PromDevice27 driver supports Flash, EEPROM, and EPROM chips that use a variety of programming algorithms.  
 
-Most, if not all, 27C series chips are not 5V-only and require a higher voltage to program or erase. This driver supports chips that need the voltage constantly applied while programming or erasing.  The programming voltages are provided by an external power supply and manually switched before starting a write or erase operation.  See the [TommyPROM32 hardware](pcb#TommyPROM32) for a diode circuit that allows the programming voltage to be switched between Vcc and a higher voltage.  
+Most, if not all, 27C series chips are not 5V-only and require a higher voltage to program or erase. This driver supports chips that need the voltage constantly applied while programming or erasing.  The programming voltages are provided by an external power supply and manually switched before starting a write or erase operation.  See the [TommyPROM32 hardware](tommyprom32-pcb) for a diode circuit that allows the programming voltage to be switched between Vcc and a higher voltage.  
 
-Check the [Chip Details](#27c-and-27e-series-eproms-and-flash) for the high voltage connections for a particular chip or consult your data sheet. Also note the warning in that section about issuing other commands while the programming voltage is asserted.
+Check the chip details below for the high voltage connections for a particular chip or consult your data sheet. Also note the warning in that section about issuing other commands while the programming voltage is asserted.
 
 Chips that use high voltage pulses for each byte are not supported.  For those chips, some elements of the [8755A hardware](prom-device-8755) may be leveraged to build a version of the programmer that is able to provide high voltage pulses.
+
+## Verified Chips
+
+|Model                   |Manufacturer |Type   |Module |Notes|
+|:---                    |:---         |:---   |:---   |:--- |
+|[M27256](#m27256)       |ST Micro     |EPROM  |27     |VCC=6V, VPP=12.5V to pgm|
+|[M27C256](m27c256)      |ST Micro     |EPROM  |27     |VCC=6.5V, VPP=12.75V to pgm|
+|[W27C257](w27c257)      |Winbond      |EEPROM |27     |Continuous 12V or 14V for program/erase|
+|[SST27SF020](sst27sf020)|SST          |Flash  |27     |12V continuous for pgm/erase|
+
 
 ## 27C and 27E Series EPROMs and Flash
 
@@ -30,7 +40,9 @@ This chip can only be erased with UV light, so the erase command is not supporte
 
 This is an older version of the M27C256.  Pin connections are the same, but for programming Vcc=6V and Vpp=12.5V.  The programming pulse width is 1ms instead of 100us, and the programming algorithm uses an overwrite pulse equal to 3ms * the number of program pulses written.
 
-### W27C257, W27E257 and W27C512
+### W27C257
+### W27E257
+### W27C512
 
 The Winbond W27C257 and W27E257 appear to be identical 32Kx8 EEPROMs.  The 27C version has been tested.  The Winbond W27C512 is a 64Kx8 EEPROM with no dedicated _VPP_ pin.
 
@@ -54,15 +66,6 @@ the newer 28C EEPROMs, these chips do not automatically erase before writing to 
 location. Instead, the entire chip is erased by applying 12V to _VPP_ and _A9_ and then
 pulsing _WE_.
 
-## Verified Chips
-
-|Model     |Manufacturer |Type   |Module |Notes|
-|:---      |:---         |:---   |:---   |:--- |
-|M27256    |ST Micro     |EPROM  |27     |VCC=6V, VPP=12.5V to pgm|
-|M27C256   |ST Micro     |EPROM  |27     |VCC=6.5V, VPP=12.75V to pgm|
-|W27C257   |Winbond      |EEPROM |27     |Continuous 12V or 14V for program/erase|
-|SST27SF020|SST          |Flash  |27     |12V continuous for pgm/erase|
-
 ## Chips to be Tested
 
 |Model     |Manufacturer |Type   |Module |Notes|
@@ -80,22 +83,3 @@ pulsing _WE_.
 |M27C2001  |ST Micro     |EPROM  |       |VCC=6.5V, VPP=12.75V to pgm|
 |M27C4001  |ST Micro     |EPROM  |       |VCC=6.5V, VPP=12.75V to pgm|
 |MCM68766  |Motorola     |EPROM  |       |PGM pulse is 25V|
-
-## Chip Manufacturers
-
-|Name     |Code |Notes|
-|:---                         |:---|:---|
-|AMS - Advanced Memory Systems|AMS |Merged with Intersil|
-|AMD - Advanced Micro Devices |AM  ||
-|Atmel                        |AT  |Aquired by Microchip|
-|CSI - Catalyst Semiconductor |CAT |Aquired by ON Semiconductor|
-|Fujitsu                      |MBM ||
-|Intel                        |i   ||
-|Mitsubishi                   |M5L ||
-|Motorola                     |MCM ||
-|Seeq Technology              |    |Aquired by LSI Logic|
-|SST - Silicon Storage Tech   |ST  |Aquired by Microchip|
-|ST Microelectronics          |M   ||
-|Texas Instruments            |TMS ||
-|Winbond                      |W   ||
-|Xicor                        |X   ||
