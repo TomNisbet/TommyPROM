@@ -16,24 +16,32 @@ docs:
         url: /docs/hardware
       - title: "Software"
         url: /docs/software
-      - title: "PROM-specific Code"
-        url: /docs/prom-specific-code
       - title: "Printed Circuit Board"
         url: /docs/pcb
       - title: "TommyPROM32 PCB"
         url: /docs/tommyprom32-pcb
       - title: "Adding Chip Families"
         url: /docs/extending
-      - title: "8755A Hardware"
-        url: /docs/8755A-hardware
+  - title: "PROM-specific Code"
+    children:
+      - title: "Overview"
+        url: /docs/prom-specific-code
+      - title: "PromDevice28C"
+        url: /docs/prom-device-28c
+      - title: "PromDeviceSST"
+        url: /docs/prom-device-sst
+      - title: "PromDevice27"
+        url: /docs/prom-device-27
+      - title: "PromDevice23"
+        url: /docs/prom-device-23
+      - title: "PromDevice8755"
+        url: /docs/prom-device-8755
   - title: "References"
     children:
       - title: "28C256 and SDP"
         url: /docs/28C256-notes
       - title: "PROM Types"
         url: /docs/prom-families
-      - title: "2316 and 2332 ROMs"
-        url: /docs/2316-roms
       - title: "Release History"
         url: /docs/release-history
   - title: "Links"

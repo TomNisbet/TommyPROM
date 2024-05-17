@@ -1,6 +1,6 @@
 ---
 title: 2316, 2332, and 2364 ROMs
-permalink: /docs/2316-roms
+permalink: /docs/prom-device-23
 exerpt: "2316, 2332, and 2364 Read Only Memory"
 ---
 
