@@ -18,7 +18,7 @@ Chips that use high voltage pulses for each byte are not supported.  For those c
 |:---                    |:---         |:---   |:---   |:--- |
 |[M27256](#m27256)       |ST Micro     |EPROM  |27     |VCC=6V, VPP=12.5V to pgm|
 |[M27C256](#m27c256)      |ST Micro     |EPROM  |27     |VCC=6.5V, VPP=12.75V to pgm|
-|[W27C257](#w27c257,-27e257,-27c512)      |Winbond      |EEPROM |27     |Continuous 12V or 14V for program/erase|
+|[W27C257](#w27c257-27e257-27c512)      |Winbond      |EEPROM |27     |Continuous 12V or 14V for program/erase|
 |[SST27SF020](#sst27sf020)|SST          |Flash  |27     |12V continuous for pgm/erase|
 
 
@@ -46,7 +46,7 @@ The Winbond W27C257 and W27E257 appear to be identical 32Kx8 EEPROMs.  The 27C v
 
 The 257 EEPROMs have a _VPP_ pin that needs a constant 12V during programming. Unlike the newer 28C EEPROMs, these chips do not automatically erase before writing to a location. Instead, the entire chip is erased by applying 14V to _VPP_ and _A9_ and then pulsing _CE_.  To erase the chip, assert the voltages on _VPP_ and _A9_ and then issue the _Erase_ command from the terminal.
 
-Unlike the 257 chips, the W27C512 does not have a dedicated pin for the programming voltage and instead uses the 12V on _OE_ pin to place the chip in programming mode.  The verify operation requires that the _OE_ pin be switched to _LOW_ and there is no hardware support for this, so the current code supports the 512 chip by doing a single write cycle with no verify.
+Unlike the 257 chips, the W27C512 does not have a dedicated pin for the programming voltage and instead uses 12V on the _OE_ pin to place the chip in programming mode.  The verify operation requires that the _OE_ pin be switched to _LOW_ and there is no hardware support for this, so the current code supports the 512 chip by doing a single write cycle with no verify.
 
 Because the chips use a constant high voltage for programming instead of a pulse, an external power supply and two diodes can be used to supply either 5V or 12V to the pins for programming and erasing.
 
@@ -54,15 +54,9 @@ Note that the W27x257 chip are almost a drop-in replacement for the 28C256.  The
 
 ## SST27SF020
 
-The Silicon Storage SST27SF0x0 are programmed similarly to the 27C257 in that a constant
-voltage is applied for program and erase operations.  Unlike the 27C257, these have a
-dedicated WE pin that controls programming and erasing.  Another difference is that they
-do not have a verify operation to read back the programmed data.
+The Silicon Storage SST27SF0x0 are programmed similarly to the 27C257 in that a constant voltage is applied for program and erase operations.  Unlike the 27C257, these have a dedicated WE pin that controls programming and erasing.  Another difference is that they do not have a verify operation to read back the programmed data.
 
-These Flash chips have a _VPP_ pin that needs a constant 12V during programming. Unlike
-the newer 28C EEPROMs, these chips do not automatically erase before writing to a
-location. Instead, the entire chip is erased by applying 12V to _VPP_ and _A9_ and then
-pulsing _WE_.
+These Flash chips have a _VPP_ pin that needs a constant 12V during programming. Unlike the newer 28C EEPROMs, these chips do not automatically erase before writing to a location. Instead, the entire chip is erased by applying 12V to _VPP_ and _A9_ and then pulsing _WE_.
 
 ## Chips to be Tested
 
