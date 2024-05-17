@@ -17,9 +17,9 @@ Chips that use high voltage pulses for each byte are not supported.  For those c
 |Model                   |Manufacturer |Type   |Module |Notes|
 |:---                    |:---         |:---   |:---   |:--- |
 |[M27256](#m27256)       |ST Micro     |EPROM  |27     |VCC=6V, VPP=12.5V to pgm|
-|[M27C256](m27c256)      |ST Micro     |EPROM  |27     |VCC=6.5V, VPP=12.75V to pgm|
-|[W27C257](w27c257)      |Winbond      |EEPROM |27     |Continuous 12V or 14V for program/erase|
-|[SST27SF020](sst27sf020)|SST          |Flash  |27     |12V continuous for pgm/erase|
+|[M27C256](#m27c256)      |ST Micro     |EPROM  |27     |VCC=6.5V, VPP=12.75V to pgm|
+|[W27C257](#w27c257,-27e257,-27c512)      |Winbond      |EEPROM |27     |Continuous 12V or 14V for program/erase|
+|[SST27SF020](#sst27sf020)|SST          |Flash  |27     |12V continuous for pgm/erase|
 
 
 ## 27C and 27E Series EPROMs and Flash
@@ -40,9 +40,7 @@ This chip can only be erased with UV light, so the erase command is not supporte
 
 This is an older version of the M27C256.  Pin connections are the same, but for programming Vcc=6V and Vpp=12.5V.  The programming pulse width is 1ms instead of 100us, and the programming algorithm uses an overwrite pulse equal to 3ms * the number of program pulses written.
 
-### W27C257
-### W27E257
-### W27C512
+### W27C257, W27E257, W27C512
 
 The Winbond W27C257 and W27E257 appear to be identical 32Kx8 EEPROMs.  The 27C version has been tested.  The Winbond W27C512 is a 64Kx8 EEPROM with no dedicated _VPP_ pin.
 
