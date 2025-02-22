@@ -42,7 +42,7 @@ Note the the top picture showed the version 1.0 board and a jumper wire was need
 
 ### M27C256
 
-The M27C256 chip needs two voltages for programming.  The external power supply is providing 12.75V to _VPP Out 1_ for the the chip's _Vpp_ and _A9_ pins.  The power supply is also providing 6.25V to _VPP Out 2_ for the chips _Vcc_.  Note the the chip's _Vcc_ is no longer connected to the system +5V.  The two _VPP Select_ switches should be in the _low_ position for normal read operation and in the _high_ position for programming.
+The M27C256 chip needs two voltages for programming.  The external power supply is providing 12.75V to _VPP Out 1_ for the the chip's _Vpp_ pin.  The power supply is also providing 6.25V to _VPP Out 2_ for the chips _Vcc_ pin.  Note the the chip's _Vcc_ is no longer connected to the system +5V.  The two _VPP Select_ switches should be in the _low_ position for normal read operation and in the _high_ position for programming.
 
 [![TommyPROM32 M27C256 programming](images/TommyPROM32-27C256-500.jpg)](images/TommyPROM32-27C256.jpg)
 
