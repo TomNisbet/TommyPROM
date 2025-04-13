@@ -13,7 +13,7 @@ Features include:
 * ROM images transfers using XMODEM - no special host client needed.
 * Support for fast block EEPROM writes - a 32K EEPROM will program in just a few seconds.
 * Optimized code that supports the timing requirements needed to unlock the 28C series
-[Software Protection Algorithm](docs/28C256-notes).
+[Software Protection Algorithm](https://tomnisbet.github.io/TommyPROM/docs/28C256-notes).
 * Modular software design to easily support other EEPROM and EPROM families.
 
 ![TommyPROM Nano Hardware](docs/_docs/images/TommyPROM-nano.jpg)
