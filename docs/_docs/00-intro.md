@@ -66,7 +66,8 @@ use this version, just compile and upload it to the Arduino.
 that it can run quickly enough to meet 28C series chip timing requirements for SDP
 unlocking.  To use different Arduino hardware, like the Micro, the board-specific code in
 PromDevice.cpp and PromAddressDriver.cpp must be changed to match the port mappings
-between the ATmega chip and the Arduino I/O pins.
+between the ATmega chip and the Arduino I/O pins. If you are compiling for the
+Arduino Mega2560, uncomment the IS_MEGA line in Configure.
 
 Because the Arduino has limited code and RAM space available, only one PROM driver is
 compiled in at a time.  To change drivers, uncomment the desired PROM_IS_xx line in

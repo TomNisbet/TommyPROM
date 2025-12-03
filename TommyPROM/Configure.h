@@ -1,7 +1,9 @@
 // Uncomment this to enable extra debugging commands and code
 
-//#define ENABLE_DEBUG_COMMANDS
+// #define ENABLE_DEBUG_COMMANDS
 
+// Uncomment this to enable compilation for the Arduino Mega
+// #define IS_MEGA
 
 // Uncomment ONLY ONE of these to choose the PROM device code that will be
 // compiled in.

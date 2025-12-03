@@ -11,11 +11,11 @@ hardware allows access to individual control lines from the Arduino to verify th
 hardware was assembled correctly.
 
 The verifier sketch can be used without a chip installed to scope out address and data
-lines.  It also offers low-level control when the chip is installed.  
+lines.  It also offers low-level control when the chip is installed.
 
 THIS TOOL USES DIRECT PORT ACCESS ON THE ARDUINO.  CHECK TO MAKE SURE IT IS COMPATIBLE
-WITH YOUR BOARD BEFORE USING.  It will work correctly on the Uno, Nano, and Boarduino.  It
-WILL NOT WORK on the Micro.
+WITH YOUR BOARD BEFORE USING.  It will work correctly on the Uno, Nano, Boarduino, and
+Mega2560 with configuration changes.  It WILL NOT WORK on the Micro.
 
 Note that the commands write to the individual 28C control lines with some exceptions to
 protect the chip and the host Arduino:

@@ -41,7 +41,7 @@ To meet the timing requirements for block writes and 28C chip unlocking, the Pro
 class accesses the shift registers and data bus using direct port writes instead of 8
 individual pin accesses.  This greatly increases performance, but it makes the code
 dependent on the particular flavor of Arduino being used.  The code supports the Uno,
-Nano, and Boarduino versions of Arduino hardware or any other variant that uses that same
+Nano, Boarduino, and Mega2560 versions of Arduino hardware or any other variant that uses that same
 mapping of ATMega ports to I/O pins.  To support a different Arduino board, either change
 the pins used to match the mapping in the software, or change the hardware-specific code
 in PromDevice.cpp and PromAddressDriver.cpp.
@@ -79,5 +79,5 @@ the Vdd switching hardware that toggles the Vdd pin between the normal 5V value 
 ### PromAddressDriver class
 
 Although not actually a subclass of PromDevice, this contains the code to drive the shift
-registers that provide the address lines. If this hardware is used, the PromDeviceXX class
+registers that provide the address lines or directly control the address lines on the Mega2560. If this hardware is used, the PromDeviceXX class
 can call this code to implement the SetAddress methods.

@@ -26,7 +26,7 @@ already been used with these chips for read-only operations.
 
 The current design can directly address chips as large as 512K bytes, like the 29C040. Use
 the shift registers for A<sub>0</sub>..A<sub>15</sub> and wire Arduino pins D10..D12 to
-A<sub>16</sub>..A<sub>18</sub> on the target chip.
+A<sub>16</sub>..A<sub>18</sub> on the target chip or on the Mega2560, pins D38 to D40 to A<sub>16</sub>..A<sub>18</sub>.
 
 # Software
 

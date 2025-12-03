@@ -18,9 +18,7 @@
 #include "CmdStatus.h"
 #include "XModem.h"
 
-
 static const char * MY_VERSION = "3.7";
-
 
 // Global status
 CmdStatus cmdStatus;

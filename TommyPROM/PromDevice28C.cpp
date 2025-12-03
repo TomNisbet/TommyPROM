@@ -32,12 +32,12 @@ void PromDevice28C::begin()
 
     // Define the EEPROM control pins as output, making sure they are all
     // in the disabled state.
-    digitalWrite(OE, HIGH);
     pinMode(OE, OUTPUT);
-    digitalWrite(CE, HIGH);
+    digitalWrite(OE, HIGH);
     pinMode(CE, OUTPUT);
-    digitalWrite(WE, HIGH);
+    digitalWrite(CE, HIGH);
     pinMode(WE, OUTPUT);
+    digitalWrite(WE, HIGH);
 
     // This chip uses the shift register hardware for addresses, so initialize that.
     PromAddressDriver::begin();

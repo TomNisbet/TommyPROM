@@ -7,8 +7,12 @@
 //
 // This code will only work on Arduino Uno and Nano hardware.  The ports for other
 // Arduinos map to different IO pins.
+//
+// Ghostboo124: Arduino Mega hardware support has been added.
 
 #include "PromAddressDriver.h"
+
+#ifndef IS_MEGA // if this isn't an arduino mega
 
 #define ADDR_CLK_HI     A3
 #define ADDR_CLK_LO     A4
@@ -120,3 +124,92 @@ void PromAddressDriver::setAddressRegister(uint8_t clkPin, byte addr)
     delayMicroseconds(1);
     PORTB &= ~RCLK_595_MASK;
 }
+
+#else // #ifndef IS_MEGA
+
+// Address lines A0..A18 are controlled by D22..D40.
+#define ADDR_MASK_A 0xff // D22..D29 = PA0..PA7 = A0..A7
+#define ADDR_MASK_C 0xff // D30..D37 = PC7..PC0 = A8..A15
+#define ADDR_MASK_D 0x80 // D38      = PD7      = A16
+#define ADDR_MASK_G 0x06 // D39..D40 = PG2..PG1 = A17..A18
+
+void PromAddressDriver::begin()
+{
+    // The address control pins are always outputs.
+    DDRA |= ADDR_MASK_A; // Set D22..D29 as outputs
+    DDRC |= ADDR_MASK_C; // Set D30..D37 as outputs
+    DDRD |= ADDR_MASK_D; // Set D38 as output
+    DDRG |= ADDR_MASK_G; // Set D39..D40 as outputs
+
+    // To save time, the setAddress only writes the hi byte if it has changed.
+    // The value used to detect the change is initialized to a non-zero value,
+    // so set an initial address to avoid the the case where the first address
+    // written is the 'magic' initial address.
+    setAddress(0x0000);
+}
+
+// Set the address pins to a given address.
+void PromAddressDriver::setAddress(uint32_t address)
+{
+    static byte lastHi = 0xca;
+    static byte lastUpper = 0xca;
+    byte upper = (address >> 16) & 0xff;
+    byte hi = (address >> 8) & 0xff;
+    byte lo = address & 0xff;
+
+    if (upper != lastUpper)
+    {
+        setUpperAddress(upper);
+        lastUpper = upper;
+    }
+    if (hi != lastHi)
+    {
+        setLowerAddress(hi, true);
+        lastHi = hi;
+    }
+    setLowerAddress(lo, false);
+}
+
+// Set the upper address bits on the address pins.
+void PromAddressDriver::setUpperAddress(byte addr)
+{
+    // Set the upper address on pins D38..D40.
+
+    // D38
+    if (addr & 0x01)
+        PORTD |= ADDR_MASK_D;
+    else
+        PORTD &= ~ADDR_MASK_D;
+
+    // D39, D40
+    uint8_t portG = PORTG & ~ADDR_MASK_G;
+    if (addr & 0x02)        // A17 -> PG2
+        portG |= 0x04;
+    if (addr & 0x04)        // A18 -> PG1
+        portG |= 0x02;
+    PORTG = portG;
+}
+
+
+// Write the 8-bit low or high address values to the address pins.
+void PromAddressDriver::setLowerAddress(byte addr, bool isHigh)
+{
+    if (isHigh) { // If we are working with A8..A15
+        // D30..D37 = PC7..PC0 = A8..A15
+        uint8_t portC = 0;
+        if (addr & 0x01) portC |= 0x80; // A8 -> PC7 (D30)
+        if (addr & 0x02) portC |= 0x40; // A9 -> PC6 (D31)
+        if (addr & 0x04) portC |= 0x20; // A10 -> PC5 (D32)
+        if (addr & 0x08) portC |= 0x10; // A11 -> PC4 (D33)
+        if (addr & 0x10) portC |= 0x08; // A12 -> PC3 (D34)
+        if (addr & 0x20) portC |= 0x04; // A13 -> PC2 (D35)
+        if (addr & 0x40) portC |= 0x02; // A14 -> PC1 (D36)
+        if (addr & 0x80) portC |= 0x01; // A15 -> PC0 (D37)
+        PORTC = portC;
+    } else { // If we are working with A0..A7
+        // D22..D29 = PA0..PA7 = A0..A7
+        PORTA = addr;
+    }
+}
+
+#endif // #ifndef IS_MEGA

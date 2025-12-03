@@ -16,6 +16,12 @@ The basic circuit is as follows:
 * Pins A3..A5 control shift registers to produce the address lines.
 * Pins D10..D12 control A<sub>16</sub>..A<sub>18</sub> for chips larger than 64K bytes.
 
+If you use a Arduino Mega2560, the basic circuit is as follows:
+* Pins D2..D9 are wired to the data lines on teh target PROM.
+* Pins A0..A2 are wired to the WE, CE, and OE control lines of the target PROM.
+* Pins D22..D37 control the address lines A<sub>0</sub>..A<sub>15</sub>.
+* Pins D38..D40 control the address lines A<sub>16</sub>..A<sub>18</sub> for chips larger than 64K bytes
+
 Note that the existing design uses 74LS164 shift registers, but another 8-bit parallel out
 shift register, like the 74LS595, can be used instead with some pin changes.  See the
 [74LS595 Shift Registers](#74ls595-shift-registers) section below for details.
@@ -23,7 +29,7 @@ shift register, like the 74LS595, can be used instead with some pin changes.  Se
 The two shift registers can produce a sixteen bit address, although the 28C256 only needs
 15 addresses. Chips larger than 64K are supported by using the shift registers for
 A<sub>0</sub>..A<sub>15</sub> and connecting Arduino pins D10..D12 to the chip's
-A<sub>16</sub>..A<sub>18</sub>
+A<sub>16</sub>..A<sub>18</sub> or for the Mega2560, pins D38..D40 to A<sub>16</sub>..A<sub>18</sub>.
 
 [![TommyPROM Nano Schematic](images/TommyPROM-nano-sch.png)](images/TommyPROM-nano-sch.png)
 
@@ -59,7 +65,7 @@ larger chips like the 27C040.
 3. The D13 pin controls the output register on the '595 shift registers.  This pin is not
 connected when using the 74LS164.
 
-Note that the 74LS595s have two additional pins that need to be connected.  
+Note that the 74LS595s have two additional pins that need to be connected.
 * An output enable pin, labeled as either G or OE in the datasheet,  must be tied LOW for
 both chips or else they will not produce any signal on their output lines.
 * A reset pin, labeled as RESET or SRCLR, must be tied HIGH for both chips or else the
